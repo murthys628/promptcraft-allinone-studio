@@ -382,8 +382,12 @@
             <div class="mt-2 flex gap-2 flex-wrap items-center">
               <button type="button" id="openChatGptBtn" class="px-3 py-1.5 rounded-lg bg-emerald-500 text-slate-950 text-xs font-bold">Copy prompt &amp; open ChatGPT (free)</button>
               <button type="button" id="openGeminiBtn" class="px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-xs text-white">Copy &amp; open Gemini</button>
-              <span class="text-[10px] text-slate-400">Paste with Ctrl+V, download the image, then upload it under "Blank / base image" below.</span>
+              <span class="text-[10px] text-slate-400">Paste the prompt into ChatGPT, then bring the image back below.</span>
             </div>
+            <label id="artDropZone" for="artFileInput" tabindex="0" class="mt-2 block cursor-pointer rounded-lg border-2 border-dashed border-emerald-500/60 bg-emerald-500/5 px-3 py-4 text-center text-xs text-emerald-200">
+              <i class="fa-solid fa-cloud-arrow-up mr-1"></i> <b>Step 2:</b> bring your ChatGPT image here. Drop it, click to choose it, or copy the image and press <b>Ctrl+V</b> on this page.
+              <input id="artFileInput" type="file" accept="image/*" class="hidden" />
+            </label>
           <img id="artPreview" alt="Selected artwork preview" class="hidden mt-2 max-h-64 rounded-lg border border-sky-500/40" />
           </div>
           <div>
@@ -2187,6 +2191,48 @@
     }
 
     const artGallery = document.getElementById('artGallery');
+
+    // Accept an image from ChatGPT by drop, file picker or clipboard paste, then jump to the text fields.
+    function useArtworkFile(file) {
+      if (!file || !file.type.startsWith('image/')) {
+        showToast('Please choose an image file.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => loadArtwork(
+        reader.result,
+        'Artwork added. Now fill in the text, logo and contact details below.',
+        () => showToast('Could not read that image.'),
+        () => {
+          const next = document.getElementById('overlayHeadline');
+          next.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setTimeout(() => next.focus(), 400);
+        }
+      );
+      reader.readAsDataURL(file);
+    }
+    const artDropZone = document.getElementById('artDropZone');
+    document.getElementById('artFileInput').addEventListener('change', (event) => {
+      useArtworkFile(event.target.files[0]);
+      event.target.value = '';
+    });
+    ['dragenter', 'dragover'].forEach((name) => artDropZone.addEventListener(name, (event) => {
+      event.preventDefault();
+      artDropZone.classList.add('bg-emerald-500/20');
+    }));
+    ['dragleave', 'drop'].forEach((name) => artDropZone.addEventListener(name, (event) => {
+      event.preventDefault();
+      artDropZone.classList.remove('bg-emerald-500/20');
+    }));
+    artDropZone.addEventListener('drop', (event) => useArtworkFile(event.dataTransfer.files[0]));
+    document.addEventListener('paste', (event) => {
+      if (promptBuilderView.classList.contains('hidden')) return;
+      const item = Array.from(event.clipboardData ? event.clipboardData.items : []).find((entry) => entry.type.startsWith('image/'));
+      if (item) {
+        event.preventDefault();
+        useArtworkFile(item.getAsFile());
+      }
+    });
     // Backgrounds are drawn locally on a canvas: free, unlimited, offline, and text-free.
     const THEME_ART = {
       dhanteras: { label: 'Dhanteras', top: '#1a0b3a', mid: '#6b1730', low: '#2a0a22', glow: '#ffb83d', kind: 'diwali' },
