@@ -385,9 +385,11 @@
               <span class="text-[10px] text-slate-400">Paste the prompt into ChatGPT, then bring the image back below.</span>
             </div>
             <label id="artDropZone" for="artFileInput" tabindex="0" class="mt-2 block cursor-pointer rounded-lg border-2 border-dashed border-emerald-500/60 bg-emerald-500/5 px-3 py-4 text-center text-xs text-emerald-200">
-              <i class="fa-solid fa-cloud-arrow-up mr-1"></i> <b>Step 2:</b> bring your ChatGPT image here. Drop it, click to choose it, or copy the image and press <b>Ctrl+V</b> on this page.
+              <i class="fa-solid fa-cloud-arrow-up mr-1"></i> <b>Step 2:</b> bring your ChatGPT image here. Tap to choose it from your gallery/downloads, or drop it here.
               <input id="artFileInput" type="file" accept="image/*" class="hidden" />
             </label>
+            <button type="button" id="artPasteBtn" class="mt-2 px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-bold"><i class="fa-solid fa-paste mr-1"></i> Paste copied image</button>
+            <span class="text-[10px] text-slate-400 ml-1">In ChatGPT, copy the image, come back here and tap this. It is also picked up automatically when you return to this tab.</span>
           <img id="artPreview" alt="Selected artwork preview" class="hidden mt-2 max-h-64 rounded-lg border border-sky-500/40" />
           </div>
           <div>
@@ -2212,6 +2214,33 @@
       reader.readAsDataURL(file);
     }
     const artDropZone = document.getElementById('artDropZone');
+
+    // Read an image straight from the clipboard (works on HTTPS after the user allows it).
+    async function pasteArtworkFromClipboard(silent) {
+      try {
+        const items = await navigator.clipboard.read();
+        for (const entry of items) {
+          const type = entry.types.find((t) => t.startsWith('image/'));
+          if (type) {
+            useArtworkFile(new File([await entry.getType(type)], 'artwork', { type }));
+            return true;
+          }
+        }
+        if (!silent) showToast('No image on the clipboard. In ChatGPT, long-press or right-click the image and choose Copy.');
+      } catch (e) {
+        if (!silent) showToast('Allow clipboard access, or use the upload box instead.');
+      }
+      return false;
+    }
+    let waitingForChatImage = false;
+    ['openChatGptBtn', 'openGeminiBtn'].forEach((id) => document.getElementById(id).addEventListener('click', () => { waitingForChatImage = true; }));
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && waitingForChatImage) {
+        waitingForChatImage = false;
+        pasteArtworkFromClipboard(true);
+      }
+    });
+    document.getElementById('artPasteBtn').addEventListener('click', () => pasteArtworkFromClipboard(false));
     document.getElementById('artFileInput').addEventListener('change', (event) => {
       useArtworkFile(event.target.files[0]);
       event.target.value = '';
