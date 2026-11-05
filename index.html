@@ -507,6 +507,11 @@
             <div><label class="block text-[10px] text-slate-400 mb-1">Tagline ribbon</label><input id="overlayTagline" placeholder="Celebrating prosperity, precision &amp; excellence" class="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1.5 text-xs text-white" /></div>
             <div><label class="block text-[10px] text-slate-400 mb-1">Offer line above contact bar</label><input id="overlayOffer" placeholder="We Offer a Wide Range of Labeling, Printing &amp; Packaging Solutions" class="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1.5 text-xs text-white" /></div>
             <div class="sm:col-span-2"><label class="block text-[10px] text-slate-400 mb-1">Slogan line</label><input id="overlaySlogan" placeholder="YOUR VISION • OUR PRINTING EXPERTISE" class="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1.5 text-xs text-white" /></div>
+            <div class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div><label class="block text-[10px] text-slate-400 mb-1">Headline size: <span id="sizeHeadlineVal">100</span>%</label><input id="sizeHeadline" type="range" min="40" max="100" step="5" value="100" class="w-full accent-amber-500" /></div>
+              <div><label class="block text-[10px] text-slate-400 mb-1">Subtitle size: <span id="sizeSubtitleVal">100</span>%</label><input id="sizeSubtitle" type="range" min="40" max="100" step="5" value="100" class="w-full accent-amber-500" /></div>
+              <div><label class="block text-[10px] text-slate-400 mb-1">Other text size: <span id="sizeOtherVal">100</span>%</label><input id="sizeOther" type="range" min="40" max="100" step="5" value="100" class="w-full accent-amber-500" /></div>
+            </div>
           </div>
         </div>
         <div class="md:col-span-2 rounded-xl border border-emerald-500/30 bg-emerald-950/10 p-4">
@@ -2579,12 +2584,16 @@
         ctx.shadowBlur = 0;
       }
 
+      const sizes = o.sizes || {};
+      const hs = sizes.headline || 1;
+      const ss = sizes.subtitle || 1;
+      const os = sizes.other || 1;
       let cursorY = rh * 0.155;
       if (o.headline) {
         // Prefer a single headline line (as in the reference poster) so the wish never runs into the artwork.
         const headlineFont = (s) => `800 ${s}px ${OVERLAY_INDIC}`;
-        let fit = fitPosterText(ctx, o.headline, headlineFont, rw * 0.86, rw * 0.09, rw * 0.045, 1);
-        if (fit.lines.length > 1) fit = fitPosterText(ctx, o.headline, headlineFont, rw * 0.82, rw * 0.075, rw * 0.04, 2);
+        let fit = fitPosterText(ctx, o.headline, headlineFont, rw * 0.86, rw * 0.09 * hs, rw * 0.045 * hs, 1);
+        if (fit.lines.length > 1) fit = fitPosterText(ctx, o.headline, headlineFont, rw * 0.82, rw * 0.075 * hs, rw * 0.04 * hs, 2);
         const lineHeight = fit.size * 1.22;
         ctx.font = `800 ${fit.size}px ${OVERLAY_INDIC}`;
         ctx.lineJoin = 'round';
@@ -2609,7 +2618,7 @@
       }
       if (o.subtitle) {
         const light = isLight(cursorY / rh, cursorY / rh + 0.07);
-        const fit = fitPosterText(ctx, o.subtitle, (s) => `italic ${s}px ${OVERLAY_SERIF}`, rw * 0.74, rw * 0.03, rw * 0.02, 2);
+        const fit = fitPosterText(ctx, o.subtitle, (s) => `italic ${s}px ${OVERLAY_SERIF}`, rw * 0.74, rw * 0.03 * ss, rw * 0.02 * ss, 2);
         ctx.font = `italic ${fit.size}px ${OVERLAY_SERIF}`;
         ctx.fillStyle = light ? '#4a1d12' : '#fff3d6';
         ctx.save();
@@ -2620,7 +2629,7 @@
       }
 
       if (o.tagline) {
-        const fit = fitPosterText(ctx, o.tagline, (s) => `italic 600 ${s}px ${OVERLAY_SERIF}`, rw * 0.76, rw * 0.032, rw * 0.018, 1);
+        const fit = fitPosterText(ctx, o.tagline, (s) => `italic 600 ${s}px ${OVERLAY_SERIF}`, rw * 0.76, rw * 0.032 * os, rw * 0.018 * os, 1);
         ctx.font = `italic 600 ${fit.size}px ${OVERLAY_SERIF}`;
         const pillW = Math.min(rw * 0.9, ctx.measureText(fit.lines[0]).width + rw * 0.1);
         const pillH = rh * 0.05;
@@ -2649,7 +2658,7 @@
           ctx.fill();
           ctx.drawImage(service.image, slotCx - iw / 2, imageBottom - ih, iw, ih);
           if (service.label) {
-            const fit = fitPosterText(ctx, service.label, (s) => `600 ${s}px ${OVERLAY_INDIC}`, slotW * 0.86, rw * 0.022, rw * 0.012, 1);
+            const fit = fitPosterText(ctx, service.label, (s) => `600 ${s}px ${OVERLAY_INDIC}`, slotW * 0.86, rw * 0.022 * os, rw * 0.012 * os, 1);
             ctx.font = `600 ${fit.size}px ${OVERLAY_INDIC}`;
             const labelW = Math.min(slotW * 0.98, ctx.measureText(fit.lines[0]).width + rw * 0.03);
             const labelH = rh * 0.03;
@@ -2671,15 +2680,15 @@
         ctx.fillText(fit.lines[0], cx, y);
         ctx.letterSpacing = '0px';
       };
-      drawCentered(o.offer, rh * 0.81, (s) => `800 ${s}px ${OVERLAY_INDIC}`, rw * 0.027, rw * 0.015, '#ffd978', '#1b1f4b', 0);
-      drawCentered(o.slogan, rh * 0.92, (s) => `600 ${s}px ${OVERLAY_INDIC}`, rw * 0.017, rw * 0.01, '#ffe9b0', '#3b2a14', rw * 0.004);
+      drawCentered(o.offer, rh * 0.81, (s) => `800 ${s}px ${OVERLAY_INDIC}`, rw * 0.027 * os, rw * 0.015 * os, '#ffd978', '#1b1f4b', 0);
+      drawCentered(o.slogan, rh * 0.92, (s) => `600 ${s}px ${OVERLAY_INDIC}`, rw * 0.017 * os, rw * 0.01 * os, '#ffe9b0', '#3b2a14', rw * 0.004);
 
       if (o.contact) {
         const barH = rh * 0.042;
         const barW = rw * 0.94;
         const barY = rh * 0.943;
         pill(cx - barW / 2, barY, barW, barH, '#2a0720', '#f0b93c');
-        const fit = fitPosterText(ctx, o.contact, (s) => `700 ${s}px ${OVERLAY_INDIC}`, barW * 0.9, rw * 0.028, rw * 0.014, 1);
+        const fit = fitPosterText(ctx, o.contact, (s) => `700 ${s}px ${OVERLAY_INDIC}`, barW * 0.9, rw * 0.028 * os, rw * 0.014 * os, 1);
         ctx.font = `700 ${fit.size}px ${OVERLAY_INDIC}`;
         ctx.fillStyle = '#ffffff';
         ctx.fillText(fit.lines[0], cx, barY + barH / 2 + fit.size * 0.34);
@@ -2687,6 +2696,11 @@
       ctx.restore();
       ctx.textAlign = 'start';
     }
+
+    ['Headline', 'Subtitle', 'Other'].forEach((name) => {
+      const slider = document.getElementById(`size${name}`);
+      slider.addEventListener('input', () => { document.getElementById(`size${name}Val`).textContent = slider.value; });
+    });
 
     function extractQuotedHeadline(request) {
       const matches = [...request.matchAll(/["“]([^"“”]{3,100})["”]/g)].map((match) => match[1].trim());
@@ -2771,6 +2785,11 @@
           tagline: document.getElementById('overlayTagline').value.trim(),
           offer: document.getElementById('overlayOffer').value.trim(),
           slogan: document.getElementById('overlaySlogan').value.trim(),
+          sizes: {
+            headline: Number(document.getElementById('sizeHeadline').value) / 100,
+            subtitle: Number(document.getElementById('sizeSubtitle').value) / 100,
+            other: Number(document.getElementById('sizeOther').value) / 100
+          },
           contact: [website.replace(/^https?:\/\//i, '').replace(/\/$/, ''), email, phone].filter(Boolean).join('   •   '),
           services: serviceImages.map((image, index) => ({
             image,
