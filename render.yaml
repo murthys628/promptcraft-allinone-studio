@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: promptcraft-suite
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: python tts_server.py
+    healthCheckPath: /healthz
+    envVars:
+      - key: DATA_DIR
+        value: /var/data
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: IMAGE_DAILY_LIMIT
+        value: "20"
+    disk:
+      name: promptcraft-data
+      mountPath: /var/data
+      sizeGB: 1

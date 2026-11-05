@@ -1,0 +1,2912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PromptCraft All-in-One Studio — Free Prompts, Videos & Voiceover</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- Google Multi-language Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@400;600;800&family=Noto+Sans+Devanagari:wght@400;600;800&family=Noto+Sans+Tamil:wght@400;600;800&family=Noto+Sans+Telugu:wght@400;600;800&family=Noto+Sans+Malayalam:wght@400;600;800&family=Noto+Sans+Bengali:wght@400;600;800&family=Noto+Sans+Gujarati:wght@400;600;800&family=Noto+Sans+Gurmukhi:wght@400;600;800&family=Noto+Sans+Oriya:wght@400;600;800&family=Noto+Naskh+Arabic:wght@400;600;700&family=Noto+Sans+Ol+Chiki:wght@400;700&family=Noto+Sans+Meetei+Mayek:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --app-bg: #f7f7f8; --panel-bg: #ffffff; --soft-bg: #f0f0f1; --app-text: #202123; --muted-text: #6b7280; --line: #e5e7eb; --accent: #2563eb; }
+    body { font-family: 'Noto Sans Kannada', 'Noto Sans Devanagari', 'Noto Sans Tamil', 'Noto Sans Telugu', 'Noto Sans Malayalam', 'Noto Sans Bengali', 'Noto Sans Gujarati', 'Noto Sans Gurmukhi', 'Noto Sans Oriya', 'Noto Naskh Arabic', 'Noto Sans Ol Chiki', 'Noto Sans Meetei Mayek', 'Plus Jakarta Sans', sans-serif; background: var(--app-bg); color: var(--app-text); }
+    .app-sidebar { width: 258px; background: var(--panel-bg); border-right: 1px solid var(--line); }
+    .app-main-shell { margin-left: 258px !important; }
+    .theme-light .bg-slate-950 { background-color: var(--app-bg) !important; }
+    .theme-light .bg-slate-900, .theme-light .bg-slate-900\/90 { background-color: var(--panel-bg) !important; }
+    .theme-light .bg-slate-800 { background-color: var(--soft-bg) !important; }
+    #parsePromptBtn { color: #ffffff !important; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45); }
+    #parsePromptBtn:hover { color: #ffffff !important; }
+    .theme-light .border-slate-800, .theme-light .border-slate-700 { border-color: var(--line) !important; }
+    .theme-light .text-white { color: var(--app-text) !important; }
+    .theme-light .text-slate-100, .theme-light .text-slate-200, .theme-light .text-slate-300 { color: #374151 !important; }
+    .theme-light .text-slate-400, .theme-light .text-slate-500 { color: var(--muted-text) !important; }
+    .theme-light input, .theme-light textarea, .theme-light select { color: var(--app-text) !important; background-color: var(--app-bg) !important; }
+    .theme-dark { --app-bg: #09090b; --panel-bg: #18181b; --soft-bg: #27272a; --app-text: #f4f4f5; --muted-text: #a1a1aa; --line: #3f3f46; }
+    .theme-dark .bg-slate-950 { background-color: var(--app-bg) !important; }
+    .theme-dark .bg-slate-900, .theme-dark .bg-slate-900\/90 { background-color: var(--panel-bg) !important; }
+    .theme-dark .bg-slate-800 { background-color: var(--soft-bg) !important; }
+    .theme-dark .border-slate-800, .theme-dark .border-slate-700 { border-color: var(--line) !important; }
+    .theme-dark .text-white { color: var(--app-text) !important; }
+    .theme-dark .text-slate-400, .theme-dark .text-slate-500 { color: var(--muted-text) !important; }
+    .theme-soft { --app-bg: #eef4ff; --panel-bg: #ffffff; --soft-bg: #e0eaff; --app-text: #172554; --muted-text: #64748b; --line: #dbeafe; }
+    .theme-soft .bg-slate-950 { background-color: var(--app-bg) !important; }
+    .theme-soft .bg-slate-900, .theme-soft .bg-slate-900\/90 { background-color: var(--panel-bg) !important; }
+    .theme-soft .bg-slate-800 { background-color: var(--soft-bg) !important; }
+    .theme-soft .border-slate-800, .theme-soft .border-slate-700 { border-color: var(--line) !important; }
+    .theme-soft .text-white { color: var(--app-text) !important; }
+    .theme-soft .text-slate-400, .theme-soft .text-slate-500 { color: var(--muted-text) !important; }
+    .theme-light .bg-white, .theme-soft .bg-white, .theme-dark .bg-white { background-color: var(--panel-bg) !important; }
+    .theme-light .bg-slate-100, .theme-soft .bg-slate-100, .theme-dark .bg-slate-100 { background-color: var(--soft-bg) !important; }
+    .theme-light .bg-indigo-950\/20, .theme-soft .bg-indigo-950\/20, .theme-dark .bg-indigo-950\/20 { background-color: var(--soft-bg) !important; }
+    .theme-light .text-slate-900, .theme-soft .text-slate-900, .theme-dark .text-slate-900 { color: var(--app-text) !important; }
+    .theme-light header, .theme-light footer, .theme-soft header, .theme-soft footer, .theme-dark header, .theme-dark footer { background-color: var(--panel-bg) !important; border-color: var(--line) !important; }
+    .theme-light .app-sidebar, .theme-soft .app-sidebar, .theme-dark .app-sidebar { background-color: var(--panel-bg); border-color: var(--line); }
+    .theme-light .hover\:bg-slate-100:hover, .theme-soft .hover\:bg-slate-100:hover, .theme-dark .hover\:bg-slate-100:hover { background-color: var(--soft-bg) !important; }
+    .theme-light .text-slate-600, .theme-soft .text-slate-600, .theme-dark .text-slate-600 { color: var(--muted-text) !important; }
+    .theme-light .border-slate-200, .theme-soft .border-slate-200, .theme-dark .border-slate-200 { border-color: var(--line) !important; }
+    footer { margin-left: 258px; }
+    @media (max-width: 900px) { .app-sidebar { width: 72px; } .app-sidebar .sidebar-label, .app-sidebar .sidebar-brand-copy { display: none; } .app-main-shell { margin-left: 72px !important; } footer { margin-left: 72px; } }
+  </style>
+</head>
+<body class="theme-light min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white">
+
+  <!-- Sign up / Log in gate: covers the whole app until a valid session exists -->
+  <style>#authGate .bg-blue-600{color:#fff!important}#authGate input{color:#0f172a!important}</style>
+  <div id="authGate" class="fixed inset-0 z-[200] bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center p-4 overflow-auto">
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl p-7">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-slate-700 via-blue-600 to-cyan-500 flex items-center justify-center text-white text-xl"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+        <div>
+          <div class="font-extrabold text-xl text-slate-900">PromptCraft Suite</div>
+          <div class="text-xs text-slate-500">Create posters and narrated videos</div>
+        </div>
+      </div>
+      <div class="flex bg-slate-100 p-1 rounded-xl mb-5">
+        <button type="button" id="authTabSignup" class="flex-1 py-2 rounded-lg text-sm font-bold bg-blue-600 text-white">Sign up</button>
+        <button type="button" id="authTabLogin" class="flex-1 py-2 rounded-lg text-sm font-bold text-slate-600">Log in</button>
+      </div>
+      <form id="authForm" class="space-y-3" autocomplete="on">
+        <div id="authNameRow">
+          <label class="block text-xs font-semibold text-slate-600 mb-1" for="authName">Full name</label>
+          <input id="authName" type="text" autocomplete="name" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Your name">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1" for="authEmail">Email</label>
+          <input id="authEmail" type="email" required autocomplete="email" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="you@example.com">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1" for="authPassword">Password <span id="authPwHint" class="font-normal text-slate-400">(min 8 characters)</span></label>
+          <input id="authPassword" type="password" required minlength="8" autocomplete="new-password" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Password">
+        </div>
+        <div id="authError" class="hidden text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2"></div>
+        <button type="submit" id="authSubmit" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm transition">Create account</button>
+      </form>
+      <p class="text-[11px] text-slate-400 mt-4 text-center">Your account is stored on this computer's PromptCraft server.</p>
+    </div>
+  </div>
+
+  <aside class="app-sidebar fixed inset-y-0 left-0 z-50 flex flex-col p-4">
+    <div class="flex items-center gap-3 px-2 mb-8">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-slate-700 to-blue-600 flex items-center justify-center text-white shadow-lg"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+      <div class="sidebar-brand-copy">
+        <div class="font-extrabold tracking-tight">PromptCraft</div>
+        <div class="text-[10px] text-slate-500">Creative Studio</div>
+      </div>
+    </div>
+    <nav class="space-y-1">
+      <button id="sidebarNewBtn" class="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-left hover:bg-slate-100 transition"><i class="fa-solid fa-pen-to-square w-4 text-slate-500"></i><span class="sidebar-label">New creation</span></button>
+      <button id="sidebarVideoBtn" class="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-left bg-blue-50 text-blue-700 transition"><i class="fa-solid fa-video w-4"></i><span class="sidebar-label">Video studio</span></button>
+      <button id="sidebarPromptBtn" class="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-left hover:bg-slate-100 transition"><i class="fa-solid fa-pen-nib w-4 text-slate-500"></i><span class="sidebar-label">Prompt builder</span></button>
+    </nav>
+    <div class="mt-auto border-t border-slate-200 pt-3 space-y-1">
+      <div id="authUserLabel" class="px-3 py-1 text-xs text-slate-500 truncate sidebar-label"></div>
+      <button id="logoutBtn" class="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-left hover:bg-slate-100 transition"><i class="fa-solid fa-right-from-bracket w-4 text-slate-500"></i><span class="sidebar-label">Log out</span></button>
+      <button id="settingsBtn" class="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-left hover:bg-slate-100 transition"><i class="fa-solid fa-sliders w-4 text-slate-500"></i><span class="sidebar-label">Settings</span></button>
+      <div class="px-3 py-2 text-[10px] text-slate-400 sidebar-label">Local-first • No credits required</div>
+    </div>
+  </aside>
+
+  <!-- Main Header & Tab Navigation -->
+  <header class="app-main-shell bg-white/90 backdrop-blur border-b border-slate-200 sticky top-0 z-40 px-4 sm:px-8 py-3.5 flex items-center justify-between flex-wrap gap-3">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-slate-700 via-blue-600 to-cyan-500 flex items-center justify-center font-bold text-xl text-white shadow-lg shadow-blue-500/20">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+      </div>
+      <div>
+        <h1 class="font-extrabold text-lg text-slate-900 tracking-tight">PromptCraft Suite</h1>
+        <p class="text-xs text-slate-500">Create polished content locally</p>
+      </div>
+    </div>
+
+    <!-- Mode Switcher Tabs -->
+    <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
+      <button id="tabVideoBtn" class="px-4 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-blue-600 text-white shadow-sm">
+        <i class="fa-solid fa-video"></i> Video Studio
+      </button>
+      <button id="tabPromptBtn" class="px-4 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-pen-nib"></i> Prompt Builder
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- VIEW 1: VIDEO & SPOKEN VOICEOVER STUDIO   -->
+  <!-- ========================================== -->
+  <section id="videoStudioView" class="app-main-shell max-w-7xl mx-auto px-4 py-8 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
+    
+    <!-- Left Configuration Panel -->
+    <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl flex flex-col justify-between space-y-5">
+      <div class="space-y-4">
+        <div class="border-b border-slate-800 pb-3 flex items-center justify-between">
+          <h2 class="text-base font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-terminal text-amber-400"></i> Video Prompt & Voice Settings
+          </h2>
+          <span class="text-[11px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded">Prompt-Driven</span>
+        </div>
+
+        <!-- Master AI Prompt Input -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Natural Language Prompt</label>
+          <textarea id="aiPromptInput" rows="3" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono" placeholder="Describe the video, company, website, and language. For exact spoken words, add Narration: followed by the script in this same prompt."></textarea>
+          <p class="mt-1 text-[10px] text-slate-500">Need exact narration? Add a “Narration:” section to this prompt; it will fill the message and voice for you. Otherwise, a greeting is generated from the detected theme.</p>
+          <button type="button" id="parsePromptBtn" class="mt-2 w-full py-2.5 bg-gradient-to-r from-slate-700 to-blue-600 hover:from-slate-600 hover:to-blue-500 text-white text-xs font-bold rounded-lg transition shadow-md flex items-center justify-center gap-2">
+            <i class="fa-solid fa-bolt text-amber-300"></i> Auto-Detect & Generate Video From Prompt
+          </button>
+        </div>
+
+        <!-- Spoken Voice Language Selector -->
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold text-amber-400 flex items-center gap-1.5">
+              <i class="fa-solid fa-language"></i> Spoken Voice Language
+            </label>
+            <span class="text-[10px] text-slate-400">Local narration for download</span>
+          </div>
+          <select id="languageSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500 font-medium">
+            <option value="kn-IN">ಕನ್ನಡ (Kannada - India)</option>
+            <option value="hi-IN">हिन्दी (Hindi - India)</option>
+            <option value="en-IN">English (India)</option>
+            <option value="en-US">English (US / Global)</option>
+            <option value="ta-IN">தமிழ் (Tamil - India)</option>
+            <option value="te-IN">తెలుగు (Telugu - India)</option>
+            <option value="ml-IN">മലയാളം (Malayalam - India)</option>
+            <option value="bn-IN">বাংলা (Bengali - India)</option>
+            <option value="mr-IN">मराठी (Marathi - India)</option>
+            <option value="gu-IN">ગુજરાતી (Gujarati - India)</option>
+            <option value="pa-IN">ਪੰਜਾਬੀ (Punjabi - India) – poster text only</option>
+            <option value="or-IN">ଓଡ଼ିଆ (Odia - India) – poster text only</option>
+            <option value="as-IN">অসমীয়া (Assamese - India)</option>
+            <option value="ur-IN">اردو (Urdu - India)</option>
+            <option value="sa-IN">संस्कृतम् (Sanskrit)</option>
+            <option value="ne-NP">नेपाली (Nepali)</option>
+            <option value="kok-IN">कोंकणी (Konkani)</option>
+            <option value="mai-IN">मैथिली (Maithili)</option>
+            <option value="doi-IN">डोगरी (Dogri)</option>
+            <option value="brx-IN">बड़ो (Bodo)</option>
+            <option value="ks-IN">کٲشُر (Kashmiri)</option>
+            <option value="sd-IN">سنڌي (Sindhi)</option>
+            <option value="sat-IN">ᱥᱟᱱᱛᱟᱲᱤ (Santali) – poster text only</option>
+            <option value="mni-IN">ꯃꯤꯇꯩꯂꯣꯟ (Manipuri / Meitei) – poster text only</option>
+          </select>
+
+          <!-- Voice Tester -->
+          <div class="flex items-center gap-2 pt-1">
+            <button type="button" id="testVoiceBtn" class="flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-semibold rounded text-amber-300 border border-slate-700 flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-volume-high"></i> Test Voice
+            </button>
+            <button type="button" id="stopVoiceBtn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-semibold rounded text-slate-400 border border-slate-700">
+              Stop
+            </button>
+          </div>
+        </div>
+
+        <!-- Headlines & Speech Lines (Clean / Empty by default) -->
+        <div class="space-y-3">
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Headline Text (On Video)</label>
+              <button type="button" id="clearTextBtn" class="text-[10px] text-rose-300 hover:text-rose-200">Clear text</button>
+            </div>
+            <input type="text" id="festTitle" placeholder="Headline will appear here after giving prompt..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Message Text (Displayed on Screen & Spoken by Voice)</label>
+            <textarea id="festMsg" rows="3" placeholder="Message will be auto-generated or type custom text here..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500"></textarea>
+          </div>
+        </div>
+
+        <!-- Branding Details (Clean / Empty by default) -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Company / Parivara</label>
+            <input type="text" id="brandName" placeholder="Company Name" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Website URL</label>
+            <input type="text" id="brandUrl" placeholder="example.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500" />
+          </div>
+        </div>
+
+        <!-- Theme & Duration -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Theme Animation</label>
+            <select id="themeSelect" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500">
+              <option value="none">None (Waiting for prompt)</option>
+              <option value="custom_gallery">Uploaded Celebration Images</option>
+              <option value="diya">Diwali / Diya Lamp</option>
+              <option value="narak">Narak Chaturdashi</option>
+              <option value="dhanteras">Dhanteras / Prosperity</option>
+              <option value="lakshmi_puja">Lakshmi Puja</option>
+              <option value="bhai_dooj">Bhai Dooj</option>
+              <option value="festive_flag">Cultural Flag & Ribbon</option>
+              <option value="promo_neon">Commercial Neon & Laser</option>
+              <option value="corporate_blue">Corporate Hex Tech</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Duration</label>
+            <select id="videoDuration" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500">
+              <option value="10">10 Seconds (Quick Wish)</option>
+              <option value="15" selected>15 Seconds (Story/Reel)</option>
+              <option value="25">25 Seconds (Standard Speech)</option>
+              <option value="30">30 Seconds (Half-Minute)</option>
+              <option value="40">40 Seconds (Extended)</option>
+              <option value="60">60 Seconds (Detailed Message)</option>
+              <option value="90">90 Seconds (Full Festival Story)</option>
+              <option value="200">200 Seconds (3 Minutes 20 Seconds)</option>
+            </select>
+            <p class="mt-1 text-[10px] text-slate-500">This is the minimum duration. The video extends as needed to include the full narration and song.</p>
+          </div>
+        </div>
+
+        <!-- Logo & Custom Background Uploads -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Company Logo (PNG)</label>
+              <button type="button" id="clearLogoBtn" class="text-[10px] text-rose-300 hover:text-rose-200">Remove</button>
+            </div>
+            <input type="file" id="logoUpload" accept="image/*" class="w-full text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-400 cursor-pointer" />
+          </div>
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Custom Backgrounds (Optional)</label>
+              <button type="button" id="clearBackgroundsBtn" class="text-[10px] text-rose-300 hover:text-rose-200">Remove</button>
+            </div>
+            <input type="file" id="customBgUpload" accept="image/*" multiple class="w-full text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-700 file:text-white hover:file:bg-slate-600 cursor-pointer" />
+            <label class="mt-1 flex items-center gap-1.5 text-[10px] text-slate-400"><input id="cleanUploadedBackground" type="checkbox" class="accent-emerald-500" checked /> Keep uploaded image clean</label>
+            <p class="mt-1 text-[10px] text-slate-500">Uploaded photos share the video duration equally; background music plays continuously across them.</p>
+          </div>
+          <div class="sm:col-span-2">
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Background Music / Song (Optional)</label>
+              <button type="button" id="clearMusicBtn" class="text-[10px] text-rose-300 hover:text-rose-200">Remove</button>
+            </div>
+            <input type="file" id="musicUpload" accept="audio/*" class="w-full text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-400 cursor-pointer" />
+            <p class="mt-1 text-[10px] text-slate-500">Music plays continuously, rises during narration pauses, and ducks under speech. The total video duration is shown here after download.</p>
+          </div>
+          <div class="sm:col-span-2">
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Narration Audio (Optional)</label>
+              <button type="button" id="clearNarrationBtn" class="text-[10px] text-rose-300 hover:text-rose-200">Remove</button>
+            </div>
+            <input type="file" id="narrationUpload" accept="audio/*" class="w-full text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-500 file:text-slate-950 hover:file:bg-emerald-400 cursor-pointer" />
+            <p class="mt-1 text-[10px] text-slate-500">Optional fallback. Normally the local TTS service generates narration from Message Text automatically.</p>
+          </div>
+          <div class="sm:col-span-2">
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Reference Video (Optional)</label>
+              <button type="button" id="clearReferenceVideoBtn" class="text-[10px] text-rose-300 hover:text-rose-200">Remove</button>
+            </div>
+            <input type="file" id="referenceVideoUpload" accept="video/*" class="w-full text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-fuchsia-500 file:text-white hover:file:bg-fuchsia-400 cursor-pointer" />
+            <p class="mt-1 text-[10px] text-slate-500">The video is used as the visual background. Choose clean mode to preserve its design without added visual overlays.</p>
+            <label class="mt-2 flex items-center gap-2 text-[11px] text-slate-300">
+              <input id="cleanReferenceVideo" type="checkbox" checked class="accent-fuchsia-500" />
+              Keep reference video clean (do not overlay generated visuals or text)
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="pt-4 border-t border-slate-800 space-y-2">
+        <button id="previewBtn" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition flex items-center justify-center gap-2 text-sm border border-slate-700">
+          <i class="fa-solid fa-play"></i> Preview Live Animation & Voice
+        </button>
+        <button id="recordBtn" class="w-full py-3 bg-gradient-to-r from-amber-500 via-orange-500 to-blue-600 hover:opacity-95 text-slate-950 font-extrabold rounded-xl shadow-xl transition flex items-center justify-center gap-2 text-sm">
+          <i class="fa-solid fa-circle-dot text-rose-900 animate-pulse"></i> Generate & Download MP4
+        </button>
+        <div id="statusMsg" class="text-xs text-center text-blue-600 font-medium min-h-4"></div>
+      </div>
+    </div>
+
+    <!-- Right: 16:9 Landscape Video Renderer -->
+    <div class="lg:col-span-7 flex flex-col items-center justify-center bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-2xl relative">
+      <div class="w-full flex items-center justify-between pb-3 text-xs text-slate-400 border-b border-slate-800 mb-4">
+        <label class="flex items-center gap-1.5">
+          <i id="formatIcon" class="fa-solid fa-display text-indigo-400"></i>
+          <select id="videoFormat" class="bg-slate-800 border border-slate-700 rounded px-2 py-1 text-slate-200">
+            <option value="desktop">Desktop – Landscape 16:9 (1280 x 720)</option>
+            <option value="mobile">Mobile – Portrait 9:16 (720 x 1280)</option>
+          </select>
+        </label>
+        <span id="voiceIndicator" class="text-slate-400 font-semibold px-2 py-0.5 bg-slate-800 rounded border border-slate-700">Waiting for prompt</span>
+      </div>
+
+      <!-- Canvas Frame -->
+      <div id="canvasFrame" style="aspect-ratio: 16 / 9;" class="w-full relative bg-black rounded-xl overflow-hidden border border-slate-700 shadow-2xl flex items-center justify-center">
+        <canvas id="videoCanvas" width="1280" height="720" class="w-full h-full object-contain"></canvas>
+      </div>
+
+      <div class="w-full mt-4 bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-400 flex items-center justify-between flex-wrap gap-2">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-circle-info text-indigo-400"></i>
+          <span id="screenStatusNote">Canvas is in standby. Enter your prompt to generate visual and audio elements.</span>
+        </div>
+        <span class="text-emerald-400 font-mono font-semibold">100% Free Forever</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- VIEW 2: WRITTEN PROMPT BUILDER & LIBRARY   -->
+  <!-- ========================================== -->
+  <section id="promptBuilderView" class="app-main-shell hidden max-w-6xl mx-auto px-4 py-8 flex-1 w-full space-y-10">
+    <div class="text-center max-w-3xl mx-auto">
+      <h2 class="text-3xl font-extrabold text-white tracking-tight">AI Copywriting & Text Prompt Generator</h2>
+      <p class="mt-2 text-sm text-slate-400">Instantly generate high-conversion prompts for social media captions, WhatsApp invites, and ad campaigns.</p>
+    </div>
+
+    <!-- Credit-free local poster generator -->
+    <div class="bg-slate-900 rounded-2xl border border-emerald-500/30 p-6 sm:p-8 shadow-xl">
+      <div class="mb-5">
+        <h3 class="font-bold text-white flex items-center gap-2"><i class="fa-solid fa-image text-emerald-400"></i> Poster Text &amp; Logo Composer</h3>
+        <p class="mt-1 text-xs text-slate-400">Pick or generate free artwork, then add your own correctly spelled text, logo and contact bar in any Indian language. Rendered in your browser, no credits required. It does not draw new images from a prompt by itself; use step 1 below for artwork.</p>
+      </div>
+      <form id="localPosterForm" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="md:col-span-2 rounded-xl border border-sky-500/40 bg-sky-500/5 p-3 space-y-3">
+          <div class="text-xs font-bold text-sky-300"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Step 1: Get artwork (free)</div>
+          <div>
+            <label class="block text-[11px] text-slate-300 mb-1">Generate an image with AI from your prompt (OpenAI, no text in the image)</label>
+            <div class="flex gap-2">
+              <input id="freeArtPrompt" placeholder="e.g. Dhanteras: golden kalash, diyas, gold coins, marigold, rich maroon background" class="flex-1 px-3 py-2 rounded-lg border border-slate-700 bg-slate-950 text-white text-xs" />
+              <button type="button" id="freeArtBtn" class="px-3 py-2 rounded-lg bg-sky-500 text-slate-950 text-xs font-bold whitespace-nowrap">Generate image</button>
+            </div>
+            <p id="freeArtStatus" class="mt-1 text-[10px] text-slate-500">Needs an OpenAI API key on the server (see README). Each image is billed to that key. The finished poster adds your exact text, logo and contact bar on top. Free fallback: the festival backgrounds below.</p>
+            <div class="mt-2 flex gap-2 flex-wrap items-center">
+              <button type="button" id="openChatGptBtn" class="px-3 py-1.5 rounded-lg bg-emerald-500 text-slate-950 text-xs font-bold">Copy prompt &amp; open ChatGPT (free)</button>
+              <button type="button" id="openGeminiBtn" class="px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-xs text-white">Copy &amp; open Gemini</button>
+              <span class="text-[10px] text-slate-400">Paste with Ctrl+V, download the image, then upload it under "Blank / base image" below.</span>
+            </div>
+          <img id="artPreview" alt="Selected artwork preview" class="hidden mt-2 max-h-64 rounded-lg border border-sky-500/40" />
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-300 mb-1">Pick a festival background (drawn in your browser, free and unlimited)</label>
+            <div id="artGallery" class="grid grid-cols-4 sm:grid-cols-8 gap-2"></div>
+          </div>
+          <p class="text-[10px] text-slate-500">You can also upload your own artwork below, or make it in free ChatGPT/Gemini using the Prompt Builder prompt.</p>
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Poster request / occasion (optional when using the text fields below)</label>
+          <textarea id="posterRequest" rows="3" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-700 bg-slate-950 text-white text-xs focus:outline-none focus:border-emerald-500" placeholder="Describe any poster: Create an attractive birthday poster for Rahul with a premium blue-and-gold theme..."></textarea>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Festival visual</label>
+          <select id="posterFestival" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-700 bg-slate-950 text-white text-xs focus:outline-none focus:border-emerald-500">
+            <option value="narak">Narak Chaturdashi</option>
+            <option value="diwali">Diwali / Deepavali</option>
+            <option value="eid">Eid</option>
+            <option value="christmas">Christmas</option>
+            <option value="holi">Holi</option>
+            <option value="pongal">Pongal / Sankranti</option>
+            <option value="birthday">Birthday</option>
+            <option value="custom" selected>Any celebration / custom</option>
+          </select>
+          <p class="mt-1 text-[10px] text-slate-500">Choose a preset or use Any celebration for birthdays, anniversaries, events, and more.</p>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Blank / base image (optional)</label>
+          <input id="posterBackground" type="file" accept="image/*" class="w-full text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950" />
+          <p class="mt-1 text-[10px] text-slate-500">Optional blank canvas or background for a new design.</p>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Reference design (optional)</label>
+          <input id="posterReference" type="file" accept="image/*" class="w-full text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-500 file:text-white" />
+          <label class="mt-2 flex items-center gap-2 text-[11px] text-slate-400"><input id="preserveReference" type="checkbox" checked class="accent-emerald-600" /> Preserve reference exactly</label>
+          <select id="posterFitMode" class="mt-2 w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white">
+            <option value="full_page" selected>Crop unused margins and fill page</option>
+            <option value="contain">Show complete design (may show margins)</option>
+          </select>
+          <p class="mt-1 text-[10px] text-slate-500">Recommended: crop unused margins so the downloaded poster fills the page cleanly.</p>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Poster format</label>
+          <select id="posterFormat" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-700 bg-slate-950 text-white text-xs focus:outline-none focus:border-emerald-500">
+            <option value="desktop">Desktop – Landscape 16:9 (1920 x 1080)</option>
+            <option value="mobile" selected>Mobile – Portrait 4:5 (1080 x 1350)</option>
+          </select>
+          <p class="mt-1 text-[10px] text-slate-500">Desktop for websites and screens; Mobile for Instagram and WhatsApp.</p>
+        </div>
+        <div class="md:col-span-2 rounded-xl border border-emerald-500/40 bg-emerald-500/5 p-3 space-y-2">
+          <div class="flex items-center justify-between gap-2 flex-wrap">
+            <span class="text-xs font-bold text-emerald-400"><i class="fa-solid fa-id-card mr-1"></i> Brand kit</span>
+            <span id="brandKitStatus" class="text-[10px] text-slate-400">No brand kit saved yet.</span>
+          </div>
+          <p class="text-[10px] text-slate-500">Saves company name, website, email, phone and logo in this browser and applies them automatically every time. Service images can change per poster.</p>
+          <label class="flex items-center gap-2 text-[11px] text-slate-300"><input type="checkbox" id="brandKitSaveServices" /> Also save the 5 service images and labels</label>
+          <div class="flex gap-2 flex-wrap">
+            <button type="button" id="brandKitSave" class="px-3 py-1.5 rounded-lg bg-emerald-500 text-slate-950 text-xs font-bold">Save brand kit</button>
+            <button type="button" id="brandKitApply" class="px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-xs text-white">Apply brand kit</button>
+            <button type="button" id="brandKitClear" class="px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-xs text-red-300">Clear</button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Company name</label>
+          <input id="posterCompany" value="PEZOSYS" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-700 bg-slate-950 text-white text-xs focus:outline-none focus:border-emerald-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Website URL</label>
+          <input id="posterWebsite" value="https://www.pezosys.com/" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-700 bg-slate-950 text-white text-xs focus:outline-none focus:border-emerald-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Email address</label>
+          <input id="posterEmail" type="email" placeholder="contact@example.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-700 bg-slate-950 text-white text-xs focus:outline-none focus:border-emerald-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Phone number</label>
+          <input id="posterPhone" placeholder="+91 98765 43210" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-700 bg-slate-950 text-white text-xs focus:outline-none focus:border-emerald-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Logo (optional)</label>
+          <input id="posterLogo" type="file" accept="image/*" class="w-full text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-500 file:text-slate-950" />
+        </div>
+        <div class="md:col-span-2 rounded-xl border border-blue-500/30 bg-blue-950/10 p-4">
+          <label class="flex items-center gap-2 text-xs font-semibold text-slate-300">
+            <input id="useServiceTemplate" type="checkbox" checked class="accent-blue-600" />
+            Use editable bottom service section
+          </label>
+          <p class="mt-1 text-[10px] text-slate-500">All five are optional. Upload only the bottom images you want to replace; the other reference images stay unchanged.</p>
+          <div class="mt-3 grid grid-cols-1 sm:grid-cols-5 gap-3">
+            <div data-service-card="0"><label class="block text-[10px] text-slate-400 mb-1">Service 1</label><input id="serviceImage0" type="file" accept="image/*" class="w-full text-[10px]" /><input id="serviceLabel0" value="Service One" class="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
+            <div data-service-card="1"><label class="block text-[10px] text-slate-400 mb-1">Service 2</label><input id="serviceImage1" type="file" accept="image/*" class="w-full text-[10px]" /><input id="serviceLabel1" value="Service Two" class="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
+            <div data-service-card="2"><label class="block text-[10px] text-slate-400 mb-1">Service 3</label><input id="serviceImage2" type="file" accept="image/*" class="w-full text-[10px]" /><input id="serviceLabel2" value="Service Three" class="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
+            <div data-service-card="3"><label class="block text-[10px] text-slate-400 mb-1">Service 4</label><input id="serviceImage3" type="file" accept="image/*" class="w-full text-[10px]" /><input id="serviceLabel3" value="Service Four" class="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
+            <div data-service-card="4"><label class="block text-[10px] text-slate-400 mb-1">Service 5</label><input id="serviceImage4" type="file" accept="image/*" class="w-full text-[10px]" /><input id="serviceLabel4" value="Service Five" class="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
+          </div>
+        </div>
+        <div class="md:col-span-2 rounded-xl border border-amber-500/30 bg-amber-950/10 p-4">
+          <label class="flex items-center gap-2 text-xs font-semibold text-slate-300">
+            <input id="overlayOnArtwork" type="checkbox" class="accent-amber-500" />
+            Place my text on the uploaded artwork (logo, headline, tagline, services, contact bar)
+          </label>
+          <p class="mt-1 text-[10px] text-slate-500">Upload your artwork under "Reference design" or "Blank / base image". Use artwork without text for best results. Any language works: type the text below, or put the headline in quotes in the request above.</p>
+          <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div><label class="block text-[10px] text-slate-400 mb-1">Headline (any language)</label><input id="overlayHeadline" placeholder="ಧನತೇರಸ್ ಹಬ್ಬದ ಶುಭಾಶಯಗಳು" class="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1.5 text-xs text-white" /></div>
+            <div><label class="block text-[10px] text-slate-400 mb-1">Subtitle / wish</label><input id="overlaySubtitle" placeholder="May this auspicious occasion bring prosperity, success and new beginnings." class="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1.5 text-xs text-white" /></div>
+            <div><label class="block text-[10px] text-slate-400 mb-1">Tagline ribbon</label><input id="overlayTagline" placeholder="Celebrating prosperity, precision &amp; excellence" class="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1.5 text-xs text-white" /></div>
+            <div><label class="block text-[10px] text-slate-400 mb-1">Offer line above contact bar</label><input id="overlayOffer" placeholder="We Offer a Wide Range of Labeling, Printing &amp; Packaging Solutions" class="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1.5 text-xs text-white" /></div>
+            <div class="sm:col-span-2"><label class="block text-[10px] text-slate-400 mb-1">Slogan line</label><input id="overlaySlogan" placeholder="YOUR VISION • OUR PRINTING EXPERTISE" class="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1.5 text-xs text-white" /></div>
+          </div>
+        </div>
+        <div class="md:col-span-2 rounded-xl border border-emerald-500/30 bg-emerald-950/10 p-4">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+            <div>
+              <label for="posterPhotoCount" class="block text-xs font-semibold text-slate-300 mb-1.5">Photos on this page (0–60)</label>
+              <input id="posterPhotoCount" type="number" min="0" max="60" value="3" class="w-full px-3 py-2 rounded-lg border border-slate-700 bg-slate-950 text-white text-xs" />
+            </div>
+            <div class="sm:col-span-2">
+              <label for="posterPersonalPhotos" class="block text-xs font-semibold text-slate-300 mb-1.5">Attach photos of your choice</label>
+              <input id="posterPersonalPhotos" type="file" accept="image/*" multiple class="w-full text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-500 file:text-slate-950" />
+            </div>
+          </div>
+          <p class="mt-2 text-[10px] text-slate-500">Upload up to 60 photos for one-page collage output. With many photos, each thumbnail becomes smaller; preserved reference designs remain unchanged.</p>
+        </div>
+        <div class="md:col-span-2 flex gap-3 pt-2">
+          <button type="submit" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition flex items-center gap-2"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Poster</button>
+          <button type="button" id="downloadPosterBtn" disabled class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-slate-300 text-xs font-semibold rounded-xl"><i class="fa-solid fa-download"></i> Download PNG</button>
+        </div>
+      </form>
+      <div class="mt-4 rounded-lg border border-slate-800 bg-slate-950/60 p-3 text-[11px] text-slate-400">
+        <i class="fa-solid fa-circle-info text-emerald-400 mr-1"></i>
+        Choose a festival for a curated visual, or upload your own artwork. The design is composed in your browser and never sent to a service.
+      </div>
+      <canvas id="localPosterCanvas" width="1080" height="1350" class="hidden mt-6 w-full max-w-md mx-auto rounded-xl border border-slate-700"></canvas>
+    </div>
+
+    <!-- Generator Box -->
+    <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6 sm:p-8 shadow-xl">
+      <form id="textPromptForm" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Category *</label>
+          <select id="textCategory" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-700 bg-slate-950 text-white text-xs font-medium focus:outline-none focus:border-indigo-500">
+            <option value="festival">Festival (Diwali, Eid, Christmas, Holi, Pongal...)</option>
+            <option value="function">Personal / Family Function (Wedding, Birthday, Housewarming...)</option>
+            <option value="promotion">Promotional / Sales Offer (Flash Sale, Launch, Clearance...)</option>
+            <option value="corporate">Corporate Event (Conference, Webinar, Hackathon...)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Event or Occasion Name *</label>
+          <input type="text" id="textEventName" placeholder="e.g. Diwali Dhamaka Sale / Rahul's Wedding" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-700 bg-slate-950 text-white text-xs focus:outline-none focus:border-indigo-500" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Platform / Format</label>
+          <select id="textFormat" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-700 bg-slate-950 text-white text-xs font-medium focus:outline-none focus:border-indigo-500">
+            <option value="instagram">Instagram Caption & Reel Hooks</option>
+            <option value="whatsapp">WhatsApp Broadcast / Direct Invite</option>
+            <option value="email">Email Newsletter / Invitation</option>
+            <option value="adcopy">Ad Copy / Poster Punchlines</option>
+            <option value="image_prompt">AI Image Prompt (Midjourney / DALL-E)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Tone of Voice</label>
+          <select id="textTone" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-700 bg-slate-950 text-white text-xs font-medium focus:outline-none focus:border-indigo-500">
+            <option value="festive">Festive, Joyful & Vibrant</option>
+            <option value="warm">Warm & Emotional</option>
+            <option value="urgency">Urgent & High Energy (FOMO / Limited Offer)</option>
+            <option value="formal">Elegant & Formal</option>
+            <option value="humorous">Catchy & Playful</option>
+          </select>
+        </div>
+
+        <div class="md:col-span-2">
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Specific Details, Offers or Host Info (Optional)</label>
+          <textarea id="textExtraDetails" rows="2" placeholder="e.g. Flat 40% discount till Sunday, UPI cashback, RSVP contact number, venue details..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-700 bg-slate-950 text-white text-xs focus:outline-none focus:border-indigo-500"></textarea>
+        </div>
+
+        <div class="md:col-span-2 flex gap-3 pt-2">
+          <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition flex items-center gap-2">
+            <i class="fa-solid fa-sparkles"></i> Generate Text Prompt
+          </button>
+          <button type="button" id="textResetBtn" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl">
+            Reset
+          </button>
+        </div>
+      </form>
+
+      <!-- Output Prompt Box -->
+      <div id="textOutputBox" class="mt-6 hidden border border-blue-500/30 rounded-xl bg-blue-950/20 p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h4 class="font-bold text-white text-xs flex items-center gap-2">
+            <i class="fa-solid fa-circle-check text-emerald-400"></i> Generated Prompt Result
+          </h4>
+          <button id="copyPromptResultBtn" class="px-3 py-1.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-white rounded-lg border border-slate-700 transition flex items-center gap-1.5">
+            <i class="fa-regular fa-copy"></i> Copy Prompt
+          </button>
+        </div>
+        <div id="textPromptResult" class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs text-slate-200 font-mono whitespace-pre-wrap leading-relaxed"></div>
+      </div>
+    </div>
+
+    <!-- Ready-Made Library -->
+    <div class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xl font-bold text-white">Curated Ready-to-Copy Prompts</h3>
+        <span class="text-xs text-slate-400">Click any card to copy</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl flex flex-col justify-between">
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded">Diwali Festival</span>
+            <h5 class="font-bold text-white text-sm mt-2 mb-1">Diwali Wishes & Festive Discount</h5>
+            <p class="text-xs text-slate-400 font-mono line-clamp-3">"Create 3 warm, heartfelt Diwali greeting captions for our brand that seamlessly weaves in a festive 25% discount and festive emojis."</p>
+          </div>
+          <button class="copy-card mt-3 py-1.5 text-xs font-semibold text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 rounded-lg transition" data-text="Create 3 warm, heartfelt Diwali greeting captions for our brand that seamlessly weaves in a festive 25% discount and festive emojis.">Copy</button>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl flex flex-col justify-between">
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-rose-400 bg-rose-400/10 px-2 py-0.5 rounded">Promotional Offer</span>
+            <h5 class="font-bold text-white text-sm mt-2 mb-1">Flash Sale FOMO Copy</h5>
+            <p class="text-xs text-slate-400 font-mono line-clamp-3">"Draft high-conversion, urgent ad copy for a 24-hour flash sale. Focus on FOMO, quick checkout with UPI, and limited stock availability."</p>
+          </div>
+          <button class="copy-card mt-3 py-1.5 text-xs font-semibold text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 rounded-lg transition" data-text="Draft high-conversion, urgent ad copy for a 24-hour flash sale. Focus on FOMO, quick checkout with UPI, and limited stock availability.">Copy</button>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl flex flex-col justify-between">
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded">Family Function</span>
+            <h5 class="font-bold text-white text-sm mt-2 mb-1">Housewarming (Griha Pravesh)</h5>
+            <p class="text-xs text-slate-400 font-mono line-clamp-3">"Write an elegant and traditional WhatsApp invitation for a Griha Pravesh ceremony. Mention the pooja timings, lunch details, and family sign-off."</p>
+          </div>
+          <button class="copy-card mt-3 py-1.5 text-xs font-semibold text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-lg transition" data-text="Write an elegant and traditional WhatsApp invitation for a Griha Pravesh ceremony. Mention the pooja timings, lunch details, and family sign-off.">Copy</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="settingsPanel" class="hidden fixed right-6 top-20 z-[60] w-80 rounded-2xl border border-slate-200 bg-white p-5 shadow-2xl">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h3 class="font-bold text-slate-900">Appearance</h3>
+        <p class="text-xs text-slate-500">Personalize your workspace</p>
+      </div>
+      <button id="closeSettingsBtn" class="text-slate-400 hover:text-slate-900"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <label class="block text-xs font-semibold text-slate-600 mb-2">Background theme</label>
+    <div class="grid grid-cols-3 gap-2">
+      <button data-theme="light" class="theme-choice rounded-xl border border-slate-200 p-2 text-xs hover:border-blue-500"><span class="block h-8 rounded-lg bg-white border border-slate-200 mb-1"></span>Light</button>
+      <button data-theme="dark" class="theme-choice rounded-xl border border-slate-200 p-2 text-xs hover:border-blue-500"><span class="block h-8 rounded-lg bg-zinc-900 mb-1"></span>Dark</button>
+      <button data-theme="soft" class="theme-choice rounded-xl border border-slate-200 p-2 text-xs hover:border-blue-500"><span class="block h-8 rounded-lg bg-gradient-to-br from-blue-50 to-violet-100 mb-1"></span>Soft</button>
+    </div>
+    <label class="block text-xs font-semibold text-slate-600 mt-4 mb-2">Custom background color</label>
+    <input id="customThemeColor" type="color" value="#f7f7f8" class="w-full h-9 cursor-pointer rounded-lg border border-slate-200" />
+  </div>
+
+  <!-- Global Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 bg-slate-800 border border-slate-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-2xl transform translate-y-20 opacity-0 transition-all duration-200 pointer-events-none flex items-center gap-2 z-50">
+    <i class="fa-solid fa-check text-emerald-400"></i>
+    <span id="toastMsg">Notification</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 border-t border-slate-800 py-5 text-center text-xs text-slate-500">
+    <p>© PromptCraft All-in-One Studio • 100% Free Forever • Zero Subscriptions or Credits</p>
+  </footer>
+
+  <!-- Unified Script Logic -->
+  <script>
+    // Authentication gate
+    // Same origin when hosted (Render); a local page on :5500 talks to the local server.
+    const AUTH_API = (location.protocol === 'file:' || location.port === '5500') ? 'http://127.0.0.1:8765' : '';
+    const AUTH_TOKEN_KEY = 'promptcraft.authToken.v1';
+    function authHeaders() {
+      const headers = { 'Content-Type': 'application/json' };
+      const token = localStorage.getItem(AUTH_TOKEN_KEY);
+      if (token) headers.Authorization = 'Bearer ' + token;
+      return headers;
+    }
+    (function setupAuth() {
+      const gate = document.getElementById('authGate');
+      const form = document.getElementById('authForm');
+      const tabSignup = document.getElementById('authTabSignup');
+      const tabLogin = document.getElementById('authTabLogin');
+      const nameRow = document.getElementById('authNameRow');
+      const nameInput = document.getElementById('authName');
+      const emailInput = document.getElementById('authEmail');
+      const pwInput = document.getElementById('authPassword');
+      const pwHint = document.getElementById('authPwHint');
+      const errorBox = document.getElementById('authError');
+      const submitBtn = document.getElementById('authSubmit');
+      const userLabel = document.getElementById('authUserLabel');
+      let mode = 'signup';
+
+      function setMode(next) {
+        mode = next;
+        const signup = mode === 'signup';
+        nameRow.classList.toggle('hidden', !signup);
+        pwHint.classList.toggle('hidden', !signup);
+        pwInput.autocomplete = signup ? 'new-password' : 'current-password';
+        submitBtn.textContent = signup ? 'Create account' : 'Log in';
+        tabSignup.className = 'flex-1 py-2 rounded-lg text-sm font-bold ' + (signup ? 'bg-blue-600 text-white' : 'text-slate-600');
+        tabLogin.className = 'flex-1 py-2 rounded-lg text-sm font-bold ' + (signup ? 'text-slate-600' : 'bg-blue-600 text-white');
+        errorBox.classList.add('hidden');
+      }
+      function showError(message) {
+        errorBox.textContent = message;
+        errorBox.classList.remove('hidden');
+      }
+      function showApp(user) {
+        userLabel.textContent = user ? user.name + ' • ' + user.email : '';
+        gate.classList.add('hidden');
+      }
+      function showGate() {
+        localStorage.removeItem(AUTH_TOKEN_KEY);
+        userLabel.textContent = '';
+        form.reset();
+        gate.classList.remove('hidden');
+      }
+
+      tabSignup.addEventListener('click', () => setMode('signup'));
+      tabLogin.addEventListener('click', () => setMode('login'));
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        errorBox.classList.add('hidden');
+        submitBtn.disabled = true;
+        try {
+          const response = await fetch(AUTH_API + '/auth/' + mode, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: nameInput.value, email: emailInput.value, password: pwInput.value })
+          });
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error || 'Something went wrong.');
+          localStorage.setItem(AUTH_TOKEN_KEY, data.token);
+          form.reset();
+          showApp(data.user);
+        } catch (error) {
+          showError(error instanceof TypeError
+            ? 'Cannot reach the PromptCraft server. Start it with "py tts_server.py" and try again.'
+            : error.message);
+        } finally {
+          submitBtn.disabled = false;
+        }
+      });
+
+      document.getElementById('logoutBtn').addEventListener('click', async () => {
+        try { await fetch(AUTH_API + '/auth/logout', { method: 'POST', headers: authHeaders() }); } catch (e) {}
+        showGate();
+      });
+
+      (async () => {
+        if (!localStorage.getItem(AUTH_TOKEN_KEY)) return;
+        try {
+          const response = await fetch(AUTH_API + '/auth/me', { headers: authHeaders() });
+          if (response.ok) { showApp((await response.json()).user); return; }
+          showGate();
+        } catch (e) { /* server offline: keep the gate shown */ }
+      })();
+    })();
+
+    // Tab Switching
+    const tabVideoBtn = document.getElementById('tabVideoBtn');
+    const tabPromptBtn = document.getElementById('tabPromptBtn');
+    const videoStudioView = document.getElementById('videoStudioView');
+    const promptBuilderView = document.getElementById('promptBuilderView');
+    const settingsPanel = document.getElementById('settingsPanel');
+
+    function showVideoView() {
+      tabVideoBtn.click();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showPromptView() {
+      tabPromptBtn.click();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.getElementById('sidebarVideoBtn').addEventListener('click', showVideoView);
+    document.getElementById('sidebarPromptBtn').addEventListener('click', showPromptView);
+    document.getElementById('sidebarNewBtn').addEventListener('click', () => {
+      showPromptView();
+      document.getElementById('textPromptForm').reset();
+      document.getElementById('textOutputBox').classList.add('hidden');
+    });
+    document.getElementById('settingsBtn').addEventListener('click', () => settingsPanel.classList.toggle('hidden'));
+    document.getElementById('closeSettingsBtn').addEventListener('click', () => settingsPanel.classList.add('hidden'));
+    document.querySelectorAll('.theme-choice').forEach((choice) => {
+      choice.addEventListener('click', () => {
+        document.body.classList.remove('theme-light', 'theme-dark', 'theme-soft');
+        document.body.classList.add(`theme-${choice.dataset.theme}`);
+        ['--app-bg', '--panel-bg', '--soft-bg', '--line', '--app-text', '--muted-text'].forEach((property) => {
+          document.body.style.removeProperty(property);
+        });
+        localStorage.setItem('promptcraft-theme', choice.dataset.theme);
+        localStorage.removeItem('promptcraft-custom-bg');
+      });
+    });
+
+    document.getElementById('customThemeColor').addEventListener('input', (event) => {
+      applyCustomThemeColor(event.target.value);
+      localStorage.setItem('promptcraft-custom-bg', event.target.value);
+    });
+    function applyCustomThemeColor(color) {
+      document.body.style.setProperty('--app-bg', color);
+      document.body.style.setProperty('--panel-bg', `color-mix(in srgb, ${color} 94%, white)`);
+      document.body.style.setProperty('--soft-bg', `color-mix(in srgb, ${color} 84%, white)`);
+      document.body.style.setProperty('--line', `color-mix(in srgb, ${color} 72%, #64748b)`);
+      document.body.style.setProperty('--app-text', `color-mix(in srgb, ${color} 18%, #111827)`);
+      document.body.style.setProperty('--muted-text', `color-mix(in srgb, ${color} 42%, #64748b)`);
+    }
+    const savedTheme = localStorage.getItem('promptcraft-theme');
+    if (savedTheme && ['light', 'dark', 'soft'].includes(savedTheme)) {
+      document.body.classList.remove('theme-light', 'theme-dark', 'theme-soft');
+      document.body.classList.add(`theme-${savedTheme}`);
+    }
+    const savedCustomBg = localStorage.getItem('promptcraft-custom-bg');
+    if (savedCustomBg) {
+      applyCustomThemeColor(savedCustomBg);
+      document.getElementById('customThemeColor').value = savedCustomBg;
+    }
+
+    tabVideoBtn.addEventListener('click', () => {
+      videoStudioView.classList.remove('hidden');
+      promptBuilderView.classList.add('hidden');
+      tabVideoBtn.classList.add('bg-blue-600', 'text-white');
+      tabVideoBtn.classList.remove('text-slate-400');
+      tabPromptBtn.classList.remove('bg-blue-600', 'text-white');
+      tabPromptBtn.classList.add('text-slate-400');
+    });
+
+    tabPromptBtn.addEventListener('click', () => {
+      promptBuilderView.classList.remove('hidden');
+      videoStudioView.classList.add('hidden');
+      tabPromptBtn.classList.add('bg-blue-600', 'text-white');
+      tabPromptBtn.classList.remove('text-slate-400');
+      tabVideoBtn.classList.remove('bg-blue-600', 'text-white');
+      tabVideoBtn.classList.add('text-slate-400');
+    });
+
+    // Toast Helper
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toastMsg');
+    function showToast(msg) {
+      toastMsg.innerText = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 2200);
+    }
+
+    // ==========================================
+    // VIDEO STUDIO LOGIC (PROMPT-DRIVEN ONLY)
+    // ==========================================
+    const canvas = document.getElementById('videoCanvas');
+    const ctx = canvas.getContext('2d');
+    const previewBtn = document.getElementById('previewBtn');
+    const recordBtn = document.getElementById('recordBtn');
+    const statusMsg = document.getElementById('statusMsg');
+    const voiceIndicator = document.getElementById('voiceIndicator');
+    const screenStatusNote = document.getElementById('screenStatusNote');
+
+    const aiPromptInput = document.getElementById('aiPromptInput');
+    const parsePromptBtn = document.getElementById('parsePromptBtn');
+    const languageSelect = document.getElementById('languageSelect');
+    const testVoiceBtn = document.getElementById('testVoiceBtn');
+    const stopVoiceBtn = document.getElementById('stopVoiceBtn');
+
+    const festTitle = document.getElementById('festTitle');
+    const festMsg = document.getElementById('festMsg');
+    const brandName = document.getElementById('brandName');
+    const brandUrl = document.getElementById('brandUrl');
+    const themeSelect = document.getElementById('themeSelect');
+    const videoDuration = document.getElementById('videoDuration');
+    const logoUpload = document.getElementById('logoUpload');
+    const customBgUpload = document.getElementById('customBgUpload');
+    const musicUpload = document.getElementById('musicUpload');
+    const narrationUpload = document.getElementById('narrationUpload');
+    const referenceVideoUpload = document.getElementById('referenceVideoUpload');
+    const cleanReferenceVideo = document.getElementById('cleanReferenceVideo');
+    const cleanUploadedBackground = document.getElementById('cleanUploadedBackground');
+    const clearLogoBtn = document.getElementById('clearLogoBtn');
+    const clearBackgroundsBtn = document.getElementById('clearBackgroundsBtn');
+    const clearMusicBtn = document.getElementById('clearMusicBtn');
+    const clearNarrationBtn = document.getElementById('clearNarrationBtn');
+    const clearReferenceVideoBtn = document.getElementById('clearReferenceVideoBtn');
+    const clearTextBtn = document.getElementById('clearTextBtn');
+
+    clearLogoBtn.addEventListener('click', () => {
+      customLogoImg = null;
+      logoUpload.value = '';
+      drawFrame(0);
+      showToast('Logo removed.');
+    });
+
+    clearBackgroundsBtn.addEventListener('click', () => {
+      customBackgroundLoadId++;
+      customBackgrounds = [];
+      loadedImages.custom_gallery = [];
+      customBackgroundDurationSeconds = null;
+      customBgUpload.value = '';
+      drawFrame(0);
+      showToast('Uploaded background images removed.');
+    });
+
+    window.addEventListener('error', (event) => {
+      if (statusMsg) {
+        statusMsg.innerText = `Error: ${event.message}`;
+        statusMsg.classList.add('text-rose-400');
+      }
+    });
+
+    // State Flag: false means no prompt has been given yet -> show neutral standby screen
+    let isPromptActivated = false;
+
+    let customLogoImg = null;
+    let customBackgrounds = [];
+    let customBackgroundLoadId = 0;
+    let customBackgroundDurationSeconds = null;
+    let availableVoices = [];
+    let musicAudio = null;
+    let musicObjectUrl = null;
+    let narrationAudio = null;
+    let narrationObjectUrl = null;
+    let narrationIsUploaded = false;
+    let musicAudioContext = null;
+    let musicSourceNode = null;
+    let musicGainNode = null;
+    let narrationSourceNode = null;
+    let narrationGainNode = null;
+    let musicDestination = null;
+    let musicDestinationAudible = false;
+    let narrationAnalyserNode = null;
+    let musicDuckingFrame = null;
+    let referenceVideo = null;
+    let referenceVideoObjectUrl = null;
+
+    // Voice Loader
+    function loadVoices() {
+      if ('speechSynthesis' in window) {
+        availableVoices = window.speechSynthesis.getVoices();
+      }
+    }
+    loadVoices();
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    // Curated Theme Backgrounds (Loaded on demand or preloaded)
+    const themeAssets = {
+      diya: [
+        'https://images.unsplash.com/photo-1576872381149-7847515ce5d8?auto=format&fit=crop&w=1280&q=80',
+        'https://images.unsplash.com/photo-1605379399642-870262d3d051?auto=format&fit=crop&w=1280&q=80',
+        'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=1280&q=80'
+      ],
+      narak: [
+        'https://images.unsplash.com/photo-1576872381149-7847515ce5d8?auto=format&fit=crop&w=1280&q=80',
+        'https://images.unsplash.com/photo-1605379399642-870262d3d051?auto=format&fit=crop&w=1280&q=80'
+      ],
+      dhanteras: [
+        'https://images.unsplash.com/photo-1610375461246-83df859d849d?auto=format&fit=crop&w=1280&q=80',
+        'https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&w=1280&q=80'
+      ],
+      lakshmi_puja: [
+        'https://images.unsplash.com/photo-1604608672516-f1b9f1f8f6f7?auto=format&fit=crop&w=1280&q=80',
+        'https://images.unsplash.com/photo-1605379399642-870262d3d051?auto=format&fit=crop&w=1280&q=80'
+      ],
+      bhai_dooj: [
+        'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=1280&q=80',
+        'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=1280&q=80'
+      ],
+      festive_flag: [
+        'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1280&q=80',
+        'https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=1280&q=80'
+      ],
+      promo_neon: [
+        'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=1280&q=80',
+        'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=1280&q=80'
+      ],
+      corporate_blue: [
+        'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1280&q=80',
+        'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1280&q=80'
+      ],
+      custom_gallery: []
+    };
+
+    const loadedImages = {};
+    Object.keys(themeAssets).forEach(th => {
+      loadedImages[th] = [];
+      themeAssets[th].forEach(url => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          loadedImages[th].push(img);
+          if (isPromptActivated) drawFrame(0);
+        };
+        img.src = url;
+      });
+    });
+
+    // Custom Logo File Loader
+    logoUpload.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          const img = new Image();
+          img.onload = () => { customLogoImg = img; if (isPromptActivated) drawFrame(0); };
+          img.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Custom Backgrounds Loader
+    customBgUpload.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files);
+      const loadId = ++customBackgroundLoadId;
+      customBackgrounds = new Array(files.length);
+      files.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          const img = new Image();
+          img.onload = () => {
+            if (loadId !== customBackgroundLoadId) return;
+            customBackgrounds[index] = img;
+            loadedImages.custom_gallery = customBackgrounds;
+            if (isPromptActivated) drawFrame(0);
+          };
+          img.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    referenceVideoUpload.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (referenceVideoObjectUrl) URL.revokeObjectURL(referenceVideoObjectUrl);
+      referenceVideoObjectUrl = URL.createObjectURL(file);
+      if (referenceVideo) referenceVideo.pause();
+      referenceVideo = document.createElement('video');
+      referenceVideo.src = referenceVideoObjectUrl;
+      referenceVideo.preload = 'auto';
+      referenceVideo.muted = true;
+      referenceVideo.loop = true;
+      referenceVideo.playsInline = true;
+      referenceVideo.addEventListener('loadeddata', () => {
+        if (isPromptActivated) drawFrame(0);
+        showToast('Reference video loaded. It will be used as the visual background.');
+      }, { once: true });
+    });
+
+    musicUpload.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      stopMusic();
+      if (musicAudioContext && musicAudioContext.state !== 'closed') musicAudioContext.close();
+      musicAudioContext = null;
+      musicDestinationAudible = false;
+      musicSourceNode = null;
+      musicGainNode = null;
+      narrationSourceNode = null;
+      narrationGainNode = null;
+      narrationAnalyserNode = null;
+      musicDestination = null;
+      if (musicObjectUrl) URL.revokeObjectURL(musicObjectUrl);
+      musicObjectUrl = URL.createObjectURL(file);
+      musicAudio = new Audio(musicObjectUrl);
+      musicAudio.loop = false;
+      musicAudio.volume = 1;
+      musicAudio.preload = 'auto';
+      showToast('Background music loaded.');
+    });
+
+    clearMusicBtn.addEventListener('click', () => {
+      stopMusic();
+      if (musicObjectUrl) URL.revokeObjectURL(musicObjectUrl);
+      musicAudio = null;
+      musicObjectUrl = null;
+      musicUpload.value = '';
+      showToast('Background music removed.');
+    });
+
+    narrationUpload.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      stopMusic();
+      if (narrationObjectUrl) URL.revokeObjectURL(narrationObjectUrl);
+      narrationObjectUrl = URL.createObjectURL(file);
+      if (musicAudioContext && musicAudioContext.state !== 'closed') musicAudioContext.close();
+      musicAudioContext = null;
+      musicDestinationAudible = false;
+      musicSourceNode = null;
+      musicGainNode = null;
+      narrationSourceNode = null;
+      narrationGainNode = null;
+      narrationAnalyserNode = null;
+      musicDestination = null;
+      narrationAudio = new Audio(narrationObjectUrl);
+      narrationAudio.preload = 'auto';
+      narrationAudio.loop = false;
+      narrationIsUploaded = true;
+      showToast('Kannada narration loaded and will be embedded.');
+    });
+
+    clearNarrationBtn.addEventListener('click', () => {
+      stopMusic();
+      if (narrationObjectUrl) URL.revokeObjectURL(narrationObjectUrl);
+      narrationAudio = null;
+      narrationObjectUrl = null;
+      narrationIsUploaded = false;
+      narrationUpload.value = '';
+      showToast('Narration audio removed. Automatic local narration will be used.');
+    });
+
+    clearReferenceVideoBtn.addEventListener('click', () => {
+      if (referenceVideo) referenceVideo.pause();
+      if (referenceVideoObjectUrl) URL.revokeObjectURL(referenceVideoObjectUrl);
+      referenceVideo = null;
+      referenceVideoObjectUrl = null;
+      referenceVideoUpload.value = '';
+      drawFrame(0);
+      showToast('Reference video removed.');
+    });
+
+    clearTextBtn.addEventListener('click', () => {
+      festTitle.value = '';
+      festMsg.value = '';
+      brandName.value = '';
+      brandUrl.value = '';
+      drawFrame(0);
+      showToast('Generated text and branding removed.');
+    });
+
+    async function generateLocalNarration() {
+      if (narrationIsUploaded || !festMsg.value.trim()) return;
+      const targetDuration = musicAudio && Number.isFinite(musicAudio.duration) && musicAudio.duration > 0
+        ? musicAudio.duration
+        : 0;
+      const narrationText = buildNarrationText(targetDuration);
+      const response = await fetch(AUTH_API + '/tts', {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify({ text: narrationText, language: languageSelect.value })
+      });
+      if (!response.ok) {
+        let detail = 'The local TTS service could not generate narration.';
+        try {
+          const error = await response.json();
+          if (error.error) detail = error.error;
+        } catch {
+          // Keep the actionable default when the service returns a non-JSON error.
+        }
+        throw new Error(detail);
+      }
+      const audioBlob = await response.blob();
+      if (!audioBlob.size) throw new Error('The local TTS service returned an empty audio file.');
+      if (narrationAudio) narrationAudio.pause();
+      if (narrationSourceNode) {
+        narrationSourceNode.disconnect();
+        narrationSourceNode = null;
+      }
+      if (narrationAnalyserNode) {
+        narrationAnalyserNode.disconnect();
+        narrationAnalyserNode = null;
+      }
+      if (narrationObjectUrl) URL.revokeObjectURL(narrationObjectUrl);
+      narrationObjectUrl = URL.createObjectURL(audioBlob);
+      narrationAudio = new Audio(narrationObjectUrl);
+      narrationAudio.preload = 'auto';
+      narrationAudio.loop = false;
+      narrationIsUploaded = false;
+      await waitForAudioReady(narrationAudio);
+    }
+
+    function buildNarrationText(targetDurationSeconds) {
+      const baseText = festMsg.value.trim();
+      return baseText;
+    }
+
+    function waitForAudioMetadata(audio) {
+      if (Number.isFinite(audio.duration) && audio.duration > 0) {
+        return Promise.resolve(audio.duration);
+      }
+      return new Promise((resolve, reject) => {
+        const onLoaded = () => {
+          cleanup();
+          resolve(audio.duration);
+        };
+        const onError = () => {
+          cleanup();
+          reject(new Error('The background music could not be loaded.'));
+        };
+        const cleanup = () => {
+          audio.removeEventListener('loadedmetadata', onLoaded);
+          audio.removeEventListener('error', onError);
+        };
+        audio.addEventListener('loadedmetadata', onLoaded, { once: true });
+        audio.addEventListener('error', onError, { once: true });
+        audio.load();
+      });
+    }
+
+    function waitForAudioReady(audio) {
+      if (Number.isFinite(audio.duration) && audio.duration > 0) {
+        return Promise.resolve();
+      }
+      return new Promise((resolve, reject) => {
+        const onLoaded = () => {
+          cleanup();
+          resolve();
+        };
+        const onError = () => {
+          cleanup();
+          reject(new Error('The narration audio could not be loaded.'));
+        };
+        const cleanup = () => {
+          audio.removeEventListener('loadedmetadata', onLoaded);
+          audio.removeEventListener('error', onError);
+        };
+        audio.addEventListener('loadedmetadata', onLoaded, { once: true });
+        audio.addEventListener('error', onError, { once: true });
+        audio.load();
+      });
+    }
+
+    function stopMusic() {
+      if (musicAudio) {
+        musicAudio.pause();
+        musicAudio.currentTime = 0;
+      }
+      if (narrationAudio) {
+        narrationAudio.pause();
+        narrationAudio.currentTime = 0;
+      }
+      if (musicGainNode) musicGainNode.disconnect();
+      if (narrationGainNode) narrationGainNode.disconnect();
+      if (musicDuckingFrame !== null) cancelAnimationFrame(musicDuckingFrame);
+      musicDuckingFrame = null;
+    }
+
+    async function prepareMusicStream() {
+      if (!musicAudio && !narrationAudio) return null;
+      stopMusic();
+      if (!musicAudioContext || musicAudioContext.state === 'closed') {
+        musicAudioContext = new AudioContext();
+        musicDestination = musicAudioContext.createMediaStreamDestination();
+      }
+      if (musicAudio) {
+        if (!musicSourceNode) musicSourceNode = musicAudioContext.createMediaElementSource(musicAudio);
+        if (!musicGainNode) musicGainNode = musicAudioContext.createGain();
+        musicGainNode.gain.value = narrationAudio ? 0.3 : 0.32;
+        musicSourceNode.disconnect();
+        musicSourceNode.connect(musicGainNode);
+        musicGainNode.connect(musicDestination);
+        musicGainNode.connect(musicAudioContext.destination);
+      }
+      if (narrationAudio) {
+        if (!narrationSourceNode) narrationSourceNode = musicAudioContext.createMediaElementSource(narrationAudio);
+        if (!narrationGainNode) narrationGainNode = musicAudioContext.createGain();
+        if (!narrationAnalyserNode) {
+          narrationAnalyserNode = musicAudioContext.createAnalyser();
+          narrationAnalyserNode.fftSize = 512;
+        }
+        narrationGainNode.gain.value = 1;
+        narrationSourceNode.disconnect();
+        narrationSourceNode.connect(narrationAnalyserNode);
+        narrationSourceNode.connect(narrationGainNode);
+        narrationGainNode.connect(musicDestination);
+        narrationGainNode.connect(musicAudioContext.destination);
+      }
+      musicDestinationAudible = true;
+      await musicAudioContext.resume();
+      if (musicAudio) {
+        musicAudio.volume = 1;
+        musicAudio.loop = true;
+        try {
+          await musicAudio.play();
+        } catch (error) {
+          throw new Error(`Background music could not play: ${error.message || 'allow audio playback and try again.'}`);
+        }
+      }
+      if (narrationAudio) {
+        await waitForAudioReady(narrationAudio);
+        narrationAudio.currentTime = 0;
+        narrationAudio.volume = 1;
+        narrationAudio.loop = false;
+        await narrationAudio.play();
+        if (musicAudio && musicGainNode && narrationAnalyserNode) {
+          const samples = new Uint8Array(narrationAnalyserNode.fftSize);
+          const updateMusicLevel = () => {
+            narrationAnalyserNode.getByteTimeDomainData(samples);
+            let sumSquares = 0;
+            for (const sample of samples) {
+              const normalized = (sample - 128) / 128;
+              sumSquares += normalized * normalized;
+            }
+            const rms = Math.sqrt(sumSquares / samples.length);
+            const targetGain = rms > 0.012 ? 0.18 : 0.3;
+            musicGainNode.gain.setTargetAtTime(targetGain, musicAudioContext.currentTime, 0.12);
+            if (!narrationAudio.paused && !narrationAudio.ended) {
+              musicDuckingFrame = requestAnimationFrame(updateMusicLevel);
+            } else {
+              musicGainNode.gain.setTargetAtTime(0.3, musicAudioContext.currentTime, 0.2);
+              musicDuckingFrame = null;
+            }
+          };
+          musicDuckingFrame = requestAnimationFrame(updateMusicLevel);
+        }
+      }
+      return musicDestination.stream;
+    }
+
+    function formatVideoDuration(durationMs) {
+      const totalSeconds = Math.ceil(durationMs / 1000);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      return hours > 0
+        ? [hours, minutes, seconds].map(value => String(value).padStart(2, '0')).join(':')
+        : [minutes, seconds].map(value => String(value).padStart(2, '0')).join(':');
+    }
+
+    // Speech Function
+    function speakText(text, langCode) {
+      if (!('speechSynthesis' in window) || !text) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = langCode;
+      utterance.rate = 0.95;
+      utterance.pitch = 1.0;
+      const matched = availableVoices.find(v => v.lang === langCode || v.lang.startsWith(langCode.split('-')[0]));
+      if (matched) utterance.voice = matched;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    testVoiceBtn.addEventListener('click', () => {
+      if (!festMsg.value.trim()) {
+        showToast("Please enter a message or prompt first!");
+        return;
+      }
+      speakText(festMsg.value, languageSelect.value);
+    });
+
+    stopVoiceBtn.addEventListener('click', () => {
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    });
+
+    // Manual input listeners to redraw if active
+    [festTitle, festMsg, brandName, brandUrl, themeSelect].forEach(el => {
+      el.addEventListener('input', () => {
+        if (festTitle.value.trim() || festMsg.value.trim() || themeSelect.value !== 'none') {
+          isPromptActivated = true;
+        }
+        drawFrame(0);
+      });
+    });
+
+    // PROMPT PARSER — Triggers visual activation
+    parsePromptBtn.addEventListener('click', () => {
+      try {
+      const p = aiPromptInput.value.toLowerCase().trim();
+      if (!p) {
+        showToast("Please enter a natural language prompt first!");
+        return;
+      }
+      const narrationMatch = aiPromptInput.value.match(
+        /(?:^|\n)\s*(?:narration|voiceover|spoken\s+text)\s*:\s*([\s\S]*?)(?=\n\s*(?:visuals?|company|website|duration|language|background\s+music|music)\s*:|$)/i
+      );
+      const promptNarration = narrationMatch
+        ? narrationMatch[1].trim().replace(/^[“"'`]+|[”"'`]+$/g, '')
+        : '';
+
+      isPromptActivated = true;
+      screenStatusNote.innerText = "Prompt parsed and video generated successfully.";
+
+      // 1. Language Detection
+      if (p.includes('kannada') || p.includes('ಕನ್ನಡ') || /[\u0C80-\u0CFF]/u.test(p)) {
+        languageSelect.value = 'kn-IN';
+      } else if (p.includes('hindi') || p.includes('हिन्दी')) {
+        languageSelect.value = 'hi-IN';
+      } else if (p.includes('tamil') || p.includes('தமிழ்')) {
+        languageSelect.value = 'ta-IN';
+      } else if (p.includes('telugu') || p.includes('తెలుగు')) {
+        languageSelect.value = 'te-IN';
+      } else if (p.includes('malayalam') || p.includes('മലയാളം')) {
+        languageSelect.value = 'ml-IN';
+      } else if (p.includes('bengali') || p.includes('বাংলা')) {
+        languageSelect.value = 'bn-IN';
+      } else if (p.includes('marathi') || p.includes('मराठी')) {
+        languageSelect.value = 'mr-IN';
+      } else if (p.includes('gujarati') || p.includes('ગુજરાતી')) {
+        languageSelect.value = 'gu-IN';
+      } else if (p.includes('punjabi') || p.includes('ਪੰਜਾਬੀ')) {
+        languageSelect.value = 'pa-IN';
+      } else if (p.includes('english')) {
+        languageSelect.value = 'en-IN';
+      }
+
+      // 2. Brand Name Extraction
+      if (p.includes('pezosys') || p.includes('ಪೆಝೋಸಿಸ್')) {
+        brandName.value = (p.includes('ಪರಿವಾರ') || p.includes('parivara')) ? "ಪೆಝೋಸಿಸ್ ಪರಿವಾರ" : "PEZOSYS";
+      } else {
+        const brandMatch = p.match(/(?:for|company|brand)\s+["']?([^"',\r\n]+)["']?/i);
+        brandName.value = brandMatch ? brandMatch[1].trim() : "Our Brand";
+      }
+
+      // 3. Website Extraction
+      const urlMatch = p.match(/https?:\/\/[^\s]+|[a-zA-Z0-9-]+\.(com|in|org|net)/i);
+      brandUrl.value = urlMatch ? urlMatch[0].replace('https://', '').replace('http://', '') : "website.com";
+
+      // 4. Topic, Headline, Message and Theme Detection
+      const lang = languageSelect.value;
+      const isNarakPrompt = /\bnarak\s+chaturdashi\b|\bnaraka\s+chaturdashi\b|ನರಕ\s*ಚತುರ್ದಶಿ/u.test(p);
+      const isDhanterasPrompt = /\bdhanteras\b|\bdhanatrayodashi\b|ಧನतेરસ|ಧನತೇರಸ್/u.test(p);
+      const isLakshmiPujaPrompt = /\blakshmi\s+puja\b|\blaxmi\s+puja\b|ಲಕ್ಷ್ಮಿ\s*ಪೂಜೆ/u.test(p);
+      const isBhaiDoojPrompt = /\bbhai\s+dooj\b|\bbhaidooj\b|ಭಾಯಿ\s*ದೂಜ್/u.test(p);
+      const isDiwaliPrompt = /\bdiwali\b|\bdeepavali\b|ದೀಪಾವಳಿ|दीपावली/u.test(p);
+      const isRajyotsavaPrompt = /\brajyotsava\b|ರಾಜ್ಯೋತ್ಸವ/u.test(p);
+
+      if (isNarakPrompt) {
+        themeSelect.value = "narak";
+        festTitle.value = lang === 'kn-IN' ? "ನರಕ ಚತುರ್ದಶಿಯ ಹಾರ್ದಿಕ ಶುಭಾಶಯಗಳು" : "HAPPY NARAK CHATURDASHI";
+        festMsg.value = lang === 'kn-IN'
+          ? "ಅಧರ್ಮದ ಮೇಲೆ ಧರ್ಮದ ವಿಜಯವನ್ನು ಸಾರುವ ನರಕ ಚತುರ್ದಶಿಯ ಹಾರ್ದಿಕ ಶುಭಾಶಯಗಳು. " + brandName.value + " ವತಿಯಿಂದ ನಿಮಗೂ ನಿಮ್ಮ ಕುಟುಂಬಕ್ಕೂ ಸುಖ, ಶಾಂತಿ ಮತ್ತು ಸಮೃದ್ಧಿ ದೊರೆಯಲಿ."
+          : "May Narak Chaturdashi bring the victory of goodness over darkness. " + brandName.value + " wishes you and your family peace, happiness and prosperity.";
+      } else if (isDhanterasPrompt) {
+        themeSelect.value = "dhanteras";
+        if (lang === 'kn-IN') {
+          festTitle.value = "ಧನ ತ್ರಯೋದಶಿಯ ಹಾರ್ದಿಕ ಶುಭಾಶಯಗಳು";
+          festMsg.value = "ಧನತೇರಸ್ ಬೆಳಕು ಮತ್ತು ಸಮೃದ್ಧಿಯ ಹಬ್ಬ. ಈ ಶುಭ ದಿನವು ನಿಮ್ಮ ಮನೆಗೆ ಉತ್ತಮ ಆರೋಗ್ಯ, ಸಂತೋಷ ಮತ್ತು ಐಶ್ವರ್ಯವನ್ನು ತರಲಿ. " + brandName.value + " ವತಿಯಿಂದ ನಿಮಗೂ ನಿಮ್ಮ ಕುಟುಂಬಕ್ಕೂ ಧನತೇರಸ್ ಹಬ್ಬದ ಹಾರ್ದಿಕ ಶುಭಾಶಯಗಳು.";
+        } else if (lang === 'hi-IN') {
+          festTitle.value = "धनतेरस की हार्दिक शुभकामनाएं";
+          festMsg.value = "धनतेरस प्रकाश, स्वास्थ्य और समृद्धि का पावन पर्व है। यह शुभ दिन आपके घर में सुख, शांति और खुशहाली लेकर आए। " + brandName.value + " की ओर से आपको और आपके परिवार को धनतेरस की हार्दिक शुभकामनाएं।";
+        } else {
+          festTitle.value = "HAPPY DHANTERAS";
+          festMsg.value = "Dhanteras is a festival of light, health and prosperity. May this auspicious day bring happiness, peace and abundance to your home. Warm Dhanteras wishes to you and your family from " + brandName.value + ".";
+        }
+      } else if (isLakshmiPujaPrompt) {
+        themeSelect.value = "lakshmi_puja";
+        festTitle.value = lang === 'kn-IN' ? "ಲಕ್ಷ್ಮಿ ಪೂಜೆಯ ಹಾರ್ದಿಕ ಶುಭಾಶಯಗಳು" : "HAPPY LAKSHMI PUJA";
+        festMsg.value = lang === 'kn-IN'
+          ? "ಮಹಾಲಕ್ಷ್ಮಿಯ ಆಶೀರ್ವಾದದಿಂದ ನಿಮ್ಮ ಜೀವನದಲ್ಲಿ ಶಾಂತಿ, ಸಂತೋಷ ಮತ್ತು ಸಮೃದ್ಧಿ ನೆಲೆಸಲಿ. " + brandName.value + " ವತಿಯಿಂದ ಶುಭಾಶಯಗಳು."
+          : "May Goddess Lakshmi bless your home with peace, happiness and prosperity. Best wishes from " + brandName.value + ".";
+      } else if (isBhaiDoojPrompt) {
+        themeSelect.value = "bhai_dooj";
+        festTitle.value = lang === 'kn-IN' ? "ಭಾಯಿ ದೂಜ್ ಹಬ್ಬದ ಹಾರ್ದಿಕ ಶುಭಾಶಯಗಳು" : "HAPPY BHAI DOOJ";
+        festMsg.value = lang === 'kn-IN'
+          ? "ಸಹೋದರ ಸಹೋದರಿಯರ ಪ್ರೀತಿ ಮತ್ತು ಬಾಂಧವ್ಯ ಸದಾ ಅಚಲವಾಗಿರಲಿ. " + brandName.value + " ವತಿಯಿಂದ ಭಾಯಿ ದೂಜ್ ಹಬ್ಬದ ಶುಭಾಶಯಗಳು."
+          : "Celebrating the beautiful bond between brothers and sisters. Warm Bhai Dooj wishes from " + brandName.value + ".";
+      } else if (isDiwaliPrompt) {
+        themeSelect.value = "diya";
+        if (lang === 'kn-IN') {
+          festTitle.value = "ದೀಪಾವಳಿ ಹಬ್ಬದ ಹಾರ್ದಿಕ ಶುಭಾಶಯಗಳು";
+          festMsg.value = "ಕತ್ತಲೆಯ ಮೇಲೆ ಬೆಳಕಿನ ಗೆಲುವು. " + brandName.value + " ವತಿಯಿಂದ ಸಮಸ್ತ ಜನತೆಗೆ ದೀಪಾವಳಿ ಹಬ್ಬದ ಶುಭಾಶಯಗಳು. ನಿಮ್ಮ ಮನೆ ಮನಗಳಲ್ಲಿ ಸುಖ ಶಾಂತಿ ಸದಾ ಬೆಳಗಲಿ.";
+        } else if (lang === 'hi-IN') {
+          festTitle.value = "दीपावली की हार्दिक शुभकामनाएं";
+          festMsg.value = "अंधकार पर प्रकाश की विजय। " + brandName.value + " की ओर से आप सभी को दीपावली की हार्दिक शुभकामनाएं।";
+        } else {
+          festTitle.value = "WARM DIWALI GREETINGS";
+          festMsg.value = "Celebrating the victory of light over darkness. " + brandName.value + " wishes you and your family joy, peace, and prosperity.";
+        }
+      } else if (isRajyotsavaPrompt) {
+        themeSelect.value = "festive_flag";
+        festTitle.value = "ಕನ್ನಡ ರಾಜ್ಯೋತ್ಸವದ ಹಾರ್ದಿಕ ಶುಭಾಶಯಗಳು";
+        festMsg.value = "ಕನ್ನಡ ನಾಡು ನುಡಿ ಸಂಸ್ಕೃತಿಯ ಹೆಮ್ಮೆಯ ಹಬ್ಬ. " + brandName.value + " ವತಿಯಿಂದ ಸಮಸ್ತ ಕನ್ನಡಿಗರಿಗೆ ಶುಭಾಶಯಗಳು.";
+      } else if (p.includes('sale') || p.includes('discount') || p.includes('offer') || p.includes('promo')) {
+        themeSelect.value = "promo_neon";
+        festTitle.value = "EXCLUSIVE MEGA SALE";
+        festMsg.value = "Limited time festive deals & special offers now live! Visit " + brandUrl.value + " and claim instant discounts today.";
+      } else if (p.includes('tech') || p.includes('corporate') || p.includes('summit') || p.includes('launch')) {
+        themeSelect.value = "corporate_blue";
+        festTitle.value = "ANNUAL INNOVATION SUMMIT";
+        festMsg.value = "Empowering digital innovation and technology excellence with " + brandName.value + ".";
+      } else {
+        // Generic fallback for any other custom prompt
+        themeSelect.value = customBackgrounds.length > 0 ? "custom_gallery" : "corporate_blue";
+        festTitle.value = "CELEBRATIONS & GREETINGS";
+        festMsg.value = "Heartfelt greetings and best wishes from " + brandName.value + ". Visit " + brandUrl.value + " for more information.";
+      }
+
+      if (promptNarration) festMsg.value = promptNarration;
+
+      voiceIndicator.innerText = "Voice: " + languageSelect.options[languageSelect.selectedIndex].text;
+      voiceIndicator.className = "text-amber-400 font-semibold px-2 py-0.5 bg-amber-400/10 rounded border border-amber-400/20";
+
+      drawFrame(0);
+      showToast(isDiwaliPrompt ? "Diwali video created from prompt." : "Video created from prompt.");
+      } catch (error) {
+        statusMsg.innerText = `Prompt generation failed: ${error.message}`;
+        statusMsg.classList.add('text-rose-400');
+        showToast('Prompt generation failed. See the status message below the buttons.');
+      }
+    });
+
+    // Particle Array
+    const particles = [];
+    for (let i = 0; i < 45; i++) {
+      particles.push({
+        x: Math.random(),
+        y: Math.random(),
+        r: Math.random() * 3 + 1,
+        alpha: Math.random(),
+        speed: Math.random() * 0.03 + 0.01
+      });
+    }
+
+    function drawWrappedText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = text.trim().split(/\s+/);
+      const lines = [];
+      let line = '';
+      words.forEach((word) => {
+        const candidate = line ? `${line} ${word}` : word;
+        if (line && ctx.measureText(candidate).width > maxWidth) {
+          lines.push(line);
+          line = word;
+        } else {
+          line = candidate;
+        }
+      });
+      if (line) lines.push(line);
+      lines.forEach((lineText, index) => ctx.fillText(lineText, x, y + index * lineHeight));
+      return lines.length;
+    }
+
+    function isReadyImage(image) {
+      return image instanceof HTMLImageElement && image.complete && image.naturalWidth > 0 && image.naturalHeight > 0;
+    }
+
+    // Draws an uploaded image filling the frame; a blurred copy fills any gap when the aspect ratios differ.
+    function drawBackgroundImage(img, W, H) {
+      if (W >= H) {
+        ctx.drawImage(img, 0, 0, W, H);
+        return;
+      }
+      const coverScale = Math.max(W / img.naturalWidth, H / img.naturalHeight);
+      const containScale = Math.min(W / img.naturalWidth, H / img.naturalHeight);
+      if (Math.abs(coverScale - containScale) < 0.01) {
+        ctx.drawImage(img, 0, 0, W, H);
+        return;
+      }
+      ctx.save();
+      ctx.filter = 'blur(24px)';
+      ctx.drawImage(img, (W - img.naturalWidth * coverScale) / 2, (H - img.naturalHeight * coverScale) / 2, img.naturalWidth * coverScale, img.naturalHeight * coverScale);
+      ctx.restore();
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+      ctx.fillRect(0, 0, W, H);
+      const w = img.naturalWidth * containScale;
+      const h = img.naturalHeight * containScale;
+      ctx.drawImage(img, (W - w) / 2, (H - h) / 2, w, h);
+    }
+
+    // MAIN DRAW FUNCTION
+    function drawFrame(timeSec) {
+      const W = canvas.width;
+      const H = canvas.height;
+      const cx = W / 2;
+      const portrait = H > W;
+      // IF PROMPT IS NOT ACTIVATED YET: Display clean neutral standby canvas
+      if (!isPromptActivated) {
+        // Clean neutral dark canvas
+        ctx.fillStyle = '#090d16';
+        ctx.fillRect(0, 0, W, H);
+
+        // Subtle decorative border
+        ctx.strokeStyle = '#1e293b';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(30, 30, W - 60, H - 60);
+
+        // Standby Icon & Message
+        ctx.save();
+        ctx.textAlign = 'center';
+
+        ctx.fillStyle = '#6366f1';
+        ctx.font = 'bold 28px sans-serif';
+        ctx.fillText('PromptCraft Video Canvas', cx, H / 2 - 30);
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '18px sans-serif';
+        ctx.fillText('No image or theme active yet.', cx, H / 2 + 15);
+
+        ctx.fillStyle = '#64748b';
+        ctx.font = '15px sans-serif';
+        drawWrappedText(ctx, 'Enter a prompt on the left and click "Auto-Detect & Generate" to create your video.', cx, H / 2 + 55, W - 120, 22);
+        ctx.restore();
+        return;
+      }
+
+      // WHEN PROMPT IS ACTIVATED:
+      const activeTheme = themeSelect.value;
+      const pool = activeTheme === 'custom_gallery'
+        ? customBackgrounds
+        : (customBackgrounds.length > 0 ? customBackgrounds : (loadedImages[activeTheme] || []));
+      const usablePool = pool.filter(isReadyImage);
+
+      // 1. Draw the uploaded reference video, or fall back to an image theme.
+      if (referenceVideo && referenceVideo.readyState >= 2 && referenceVideo.videoWidth > 0) {
+        const scale = Math.max(W / referenceVideo.videoWidth, H / referenceVideo.videoHeight);
+        const width = referenceVideo.videoWidth * scale;
+        const height = referenceVideo.videoHeight * scale;
+        ctx.drawImage(referenceVideo, (W - width) / 2, (H - height) / 2, width, height);
+        if (cleanReferenceVideo.checked) {
+          return;
+        }
+        const videoOverlay = ctx.createLinearGradient(0, 0, 0, H);
+        videoOverlay.addColorStop(0, 'rgba(5, 10, 25, 0.30)');
+        videoOverlay.addColorStop(0.55, 'rgba(5, 10, 25, 0.08)');
+        videoOverlay.addColorStop(1, 'rgba(5, 10, 25, 0.68)');
+        ctx.fillStyle = videoOverlay;
+        ctx.fillRect(0, 0, W, H);
+      } else if (activeTheme !== 'none' && usablePool.length > 0) {
+        const safeTime = Math.max(0, timeSec);
+        const idx = customBackgrounds.length > 1 && customBackgroundDurationSeconds
+          ? Math.min(usablePool.length - 1, Math.floor(safeTime / customBackgroundDurationSeconds))
+          : Math.floor(safeTime / 4) % usablePool.length;
+        drawBackgroundImage(usablePool[idx], W, H);
+        if (cleanUploadedBackground.checked && customBackgrounds.length > 0) {
+          return;
+        }
+
+        const grad = ctx.createRadialGradient(cx, H / 2, 200, cx, H / 2, Math.max(W, H));
+        grad.addColorStop(0, 'rgba(10, 15, 30, 0.68)');
+        grad.addColorStop(1, 'rgba(3, 7, 18, 0.94)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
+      } else {
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(0, 0, W, H);
+      }
+
+      // 2. Animated Particles
+      if (activeTheme !== 'none') {
+        particles.forEach(p => {
+          p.alpha += p.speed;
+          if (p.alpha > 1 || p.alpha < 0) p.speed = -p.speed;
+          ctx.beginPath();
+          ctx.arc(p.x * W, p.y * H, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 215, 0, ${Math.abs(p.alpha)})`;
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = '#f59e0b';
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        });
+      }
+
+      // 3. Theme Graphics
+      if (activeTheme === 'diya') {
+        const flicker = Math.sin(timeSec * 14) * 6;
+        ctx.save();
+        ctx.translate(cx, H * 0.74);
+        ctx.beginPath();
+        ctx.ellipse(0, 35, 85, 30, 0, 0, Math.PI);
+        ctx.fillStyle = '#b45309';
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#d97706';
+        ctx.stroke();
+
+        const glowGrad = ctx.createRadialGradient(0, 10, 5, 0, 10, 80);
+        glowGrad.addColorStop(0, 'rgba(251, 191, 36, 0.9)');
+        glowGrad.addColorStop(0.5, 'rgba(239, 68, 68, 0.3)');
+        glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = glowGrad;
+        ctx.beginPath();
+        ctx.arc(0, 10, 80, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(0, -45 + flicker);
+        ctx.bezierCurveTo(20, -10, 22, 25, 0, 32);
+        ctx.bezierCurveTo(-22, 25, -20, -10, 0, -45 + flicker);
+        ctx.fillStyle = '#fef08a';
+        ctx.shadowBlur = 25;
+        ctx.shadowColor = '#fbbf24';
+        ctx.fill();
+        ctx.restore();
+      } else if (activeTheme === 'festive_flag') {
+        ctx.save();
+        ctx.translate(cx, H * 0.75);
+        const wave = Math.sin(timeSec * 4) * 8;
+        ctx.fillStyle = '#facc15';
+        ctx.fillRect(-120, -10 + wave, 240, 22);
+        ctx.fillStyle = '#dc2626';
+        ctx.fillRect(-120, 12 + wave, 240, 22);
+        ctx.restore();
+      } else if (activeTheme === 'promo_neon') {
+        ctx.save();
+        ctx.translate(cx, H * 0.736);
+        const pulse = Math.sin(timeSec * 6) * 4;
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 4;
+        ctx.shadowBlur = 18 + pulse;
+        ctx.shadowColor = '#0284c7';
+        ctx.strokeRect(-110, -25, 220, 50);
+        ctx.font = 'bold 20px sans-serif';
+        ctx.fillStyle = '#38bdf8';
+        ctx.textAlign = 'center';
+        ctx.fillText('SPECIAL OFFER', 0, 7);
+        ctx.restore();
+      }
+
+      // 4. Logo in Top-Right
+      if (isReadyImage(customLogoImg)) {
+        ctx.save();
+        ctx.drawImage(customLogoImg, W - 230, 40, 180, 65);
+        ctx.restore();
+      } else if (brandName.value.trim()) {
+        ctx.save();
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+        ctx.beginPath();
+        ctx.roundRect(W - 240, 35, 200, 60, 14);
+        ctx.fill();
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 22px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(brandName.value.split(' ')[0] || 'BRAND', W - 140, 72);
+        ctx.restore();
+      }
+
+      // 5. Titles & On-Screen Multilingual Text
+      ctx.save();
+      ctx.textAlign = 'center';
+      const title = festTitle.value.trim();
+      const message = festMsg.value.trim();
+
+      let textY = portrait ? 200 : 172;
+      const titleWidth = portrait ? W - 120 : 1010;
+      const messageWidth = portrait ? W - 120 : 980;
+      if (title) {
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
+        ctx.font = '800 42px "Noto Sans Kannada", "Noto Sans Devanagari", "Noto Sans Tamil", "Noto Sans Telugu", "Noto Sans Malayalam", "Noto Sans Bengali", "Noto Sans Gujarati", "Noto Sans Gurmukhi", "Noto Sans Oriya", "Noto Naskh Arabic", "Noto Sans Ol Chiki", "Noto Sans Meetei Mayek", sans-serif';
+        ctx.fillStyle = '#fef08a';
+        const titleLines = drawWrappedText(ctx, title, cx, textY, titleWidth, 52);
+        textY += titleLines * 52 + 18;
+      }
+
+      if (message) {
+        ctx.shadowBlur = 8;
+        ctx.font = '600 25px "Noto Sans Kannada", "Noto Sans Devanagari", "Noto Sans Tamil", "Noto Sans Telugu", "Noto Sans Malayalam", "Noto Sans Bengali", "Noto Sans Gujarati", "Noto Sans Gurmukhi", "Noto Sans Oriya", "Noto Naskh Arabic", "Noto Sans Ol Chiki", "Noto Sans Meetei Mayek", sans-serif';
+        ctx.fillStyle = '#ffffff';
+        drawWrappedText(ctx, message, cx, textY, messageWidth, 38);
+      }
+
+      // 6. Brand & Website Link
+      if (brandName.value.trim()) {
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+        ctx.font = 'bold 30px "Noto Sans Kannada", "Noto Sans Devanagari", "Noto Sans Tamil", "Noto Sans Telugu", "Noto Sans Malayalam", "Noto Sans Bengali", "Noto Sans Gujarati", "Noto Sans Gurmukhi", "Noto Sans Oriya", "Noto Naskh Arabic", "Noto Sans Ol Chiki", "Noto Sans Meetei Mayek", sans-serif';
+        ctx.fillStyle = '#fbbf24';
+        ctx.fillText(brandName.value, cx, portrait ? H - 130 : 480);
+      }
+
+      if (brandUrl.value.trim()) {
+        ctx.font = 'bold 22px sans-serif';
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText('Visit: ' + brandUrl.value, cx, H - 55);
+      }
+      ctx.restore();
+    }
+
+    // Desktop (landscape) / Mobile (portrait) output format
+    const videoFormat = document.getElementById('videoFormat');
+    const canvasFrame = document.getElementById('canvasFrame');
+    function applyVideoFormat() {
+      const mobile = videoFormat.value === 'mobile';
+      canvas.width = mobile ? 720 : 1280;
+      canvas.height = mobile ? 1280 : 720;
+      canvasFrame.style.aspectRatio = mobile ? '9 / 16' : '16 / 9';
+      canvasFrame.style.width = mobile ? 'min(100%, 360px)' : '100%';
+      document.getElementById('formatIcon').className = `fa-solid ${mobile ? 'fa-mobile-screen' : 'fa-display'} text-indigo-400`;
+      drawFrame(0);
+    }
+    videoFormat.addEventListener('change', () => {
+      if (isPreviewing || recordBtn.disabled) {
+        videoFormat.value = canvas.width < canvas.height ? 'mobile' : 'desktop';
+        showToast('Stop the preview or wait for the export to finish before changing the format.');
+        return;
+      }
+      applyVideoFormat();
+    });
+
+    // Initial Standby Render
+    drawFrame(0);
+
+    // Live Animation & Spoken Voice Preview
+    let isPreviewing = false;
+    let animId = null;
+    previewBtn.addEventListener('click', async () => {
+      if (!isPromptActivated && !festTitle.value.trim() && !festMsg.value.trim()) {
+        showToast("Please enter a prompt or configure the video first!");
+        return;
+      }
+      if (isPreviewing) {
+        cancelAnimationFrame(animId);
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        stopMusic();
+        if (referenceVideo) referenceVideo.pause();
+        customBackgroundDurationSeconds = null;
+        isPreviewing = false;
+        previewBtn.innerHTML = '<i class="fa-solid fa-play"></i> Preview Live Animation & Voice';
+        return;
+      }
+      isPreviewing = true;
+      previewBtn.innerHTML = '<i class="fa-solid fa-pause"></i> Pause Preview & Voice';
+      if (referenceVideo) {
+        referenceVideo.currentTime = 0;
+        referenceVideo.play().catch(() => showToast('Reference video preview could not start.'));
+      }
+      try {
+        statusMsg.innerText = 'Generating narration preview...';
+        if (musicAudio) await waitForAudioMetadata(musicAudio);
+        await generateLocalNarration();
+        await prepareMusicStream();
+        statusMsg.innerText = 'Previewing narration and music.';
+      } catch (error) {
+        isPreviewing = false;
+        previewBtn.innerHTML = '<i class="fa-solid fa-play"></i> Preview Live Animation & Voice';
+        statusMsg.innerText = error.message || 'Narration preview could not start.';
+        showToast('Narration preview could not start.');
+        return;
+      }
+
+      const selectedPreviewDurationMs = parseInt(videoDuration.value, 10) * 1000;
+      const previewMusicDurationMs = musicAudio && Number.isFinite(musicAudio.duration)
+        ? Math.ceil(musicAudio.duration * 1000) + 250
+        : 0;
+      const previewNarrationDurationMs = narrationAudio && Number.isFinite(narrationAudio.duration)
+        ? Math.ceil(narrationAudio.duration * 1000) + 250
+        : 0;
+      const previewDurationMs = Math.max(
+        selectedPreviewDurationMs,
+        previewMusicDurationMs,
+        previewNarrationDurationMs
+      );
+      const previewDurationSeconds = previewDurationMs / 1000;
+      customBackgroundDurationSeconds = customBackgrounds.length > 1
+        ? previewDurationSeconds / customBackgrounds.length
+        : null;
+      const previewStartTime = performance.now();
+      function step(now) {
+        const elapsedMs = now - previewStartTime;
+        drawFrame(elapsedMs / 1000);
+        if (isPreviewing && elapsedMs < previewDurationSeconds * 1000) {
+          animId = requestAnimationFrame(step);
+        } else if (isPreviewing) {
+          if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+          stopMusic();
+          if (referenceVideo) referenceVideo.pause();
+          customBackgroundDurationSeconds = null;
+          isPreviewing = false;
+          previewBtn.innerHTML = '<i class="fa-solid fa-play"></i> Preview Live Animation & Voice';
+        }
+      }
+      animId = requestAnimationFrame(step);
+    });
+
+    // Record & Download Video
+    recordBtn.addEventListener('click', async () => {
+      if (!isPromptActivated && !festTitle.value.trim() && !festMsg.value.trim()) {
+        showToast("Please enter a prompt or configure the video first!");
+        return;
+      }
+      const selectedSeconds = parseInt(videoDuration.value, 10);
+      const selectedDurationMs = selectedSeconds * 1000;
+      const mp4MimeType = [
+        'video/mp4;codecs="avc1.42E01F,mp4a.40.2"',
+        'video/mp4;codecs="avc1.42E01F"',
+        'video/mp4'
+      ].find(type => window.MediaRecorder && MediaRecorder.isTypeSupported(type));
+      if (!mp4MimeType) {
+        statusMsg.innerText = 'MP4 recording is not supported in this browser. Use the latest Chrome or Edge and try again.';
+        return;
+      }
+      statusMsg.innerText = `Rendering video... (${selectedSeconds}s)`;
+      recordBtn.disabled = true;
+
+      if (referenceVideo) {
+        referenceVideo.currentTime = 0;
+        try {
+          await referenceVideo.play();
+        } catch {
+          statusMsg.innerText = 'Reference video could not be started. Try selecting the video again.';
+          recordBtn.disabled = false;
+          return;
+        }
+      }
+
+      let musicStream = null;
+      try {
+        statusMsg.innerText = 'Generating local narration...';
+        if (musicAudio) await waitForAudioMetadata(musicAudio);
+        await generateLocalNarration();
+        musicStream = await prepareMusicStream();
+        if (festMsg.value.trim() && (!narrationAudio || narrationAudio.paused)) {
+          throw new Error('Narration was not started. Check the narration audio or restart the local TTS service, then try again.');
+        }
+      } catch (error) {
+        statusMsg.innerText = error.message || 'Narration could not be generated. Start tts_server.py and try again.';
+        recordBtn.disabled = false;
+        if (referenceVideo) referenceVideo.pause();
+        return;
+      }
+      drawFrame(0);
+      const canvasStream = canvas.captureStream(30);
+      const tracks = [...canvasStream.getVideoTracks()];
+      const audioTracks = musicStream ? musicStream.getAudioTracks() : [];
+      if (audioTracks.length === 0) {
+        statusMsg.innerText = 'No narration or music audio track was created.';
+        recordBtn.disabled = false;
+        if (referenceVideo) referenceVideo.pause();
+        stopMusic();
+        return;
+      }
+      const musicDurationMs = musicAudio && Number.isFinite(musicAudio.duration)
+        ? Math.ceil(musicAudio.duration * 1000) + 250
+        : 0;
+      const narrationDurationMs = narrationAudio && Number.isFinite(narrationAudio.duration)
+        ? Math.ceil(narrationAudio.duration * 1000) + 250
+        : 0;
+      const durationMs = Math.max(selectedDurationMs, narrationDurationMs, musicDurationMs);
+      customBackgroundDurationSeconds = customBackgrounds.length > 1
+        ? durationMs / 1000 / customBackgrounds.length
+        : null;
+      statusMsg.innerText = `Recording full ${narrationAudio ? 'narration and music' : 'audio'} (${Math.ceil(durationMs / 1000)}s)...`;
+      audioTracks.forEach((track) => { track.enabled = true; });
+      tracks.push(...audioTracks);
+      const stream = new MediaStream(tracks);
+      let recorder;
+      try {
+        recorder = new MediaRecorder(stream, { mimeType: mp4MimeType });
+      } catch (error) {
+        customBackgroundDurationSeconds = null;
+        stream.getTracks().forEach((track) => track.stop());
+        stopMusic();
+        if (referenceVideo) referenceVideo.pause();
+        recordBtn.disabled = false;
+        statusMsg.innerText = `Could not start MP4 recording: ${error.message || 'unsupported encoder.'}`;
+        return;
+      }
+      const chunks = [];
+      let recordingFinished = false;
+      let stopTimer = null;
+
+      recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
+      recorder.onstop = () => {
+        if (recordingFinished) return;
+        recordingFinished = true;
+        if (stopTimer) clearTimeout(stopTimer);
+        customBackgroundDurationSeconds = null;
+        const blob = new Blob(chunks, { type: recorder.mimeType || mp4MimeType });
+        if (blob.size === 0) {
+          statusMsg.innerText = 'Video recording produced no data. Please try again.';
+          recordBtn.disabled = false;
+          stream.getTracks().forEach((track) => track.stop());
+          stopMusic();
+          if (referenceVideo) referenceVideo.pause();
+          return;
+        }
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const cleanName = (brandName.value || 'Video').replace(/[^a-zA-Z0-9]/g, '_');
+        a.download = `${cleanName}_${languageSelect.value}_${videoFormat.value}_video.mp4`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        stream.getTracks().forEach((track) => track.stop());
+        const totalDuration = formatVideoDuration(durationMs);
+        statusMsg.innerText = `MP4 downloaded. Total duration: ${totalDuration} (ends at ${totalDuration}).`;
+        recordBtn.disabled = false;
+        stopMusic();
+        if (referenceVideo) referenceVideo.pause();
+      };
+      recorder.onerror = (event) => {
+        if (recordingFinished) return;
+        recordingFinished = true;
+        if (stopTimer) clearTimeout(stopTimer);
+        customBackgroundDurationSeconds = null;
+        stream.getTracks().forEach((track) => track.stop());
+        stopMusic();
+        if (referenceVideo) referenceVideo.pause();
+        recordBtn.disabled = false;
+        const errorMessage = event.error && event.error.message ? ` ${event.error.message}` : '';
+        statusMsg.innerText = `MP4 recording failed.${errorMessage} Try the latest Chrome or Edge.`;
+      };
+
+      recorder.start(1000);
+      let startTime = performance.now();
+      function recordLoop(now) {
+        const elapsed = now - startTime;
+        drawFrame(elapsed / 1000);
+        if (elapsed < durationMs && !recordingFinished) {
+          requestAnimationFrame(recordLoop);
+        } else if (!recordingFinished && recorder.state === 'recording') {
+          recorder.stop();
+        }
+      }
+      stopTimer = setTimeout(() => {
+        if (!recordingFinished && recorder.state === 'recording') recorder.stop();
+      }, durationMs + 500);
+      requestAnimationFrame(recordLoop);
+    });
+
+    // ==========================================
+    // CREDIT-FREE LOCAL POSTER GENERATOR
+    // ==========================================
+    const localPosterForm = document.getElementById('localPosterForm');
+    const localPosterCanvas = document.getElementById('localPosterCanvas');
+    const downloadPosterBtn = document.getElementById('downloadPosterBtn');
+    let posterLogoImage = null;
+    const serviceImages = Array(5).fill(null);
+    let personalPosterImages = [];
+    const posterFestivalImages = {
+      narak: 'https://images.unsplash.com/photo-1576872381149-7847515ce5d8?auto=format&fit=crop&w=1080&q=85',
+      diwali: 'https://images.unsplash.com/photo-1605379399642-870262d3d051?auto=format&fit=crop&w=1080&q=85',
+      eid: 'https://images.unsplash.com/photo-1564121211835-e88c852648ab?auto=format&fit=crop&w=1080&q=85',
+      christmas: 'https://images.unsplash.com/photo-1512389142860-9c449e58a543?auto=format&fit=crop&w=1080&q=85',
+      holi: 'https://images.unsplash.com/photo-1577083288073-40892c0860a4?auto=format&fit=crop&w=1080&q=85',
+      pongal: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1080&q=85',
+      birthday: 'https://images.unsplash.com/photo-1464349153735-7db50ed83c84?auto=format&fit=crop&w=1080&q=85',
+      custom: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1080&q=85'
+    };
+    const posterFestivalImage = new Image();
+    posterFestivalImage.crossOrigin = 'anonymous';
+    let posterUploadedBackground = null;
+    let posterReferenceImage = null;
+    let posterFestivalKey = 'narak';
+
+    function loadPosterFestivalImage(key) {
+      posterFestivalKey = key;
+      posterFestivalImage.src = posterFestivalImages[key] || '';
+    }
+
+    loadPosterFestivalImage('custom');
+
+    document.getElementById('posterLogo').addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        posterLogoImage = new Image();
+        posterLogoImage.onload = () => showToast('Logo loaded locally.');
+        posterLogoImage.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    for (let index = 0; index < 5; index += 1) {
+      document.getElementById(`serviceImage${index}`).addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          serviceImages[index] = new Image();
+          serviceImages[index].onload = () => showToast(`Service image ${index + 1} loaded.`);
+          serviceImages[index].src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Brand kit: identity (and optionally services) saved in localStorage
+    const BRAND_KIT_KEY = 'promptcraft.brandKit.v1';
+    const brandKitStatus = document.getElementById('brandKitStatus');
+    const brandFields = { company: 'posterCompany', website: 'posterWebsite', email: 'posterEmail', phone: 'posterPhone' };
+
+    function imageToDataUrl(img, maxSize) {
+      const scale = Math.min(1, maxSize / Math.max(img.naturalWidth, img.naturalHeight));
+      const c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(img.naturalWidth * scale));
+      c.height = Math.max(1, Math.round(img.naturalHeight * scale));
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      return c.toDataURL('image/png');
+    }
+
+    function imageFromDataUrl(src) {
+      const img = new Image();
+      img.src = src;
+      return img;
+    }
+
+    function applyBrandKit(silent) {
+      let kit = null;
+      try { kit = JSON.parse(localStorage.getItem(BRAND_KIT_KEY) || 'null'); } catch (e) { kit = null; }
+      if (!kit) {
+        if (!silent) showToast('No brand kit saved yet.');
+        return;
+      }
+      Object.entries(brandFields).forEach(([key, id]) => {
+        if (typeof kit[key] === 'string') document.getElementById(id).value = kit[key];
+      });
+      if (kit.logo) posterLogoImage = imageFromDataUrl(kit.logo);
+      if (Array.isArray(kit.services)) {
+        kit.services.forEach((service, index) => {
+          if (index > 4 || !service) return;
+          if (service.label) document.getElementById(`serviceLabel${index}`).value = service.label;
+          serviceImages[index] = service.image ? imageFromDataUrl(service.image) : null;
+        });
+        document.getElementById('brandKitSaveServices').checked = true;
+      }
+      brandKitStatus.textContent = `Saved kit applied${kit.logo ? ' (logo included)' : ''}${kit.services ? ' + services' : ''}.`;
+      if (!silent) showToast('Brand kit applied.');
+    }
+
+    document.getElementById('brandKitSave').addEventListener('click', () => {
+      const kit = {};
+      Object.entries(brandFields).forEach(([key, id]) => { kit[key] = document.getElementById(id).value.trim(); });
+      if (posterLogoImage && posterLogoImage.complete && posterLogoImage.naturalWidth) kit.logo = imageToDataUrl(posterLogoImage, 600);
+      if (document.getElementById('brandKitSaveServices').checked) {
+        kit.services = serviceImages.map((image, index) => ({
+          label: document.getElementById(`serviceLabel${index}`).value.trim(),
+          image: image && image.complete && image.naturalWidth ? imageToDataUrl(image, 400) : ''
+        }));
+      }
+      try {
+        localStorage.setItem(BRAND_KIT_KEY, JSON.stringify(kit));
+        brandKitStatus.textContent = `Brand kit saved${kit.logo ? ' with logo' : ' (no logo uploaded)'}${kit.services ? ' + services' : ''}.`;
+        showToast('Brand kit saved in this browser.');
+      } catch (e) {
+        showToast('Could not save: browser storage is full. Try without service images.');
+      }
+    });
+    document.getElementById('brandKitApply').addEventListener('click', () => applyBrandKit(false));
+    document.getElementById('brandKitClear').addEventListener('click', () => {
+      localStorage.removeItem(BRAND_KIT_KEY);
+      brandKitStatus.textContent = 'No brand kit saved yet.';
+      showToast('Brand kit cleared.');
+    });
+    applyBrandKit(true);
+
+    document.getElementById('posterPersonalPhotos').addEventListener('change', (event) => {
+      personalPosterImages = [];
+      const files = Array.from(event.target.files).slice(0, 60);
+      if (event.target.files.length > 60) {
+        showToast('Only the first 60 photos were selected.');
+      }
+      files.forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const image = new Image();
+          image.onload = () => {
+            personalPosterImages.push(image);
+            showToast(`${personalPosterImages.length} personal photo${personalPosterImages.length === 1 ? '' : 's'} loaded.`);
+          };
+          image.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    document.getElementById('posterBackground').addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        posterUploadedBackground = new Image();
+        posterUploadedBackground.onload = () => showToast('Your artwork is ready. Text will be placed on it.');
+        posterUploadedBackground.src = reader.result;
+        document.getElementById('overlayOnArtwork').checked = true;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById('posterReference').addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        posterReferenceImage = new Image();
+        posterReferenceImage.onload = () => showToast('Artwork loaded. Text will be placed on it.');
+        posterReferenceImage.src = reader.result;
+        document.getElementById('overlayOnArtwork').checked = true;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function loadArtwork(url, doneMessage, onFail, onOk) {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        posterReferenceImage = null;
+        posterUploadedBackground = img;
+        document.getElementById('overlayOnArtwork').checked = true;
+        const preview = document.getElementById('artPreview');
+        preview.src = img.src;
+        preview.classList.remove('hidden');
+        showToast(doneMessage);
+        if (onOk) onOk();
+      };
+      img.onerror = onFail;
+      img.src = url;
+    }
+
+    const artGallery = document.getElementById('artGallery');
+    // Backgrounds are drawn locally on a canvas: free, unlimited, offline, and text-free.
+    const THEME_ART = {
+      dhanteras: { label: 'Dhanteras', top: '#1a0b3a', mid: '#6b1730', low: '#2a0a22', glow: '#ffb83d', kind: 'diwali' },
+      diwali: { label: 'Diwali', top: '#140a35', mid: '#4a1666', low: '#7a1f3a', glow: '#ff9f2e', kind: 'diwali' },
+      eid: { label: 'Eid', top: '#06142e', mid: '#0d3b5c', low: '#0b6b63', glow: '#ffe08a', kind: 'eid' },
+      christmas: { label: 'Christmas', top: '#06231a', mid: '#0d4a33', low: '#7a1220', glow: '#ffd36b', kind: 'snow' },
+      holi: { label: 'Holi', top: '#ff3d8b', mid: '#7a3cff', low: '#00b3a4', glow: '#ffe14d', kind: 'color' },
+      pongal: { label: 'Pongal', top: '#ff9a1f', mid: '#f4c542', low: '#d8541a', glow: '#fff1a8', kind: 'sun' },
+      birthday: { label: 'Birthday', top: '#1b1b5e', mid: '#6a2bb5', low: '#ff4f9a', glow: '#ffe14d', kind: 'confetti' },
+      corporate: { label: 'Business', top: '#06122e', mid: '#12306b', low: '#0a1a3f', glow: '#d9a73a', kind: 'diwali' }
+    };
+
+    function makeThemeArt(key, W = 1080, H = 1350) {
+      const t = THEME_ART[key];
+      const c = document.createElement('canvas');
+      c.width = W; c.height = H;
+      const g = c.getContext('2d');
+      let seed = 7 + key.length * 13;
+      const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+      const lg = g.createLinearGradient(0, 0, 0, H);
+      lg.addColorStop(0, t.top); lg.addColorStop(0.55, t.mid); lg.addColorStop(1, t.low);
+      g.fillStyle = lg; g.fillRect(0, 0, W, H);
+      const rg = g.createRadialGradient(W / 2, H * 0.18, 10, W / 2, H * 0.18, W * 0.7);
+      rg.addColorStop(0, t.glow + 'aa'); rg.addColorStop(1, t.glow + '00');
+      g.fillStyle = rg; g.fillRect(0, 0, W, H);
+      const bokeh = (n, yMin, yMax) => {
+        for (let i = 0; i < n; i += 1) {
+          const x = rnd() * W, y = H * (yMin + rnd() * (yMax - yMin)), r = 8 + rnd() * 38;
+          const b = g.createRadialGradient(x, y, 0, x, y, r);
+          b.addColorStop(0, t.glow + '99'); b.addColorStop(1, t.glow + '00');
+          g.fillStyle = b; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill();
+        }
+      };
+      const gold = (x0 = 0, x1 = W) => { const s = g.createLinearGradient(x0, 0, x1, 0); s.addColorStop(0, '#b87a1c'); s.addColorStop(0.3, '#f0b83c'); s.addColorStop(0.5, '#ffe08a'); s.addColorStop(0.75, '#e0a030'); s.addColorStop(1, '#9a6212'); return s; };
+      const diya = (x, y, s) => {
+        const f = g.createRadialGradient(x, y - s * 0.5, 0, x, y - s * 0.5, s * 0.9);
+        f.addColorStop(0, '#fff7c2'); f.addColorStop(0.4, '#ffb03a99'); f.addColorStop(1, '#ff7a0000');
+        g.fillStyle = f; g.beginPath(); g.arc(x, y - s * 0.5, s * 0.9, 0, Math.PI * 2); g.fill();
+        g.fillStyle = '#ffd36b'; g.beginPath(); g.moveTo(x, y - s * 0.95); g.quadraticCurveTo(x + s * 0.28, y - s * 0.4, x, y - s * 0.2); g.quadraticCurveTo(x - s * 0.28, y - s * 0.4, x, y - s * 0.95); g.fill();
+        g.fillStyle = gold(); g.beginPath(); g.ellipse(x, y, s * 0.9, s * 0.38, 0, 0, Math.PI); g.fill();
+        g.fillStyle = '#b8741a'; g.beginPath(); g.ellipse(x, y, s * 0.9, s * 0.14, 0, 0, Math.PI * 2); g.fill();
+      };
+      const lantern = (x, len, s) => {
+        g.strokeStyle = '#e8b84a'; g.lineWidth = 3; g.beginPath(); g.moveTo(x, 0); g.lineTo(x, len); g.stroke();
+        const f = g.createRadialGradient(x, len + s, 0, x, len + s, s * 1.8);
+        f.addColorStop(0, t.glow + 'cc'); f.addColorStop(1, t.glow + '00');
+        g.fillStyle = f; g.beginPath(); g.arc(x, len + s, s * 1.8, 0, Math.PI * 2); g.fill();
+        g.fillStyle = '#ffb347'; g.strokeStyle = '#e8b84a'; g.lineWidth = 4;
+        g.beginPath(); g.roundRect(x - s * 0.55, len, s * 1.1, s * 1.5, s * 0.3); g.fill(); g.stroke();
+        g.fillStyle = '#e8b84a'; g.fillRect(x - s * 0.4, len - 8, s * 0.8, 10);
+      };
+      if (t.kind === 'diwali') {
+        bokeh(30, 0.1, 0.95);
+        g.strokeStyle = gold(); g.lineWidth = 10;
+        g.beginPath(); g.moveTo(0, H * 0.2); g.quadraticCurveTo(W * 0.1, H * 0.02, W * 0.5, H * 0.02); g.quadraticCurveTo(W * 0.9, H * 0.02, W, H * 0.2); g.stroke();
+        g.lineWidth = 3; g.beginPath(); g.moveTo(0, H * 0.235); g.quadraticCurveTo(W * 0.12, H * 0.055, W * 0.5, H * 0.055); g.quadraticCurveTo(W * 0.88, H * 0.055, W, H * 0.235); g.stroke();
+        lantern(W * 0.1, H * 0.06, 34); lantern(W * 0.2, H * 0.03, 26); lantern(W * 0.9, H * 0.06, 34); lantern(W * 0.8, H * 0.03, 26);
+        // kalash with coins and diyas in the centre band
+        const cx = W / 2, by = H * 0.83;
+        g.fillStyle = gold(cx - W * 0.17, cx + W * 0.17); g.beginPath(); g.ellipse(cx, by, W * 0.14, H * 0.03, 0, 0, Math.PI * 2); g.fill();
+        g.beginPath(); g.moveTo(cx - W * 0.09, by - H * 0.1); g.quadraticCurveTo(cx - W * 0.17, by - H * 0.02, cx - W * 0.12, by); g.lineTo(cx + W * 0.12, by); g.quadraticCurveTo(cx + W * 0.17, by - H * 0.02, cx + W * 0.09, by - H * 0.1); g.closePath(); g.fill();
+        g.fillStyle = '#7a4b12'; g.font = `bold ${W * 0.07}px serif`; g.textAlign = 'center'; g.fillText('\u0950', cx, by - H * 0.03);
+        g.fillStyle = '#2f7d32'; for (let i = -2; i <= 2; i += 1) { g.beginPath(); g.ellipse(cx + i * W * 0.04, by - H * 0.125, W * 0.025, H * 0.03, i * 0.4, 0, Math.PI * 2); g.fill(); }
+        g.fillStyle = '#c9822a'; g.beginPath(); g.arc(cx, by - H * 0.14, W * 0.05, 0, Math.PI * 2); g.fill();
+        for (let i = 0; i < 14; i += 1) { g.fillStyle = gold(); g.beginPath(); g.ellipse(cx - W * 0.3 + i * W * 0.012 + (i % 3) * 6, by + 4 - (i % 4) * 8, 22, 9, 0, 0, Math.PI * 2); g.fill(); }
+        diya(cx - W * 0.3, by, 44); diya(cx + W * 0.3, by, 44);
+        for (let i = 0; i < 18; i += 1) { g.fillStyle = i % 2 ? '#ff9f1c' : '#ffcf40'; g.beginPath(); g.arc(W * 0.12 + i * W * 0.05, by + H * 0.06 + Math.sin(i) * 6, 14, 0, Math.PI * 2); g.fill(); }
+      } else if (t.kind === 'eid') {
+        bokeh(14, 0.05, 0.5);
+        for (let i = 0; i < 60; i += 1) { g.fillStyle = '#ffffffcc'; g.beginPath(); g.arc(rnd() * W, rnd() * H * 0.6, 1 + rnd() * 2.4, 0, Math.PI * 2); g.fill(); }
+        g.fillStyle = gold(); g.beginPath(); g.arc(W * 0.5, H * 0.43, W * 0.16, 0, Math.PI * 2); g.fill();
+        g.fillStyle = t.mid; g.beginPath(); g.arc(W * 0.555, H * 0.41, W * 0.14, 0, Math.PI * 2); g.fill();
+        lantern(W * 0.18, 0, 36); lantern(W * 0.82, 0, 36);
+        g.fillStyle = '#04101f'; for (let i = 0; i < 5; i += 1) { g.beginPath(); g.arc(W * (0.1 + i * 0.2), H, W * 0.12, Math.PI, 0); g.fill(); }
+      } else if (t.kind === 'snow') {
+        for (let i = 0; i < 110; i += 1) { g.fillStyle = '#ffffffbb'; g.beginPath(); g.arc(rnd() * W, rnd() * H, 2 + rnd() * 5, 0, Math.PI * 2); g.fill(); }
+        bokeh(22, 0.55, 1);
+        for (let i = 0; i < 7; i += 1) { const x = W * (0.08 + i * 0.14); g.fillStyle = ['#e63946', '#ffd36b', '#ffffff'][i % 3]; g.beginPath(); g.arc(x, H * 0.07 + (i % 2) * 40, 20, 0, Math.PI * 2); g.fill(); }
+        g.strokeStyle = '#ffd36b'; g.lineWidth = 3; g.beginPath(); g.moveTo(0, H * 0.05); for (let i = 1; i <= 7; i += 1) g.quadraticCurveTo(W * (i - 0.5) / 7, H * 0.11, W * i / 7, H * 0.05); g.stroke();
+      } else if (t.kind === 'color') {
+        for (let i = 0; i < 26; i += 1) {
+          const x = rnd() * W, y = rnd() * H, r = 60 + rnd() * 170;
+          const cols = ['#ff2d6f', '#ffe14d', '#27d3ff', '#7cff4d', '#ff8a1f', '#b84dff'];
+          const b = g.createRadialGradient(x, y, 0, x, y, r); b.addColorStop(0, cols[i % 6] + 'cc'); b.addColorStop(1, cols[i % 6] + '00');
+          g.fillStyle = b; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill();
+        }
+      } else if (t.kind === 'sun') {
+        g.fillStyle = '#fff6b5'; g.beginPath(); g.arc(W / 2, H * 0.4, W * 0.18, 0, Math.PI * 2); g.fill();
+        g.strokeStyle = '#fff6b588'; g.lineWidth = 8; for (let i = 0; i < 24; i += 1) { const a = i * Math.PI / 12; g.beginPath(); g.moveTo(W / 2 + Math.cos(a) * W * 0.22, H * 0.4 + Math.sin(a) * W * 0.22); g.lineTo(W / 2 + Math.cos(a) * W * 0.32, H * 0.4 + Math.sin(a) * W * 0.32); g.stroke(); }
+        g.fillStyle = '#7a3a12'; g.beginPath(); g.ellipse(W / 2, H * 0.56, W * 0.14, H * 0.05, 0, 0, Math.PI * 2); g.fill();
+        g.fillStyle = '#c0501a'; g.beginPath(); g.moveTo(W * 0.38, H * 0.5); g.quadraticCurveTo(W * 0.34, H * 0.6, W * 0.42, H * 0.62); g.lineTo(W * 0.58, H * 0.62); g.quadraticCurveTo(W * 0.66, H * 0.6, W * 0.62, H * 0.5); g.closePath(); g.fill();
+        for (let i = 0; i < 12; i += 1) { g.fillStyle = i % 2 ? '#2f9e44' : '#8bd450'; g.beginPath(); g.ellipse(W * (0.05 + i * 0.085), H * 0.96, 16, 90 + (i % 3) * 25, 0, 0, Math.PI * 2); g.fill(); }
+      } else {
+        for (let i = 0; i < 90; i += 1) { g.save(); g.translate(rnd() * W, rnd() * H); g.rotate(rnd() * 6); g.fillStyle = ['#ffe14d', '#ff4f9a', '#4dd2ff', '#7cff4d', '#ffffff'][i % 5]; g.fillRect(-7, -3, 14, 6); g.restore(); }
+        bokeh(14, 0.5, 1);
+        for (let i = 0; i < 6; i += 1) { const x = W * (0.1 + i * 0.16), y = H * (0.12 + (i % 2) * 0.05); g.fillStyle = ['#ff4f9a', '#ffe14d', '#4dd2ff'][i % 3]; g.beginPath(); g.ellipse(x, y, 40, 52, 0, 0, Math.PI * 2); g.fill(); g.strokeStyle = '#ffffff88'; g.lineWidth = 2; g.beginPath(); g.moveTo(x, y + 52); g.lineTo(x + 10, y + 190); g.stroke(); }
+      }
+      const vg = g.createRadialGradient(W / 2, H / 2, W * 0.35, W / 2, H / 2, H * 0.8);
+      vg.addColorStop(0, '#00000000'); vg.addColorStop(1, '#00000066');
+      g.fillStyle = vg; g.fillRect(0, 0, W, H);
+      return c;
+    }
+
+    Object.entries(THEME_ART).forEach(([key, theme]) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'rounded-lg overflow-hidden border border-slate-700 hover:border-sky-400 text-[10px] text-slate-300 bg-slate-950';
+      const thumb = makeThemeArt(key, 160, 200);
+      button.innerHTML = `<img src="${thumb.toDataURL('image/jpeg', 0.8)}" alt="${theme.label}" class="w-full h-16 object-cover" /><div class="py-0.5">${theme.label}</div>`;
+      button.addEventListener('click', () => {
+        const portrait = document.getElementById('posterFormat').value !== 'desktop';
+        const art = portrait ? makeThemeArt(key, 1080, 1350) : makeThemeArt(key, 1920, 1080);
+        loadArtwork(art.toDataURL('image/jpeg', 0.92), `${theme.label} background selected. Now fill the text fields and click Generate Poster.`, () => showToast('Could not create that background.'));
+      });
+      artGallery.appendChild(button);
+    });
+
+    function buildChatPrompt() {
+      const scene = document.getElementById('freeArtPrompt').value.trim() || document.getElementById('posterRequest').value.trim();
+      if (!scene) return '';
+      const landscape = document.getElementById('posterFormat').value === 'desktop';
+      return `Create a high-resolution, ${landscape ? '16:9 landscape' : '4:5 portrait'} poster background artwork: ${scene}. Luxurious, rich colours and lighting. Leave clear empty space at the top (for a logo and headline) and at the bottom (for a contact bar). IMPORTANT: do not draw any text, letters, numbers, logos or watermarks anywhere in the image.`;
+    }
+
+    async function copyAndOpen(url) {
+      const prompt = buildChatPrompt();
+      if (!prompt) {
+        showToast('Describe the image first (box above).');
+        return;
+      }
+      try { await navigator.clipboard.writeText(prompt); } catch (e) { /* user can copy manually */ }
+      window.open(url, '_blank', 'noopener');
+      showToast('Prompt copied. Paste it (Ctrl+V) in the chat, download the image, then upload it below.');
+    }
+    document.getElementById('openChatGptBtn').addEventListener('click', () => copyAndOpen('https://chatgpt.com/'));
+    document.getElementById('openGeminiBtn').addEventListener('click', () => copyAndOpen('https://gemini.google.com/app'));
+
+    document.getElementById('freeArtBtn').addEventListener('click', async () => {
+      const prompt = document.getElementById('freeArtPrompt').value.trim();
+      const status = document.getElementById('freeArtStatus');
+      const button = document.getElementById('freeArtBtn');
+      if (!prompt) {
+        showToast('Describe the image first.');
+        return;
+      }
+      const landscape = document.getElementById('posterFormat').value === 'desktop';
+      const full = `${prompt}. Poster background artwork with clear empty space at the top and bottom for text. Do not draw any text, letters, words, logos or watermarks.`;
+      button.disabled = true;
+      status.textContent = 'Creating your image with OpenAI... this takes 20-60 seconds.';
+      try {
+        const response = await fetch(AUTH_API + '/image', {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify({ prompt: full, orientation: landscape ? 'landscape' : 'portrait' })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Image generation failed.');
+        loadArtwork(`data:image/png;base64,${data.image}`, 'Image ready. Fill the text fields and click Generate Poster.', () => {
+          status.textContent = 'The image could not be displayed. Try again.';
+        }, () => {
+          status.textContent = 'Image ready. Click again for a different version.';
+        });
+      } catch (error) {
+        status.textContent = error instanceof TypeError
+          ? 'Cannot reach the local server. Start it with: py .\\tts_server.py'
+          : error.message;
+      } finally {
+        button.disabled = false;
+      }
+    });    document.getElementById('posterFestival').addEventListener('change', (event) => {
+      posterUploadedBackground = null;
+      loadPosterFestivalImage(event.target.value);
+    });
+
+    function posterText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = text.split(/\s+/);
+      let line = '';
+      words.forEach((word) => {
+        const test = line ? `${line} ${word}` : word;
+        if (ctx.measureText(test).width > maxWidth && line) {
+          ctx.fillText(line, x, y);
+          line = word;
+          y += lineHeight;
+        } else {
+          line = test;
+        }
+      });
+      if (line) ctx.fillText(line, x, y);
+      return y;
+    }
+
+    const OVERLAY_INDIC = '"Noto Sans Kannada","Noto Sans Devanagari","Noto Sans Tamil","Noto Sans Telugu","Noto Sans Malayalam","Noto Sans Bengali","Noto Sans Gujarati","Noto Sans Gurmukhi","Noto Sans Oriya","Noto Naskh Arabic","Noto Sans Ol Chiki","Noto Sans Meetei Mayek","Plus Jakarta Sans",sans-serif';
+    const OVERLAY_SERIF = 'Georgia,"Noto Sans Kannada","Noto Sans Devanagari","Noto Sans Tamil","Noto Sans Telugu","Noto Sans Malayalam","Noto Sans Bengali","Noto Sans Gujarati","Noto Sans Gurmukhi","Noto Sans Oriya","Noto Naskh Arabic","Noto Sans Ol Chiki","Noto Sans Meetei Mayek","Times New Roman",serif';
+
+    function wrapPosterLines(ctx, text, maxWidth) {
+      const lines = [];
+      let line = '';
+      text.trim().split(/\s+/).forEach((word) => {
+        const candidate = line ? `${line} ${word}` : word;
+        if (line && ctx.measureText(candidate).width > maxWidth) {
+          lines.push(line);
+          line = word;
+        } else {
+          line = candidate;
+        }
+      });
+      if (line) lines.push(line);
+      return lines;
+    }
+
+    // Shrinks the font until the text fits the width within maxLines.
+    function fitPosterText(ctx, text, fontFor, maxWidth, startSize, minSize, maxLines) {
+      let size = startSize;
+      let lines = [];
+      while (size >= minSize) {
+        ctx.font = fontFor(size);
+        lines = wrapPosterLines(ctx, text, maxWidth);
+        if (lines.length <= maxLines) break;
+        size -= 2;
+      }
+      return { size: Math.max(size, minSize), lines };
+    }
+
+    // Draws logo, headline, wish, ribbon, service tiles and contact bar over uploaded artwork.
+    function composePosterOnArtwork(ctx, W, H, art, o) {
+      const portrait = H >= W;
+      const rh = H;
+      const rw = portrait ? W : Math.round(H * 0.8);
+      const rx = Math.round((W - rw) / 2);
+      const cx = rx + rw / 2;
+      const cover = (x, y, w, h) => {
+        const scale = Math.max(w / art.naturalWidth, h / art.naturalHeight);
+        const iw = art.naturalWidth * scale;
+        const ih = art.naturalHeight * scale;
+        ctx.drawImage(art, x + (w - iw) / 2, y + (h - ih) / 2, iw, ih);
+      };
+      if (!portrait) {
+        ctx.save();
+        ctx.filter = 'blur(28px)';
+        cover(0, 0, W, H);
+        ctx.restore();
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+        ctx.fillRect(0, 0, W, H);
+      }
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(rx, 0, rw, rh);
+      ctx.clip();
+      cover(rx, 0, rw, rh);
+
+      const isLight = (from, to) => {
+        try {
+          const data = ctx.getImageData(rx, Math.round(from * rh), rw, Math.max(1, Math.round((to - from) * rh))).data;
+          let sum = 0;
+          let count = 0;
+          for (let i = 0; i < data.length; i += 148) {
+            sum += 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+            count += 1;
+          }
+          return sum / count > 140;
+        } catch {
+          return false;
+        }
+      };
+      const pill = (x, y, w, h, fill, stroke) => {
+        ctx.beginPath();
+        ctx.roundRect(x, y, w, h, h / 2);
+        ctx.fillStyle = fill;
+        ctx.fill();
+        ctx.lineWidth = Math.max(2, rw * 0.003);
+        ctx.strokeStyle = stroke;
+        ctx.stroke();
+      };
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'alphabetic';
+
+      if (isReadyImage(o.logo)) {
+        const scale = Math.min(rw * 0.42 / o.logo.naturalWidth, rh * 0.13 / o.logo.naturalHeight);
+        const lw = o.logo.naturalWidth * scale;
+        const lh = o.logo.naturalHeight * scale;
+        ctx.drawImage(o.logo, cx - lw / 2, rh * 0.012, lw, lh);
+      } else if (o.company) {
+        ctx.font = `800 ${rw * 0.06}px ${OVERLAY_INDIC}`;
+        ctx.fillStyle = '#fde68a';
+        ctx.shadowColor = 'rgba(0,0,0,0.6)';
+        ctx.shadowBlur = 8;
+        ctx.fillText(o.company, cx, rh * 0.09);
+        ctx.shadowBlur = 0;
+      }
+
+      let cursorY = rh * 0.175;
+      if (o.headline) {
+        const fit = fitPosterText(ctx, o.headline, (s) => `800 ${s}px ${OVERLAY_INDIC}`, rw * 0.82, rw * 0.09, rw * 0.04, 2);
+        const lineHeight = fit.size * 1.22;
+        ctx.font = `800 ${fit.size}px ${OVERLAY_INDIC}`;
+        ctx.lineJoin = 'round';
+        fit.lines.forEach((line, index) => {
+          const y = cursorY + fit.size + index * lineHeight;
+          ctx.save();
+          ctx.shadowColor = 'rgba(0, 0, 0, 0.45)';
+          ctx.shadowBlur = fit.size * 0.12;
+          ctx.shadowOffsetY = 3;
+          ctx.lineWidth = fit.size * 0.13;
+          ctx.strokeStyle = '#5a2205';
+          ctx.strokeText(line, cx, y);
+          ctx.restore();
+          const gold = ctx.createLinearGradient(0, y - fit.size, 0, y);
+          gold.addColorStop(0, '#fff1b0');
+          gold.addColorStop(0.5, '#f6b93b');
+          gold.addColorStop(1, '#c9771a');
+          ctx.fillStyle = gold;
+          ctx.fillText(line, cx, y);
+        });
+        cursorY += fit.size + (fit.lines.length - 1) * lineHeight + rh * 0.02;
+      }
+      if (o.subtitle) {
+        const light = isLight(cursorY / rh, cursorY / rh + 0.07);
+        const fit = fitPosterText(ctx, o.subtitle, (s) => `italic ${s}px ${OVERLAY_SERIF}`, rw * 0.78, rw * 0.031, rw * 0.02, 3);
+        ctx.font = `italic ${fit.size}px ${OVERLAY_SERIF}`;
+        ctx.fillStyle = light ? '#4a1d12' : '#fff3d6';
+        fit.lines.forEach((line, index) => ctx.fillText(line, cx, cursorY + fit.size + index * fit.size * 1.3));
+      }
+
+      if (o.tagline) {
+        const fit = fitPosterText(ctx, o.tagline, (s) => `italic 600 ${s}px ${OVERLAY_SERIF}`, rw * 0.76, rw * 0.032, rw * 0.018, 1);
+        ctx.font = `italic 600 ${fit.size}px ${OVERLAY_SERIF}`;
+        const pillW = Math.min(rw * 0.9, ctx.measureText(fit.lines[0]).width + rw * 0.1);
+        const pillH = rh * 0.05;
+        const pillY = rh * 0.56;
+        pill(cx - pillW / 2, pillY, pillW, pillH, '#5b0f2a', '#e8b84a');
+        ctx.fillStyle = '#ffeccb';
+        ctx.fillText(fit.lines[0], cx, pillY + pillH / 2 + fit.size * 0.33);
+      }
+
+      const active = o.services.filter((service) => isReadyImage(service.image));
+      if (active.length > 0) {
+        const columns = Math.max(active.length, 3);
+        const slotW = rw * 0.9 / columns;
+        const startX = cx - (active.length * slotW) / 2;
+        active.forEach((service, index) => {
+          const slotCx = startX + slotW * (index + 0.5);
+          const boxW = slotW * 0.9;
+          const boxH = rh * 0.105;
+          const scale = Math.min(boxW / service.image.naturalWidth, boxH / service.image.naturalHeight);
+          const iw = service.image.naturalWidth * scale;
+          const ih = service.image.naturalHeight * scale;
+          const imageBottom = rh * 0.735;
+          ctx.fillStyle = 'rgba(245, 190, 70, 0.85)';
+          ctx.beginPath();
+          ctx.ellipse(slotCx, imageBottom, slotW * 0.45, rh * 0.01, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.drawImage(service.image, slotCx - iw / 2, imageBottom - ih, iw, ih);
+          if (service.label) {
+            const fit = fitPosterText(ctx, service.label, (s) => `600 ${s}px ${OVERLAY_INDIC}`, slotW * 0.86, rw * 0.022, rw * 0.012, 1);
+            ctx.font = `600 ${fit.size}px ${OVERLAY_INDIC}`;
+            const labelW = Math.min(slotW * 0.98, ctx.measureText(fit.lines[0]).width + rw * 0.03);
+            const labelH = rh * 0.03;
+            const labelY = rh * 0.75;
+            pill(slotCx - labelW / 2, labelY, labelW, labelH, '#4a0e1f', '#e8b84a');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText(fit.lines[0], slotCx, labelY + labelH / 2 + fit.size * 0.34);
+          }
+        });
+      }
+
+      const drawCentered = (text, y, fontFor, startSize, minSize, lightColor, darkColor, spacing) => {
+        if (!text) return;
+        const light = isLight(y / rh - 0.02, y / rh + 0.02);
+        const fit = fitPosterText(ctx, text, fontFor, rw * 0.9, startSize, minSize, 1);
+        ctx.font = fontFor(fit.size);
+        ctx.letterSpacing = spacing ? `${spacing}px` : '0px';
+        ctx.fillStyle = light ? darkColor : lightColor;
+        ctx.fillText(fit.lines[0], cx, y);
+        ctx.letterSpacing = '0px';
+      };
+      drawCentered(o.offer, rh * 0.81, (s) => `800 ${s}px ${OVERLAY_INDIC}`, rw * 0.027, rw * 0.015, '#ffd978', '#1b1f4b', 0);
+      drawCentered(o.slogan, rh * 0.9, (s) => `600 ${s}px ${OVERLAY_INDIC}`, rw * 0.017, rw * 0.01, '#ffe9b0', '#3b2a14', rw * 0.004);
+
+      if (o.contact) {
+        const barH = rh * 0.055;
+        const barW = rw * 0.94;
+        const barY = rh * 0.925;
+        pill(cx - barW / 2, barY, barW, barH, '#0b1f55', '#d9a73a');
+        const fit = fitPosterText(ctx, o.contact, (s) => `700 ${s}px ${OVERLAY_INDIC}`, barW * 0.9, rw * 0.03, rw * 0.014, 1);
+        ctx.font = `700 ${fit.size}px ${OVERLAY_INDIC}`;
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(fit.lines[0], cx, barY + barH / 2 + fit.size * 0.34);
+      }
+      ctx.restore();
+      ctx.textAlign = 'start';
+    }
+
+    function extractQuotedHeadline(request) {
+      const matches = [...request.matchAll(/["“]([^"“”]{3,100})["”]/g)].map((match) => match[1].trim());
+      return matches.find((text) => !/^https?:|@|www\./i.test(text)) || '';
+    }
+
+    localPosterForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const request = document.getElementById('posterRequest').value.trim();
+      if (!request && !document.getElementById('overlayOnArtwork').checked) {
+        showToast('Describe the poster, or pick artwork and fill the text fields.');
+        return;
+      }
+      const company = document.getElementById('posterCompany').value.trim() || 'Our Brand';
+      const website = document.getElementById('posterWebsite').value.trim();
+      const email = document.getElementById('posterEmail').value.trim();
+      const phone = document.getElementById('posterPhone').value.trim();
+      const preserveReference = document.getElementById('preserveReference').checked;
+      const useServiceTemplate = document.getElementById('useServiceTemplate').checked;
+      const posterFitMode = document.getElementById('posterFitMode').value;
+      const requestedPhotoCount = Math.max(0, Math.min(60, Number.parseInt(document.getElementById('posterPhotoCount').value, 10) || 0));
+      const selectedPersonalImages = personalPosterImages.slice(0, requestedPhotoCount);
+      const lowerRequest = request.toLowerCase();
+      const detectedFestival = lowerRequest.includes('narak') || lowerRequest.includes('naraka') ? 'narak'
+        : lowerRequest.includes('diwali') || lowerRequest.includes('deepavali') ? 'diwali'
+          : lowerRequest.includes('eid') ? 'eid'
+            : lowerRequest.includes('christmas') ? 'christmas'
+              : lowerRequest.includes('holi') ? 'holi'
+                : lowerRequest.includes('pongal') || lowerRequest.includes('sankranti') ? 'pongal'
+                  : lowerRequest.includes('birthday') || lowerRequest.includes('birth day') ? 'birthday'
+                  : document.getElementById('posterFestival').value;
+      document.getElementById('posterFestival').value = detectedFestival;
+      loadPosterFestivalImage(detectedFestival);
+      const festivalNames = {
+        narak: 'NARAK CHATURDASHI',
+        diwali: 'DIWALI / DEEPAVALI',
+        eid: 'EID MUBARAK',
+        christmas: 'MERRY CHRISTMAS',
+        holi: 'HAPPY HOLI',
+        pongal: 'HAPPY PONGAL',
+        birthday: 'HAPPY BIRTHDAY',
+        custom: 'FESTIVE GREETINGS'
+      };
+      const title = festivalNames[detectedFestival] || festivalNames.custom;
+      const subtitle = detectedFestival === 'narak'
+        ? 'May the light of goodness overcome all darkness'
+        : detectedFestival === 'eid' ? 'May this celebration bring peace, joy and blessings'
+          : detectedFestival === 'christmas' ? 'Wishing you warmth, joy and togetherness'
+        : detectedFestival === 'birthday' ? 'Wishing you happiness, success and wonderful memories'
+        : 'Wishing you joy, peace and prosperity';
+      const ctx = localPosterCanvas.getContext('2d');
+      const posterFormatValue = document.getElementById('posterFormat').value;
+      const W = posterFormatValue === 'desktop' ? 1920 : 1080;
+      const H = posterFormatValue === 'desktop' ? 1080 : 1350;
+      const cx = W / 2;
+      const Y = (value) => Math.round(value * H / 1350);
+      localPosterCanvas.width = W;
+      localPosterCanvas.height = H;
+      localPosterCanvas.className = `hidden mt-6 w-full ${W > H ? 'max-w-3xl' : 'max-w-md'} mx-auto rounded-xl border border-slate-700`;
+      const gradient = ctx.createLinearGradient(0, 0, W, H);
+      gradient.addColorStop(0, '#170b35');
+      gradient.addColorStop(0.55, '#7c241d');
+      gradient.addColorStop(1, '#f59e0b');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, W, H);
+      const backgroundImage = posterReferenceImage || posterUploadedBackground || posterFestivalImage;
+      const useReferenceAsTemplate = Boolean(posterReferenceImage && preserveReference && useServiceTemplate);
+      const useReferenceOnly = Boolean(posterReferenceImage && preserveReference && !useServiceTemplate);
+      const overlayArtworkUploaded = posterReferenceImage || posterUploadedBackground;
+      const overlayRequested = document.getElementById('overlayOnArtwork').checked;
+      const overlayArtwork = overlayArtworkUploaded || posterFestivalImage;
+      if (overlayRequested && !(overlayArtwork && overlayArtwork.complete && overlayArtwork.naturalWidth > 0)) {
+        showToast('Artwork is still loading. Please try again in a moment.');
+        return;
+      }
+      if (overlayRequested) {
+        const overlay = {
+          logo: posterLogoImage,
+          company,
+          headline: document.getElementById('overlayHeadline').value.trim() || extractQuotedHeadline(request) || title,
+          subtitle: document.getElementById('overlaySubtitle').value.trim(),
+          tagline: document.getElementById('overlayTagline').value.trim(),
+          offer: document.getElementById('overlayOffer').value.trim(),
+          slogan: document.getElementById('overlaySlogan').value.trim(),
+          contact: [website.replace(/^https?:\/\//i, '').replace(/\/$/, ''), email, phone].filter(Boolean).join('   •   '),
+          services: serviceImages.map((image, index) => ({
+            image,
+            label: document.getElementById(`serviceLabel${index}`).value.trim()
+          }))
+        };
+        const sampleText = Object.values({ ...overlay, logo: '', services: '' }).join(' ') + overlay.services.map((s) => s.label).join(' ');
+        const fontLoads = ['Kannada', 'Devanagari', 'Tamil', 'Telugu', 'Malayalam', 'Bengali', 'Gujarati', 'Gurmukhi', 'Oriya', 'Ol Chiki', 'Meetei Mayek'].flatMap((script) => [
+          document.fonts.load(`800 40px "Noto Sans ${script}"`, sampleText),
+          document.fonts.load(`600 20px "Noto Sans ${script}"`, sampleText)
+        ]).concat([document.fonts.load('700 20px "Noto Naskh Arabic"', sampleText)]);
+        Promise.all(fontLoads).catch(() => {}).then(() => {
+          composePosterOnArtwork(ctx, W, H, overlayArtwork, overlay);
+          localPosterCanvas.classList.remove('hidden');
+          downloadPosterBtn.disabled = false;
+          showToast('Poster composed on your artwork.');
+        });
+        return;
+      }
+      let imageWidth = W;
+      let imageHeight = H;
+      let imageOffsetX = 0;
+      let imageOffsetY = 0;
+      if (backgroundImage.complete && backgroundImage.naturalWidth > 0) {
+        const scale = posterFitMode === 'contain'
+          ? Math.min(W / backgroundImage.naturalWidth, H / backgroundImage.naturalHeight)
+          : Math.max(W / backgroundImage.naturalWidth, H / backgroundImage.naturalHeight);
+        imageWidth = backgroundImage.naturalWidth * scale;
+        imageHeight = backgroundImage.naturalHeight * scale;
+        imageOffsetX = (W - imageWidth) / 2;
+        imageOffsetY = (H - imageHeight) / 2;
+        ctx.globalAlpha = useReferenceOnly || useReferenceAsTemplate ? 1 : 0.62;
+        ctx.drawImage(backgroundImage, imageOffsetX, imageOffsetY, imageWidth, imageHeight);
+        ctx.globalAlpha = 1;
+        if (!useReferenceOnly && !useReferenceAsTemplate) {
+          const overlay = ctx.createLinearGradient(0, 0, 0, H);
+          overlay.addColorStop(0, 'rgba(23, 11, 53, 0.78)');
+          overlay.addColorStop(0.48, 'rgba(124, 36, 29, 0.25)');
+          overlay.addColorStop(1, 'rgba(28, 25, 23, 0.9)');
+          ctx.fillStyle = overlay;
+          ctx.fillRect(0, 0, W, H);
+        }
+      }
+      if (useReferenceOnly) {
+        ctx.globalAlpha = 1;
+        ctx.textAlign = 'start';
+        localPosterCanvas.classList.remove('hidden');
+        downloadPosterBtn.disabled = false;
+        showToast('Reference artwork preserved exactly without overlays.');
+        return;
+      }
+      if (useReferenceAsTemplate) {
+        const serviceImagePositions = [0.09, 0.27, 0.45, 0.63, 0.81];
+        serviceImages.forEach((image, index) => {
+          if (!image) return;
+          const slotWidth = imageWidth * 0.14;
+          const slotHeight = imageHeight * 0.12;
+          const slotX = imageOffsetX + imageWidth * serviceImagePositions[index] - slotWidth / 2;
+          const slotY = imageOffsetY + imageHeight * 0.70;
+          ctx.fillStyle = '#fffdf5';
+          ctx.fillRect(slotX - 6, slotY - 6, slotWidth + 12, slotHeight + 12);
+          const scale = Math.min(slotWidth / image.naturalWidth, slotHeight / image.naturalHeight);
+          const width = image.naturalWidth * scale;
+          const height = image.naturalHeight * scale;
+          ctx.drawImage(image, slotX + (slotWidth - width) / 2, slotY + (slotHeight - height) / 2, width, height);
+        });
+        ctx.textAlign = 'start';
+        localPosterCanvas.classList.remove('hidden');
+        downloadPosterBtn.disabled = false;
+        showToast('Reference layout preserved; service images replaced in place.');
+        return;
+      }
+      if (useServiceTemplate) {
+        const panelTop = Y(850);
+        ctx.fillStyle = '#fffdf5';
+        ctx.fillRect(0, panelTop, W, H - panelTop);
+        ctx.fillStyle = '#1d4ed8';
+        ctx.font = '700 27px Arial';
+        ctx.fillText('Our Services & Solutions', cx, panelTop + 45);
+        const columnWidth = (W - 30) / 5;
+        const itemWidth = columnWidth - 35;
+        for (let index = 0; index < 5; index += 1) {
+          const x = 35 + index * columnWidth;
+          const image = serviceImages[index];
+          if (image) {
+            const scale = Math.min(itemWidth / image.naturalWidth, 120 / image.naturalHeight);
+            const width = image.naturalWidth * scale;
+            const height = image.naturalHeight * scale;
+            ctx.drawImage(image, x + (itemWidth - width) / 2, panelTop + 75 + (120 - height) / 2, width, height);
+          } else {
+            ctx.fillStyle = '#e5e7eb';
+            ctx.fillRect(x, panelTop + 75, itemWidth, 120);
+          }
+          ctx.fillStyle = '#1e3a8a';
+          ctx.font = '700 18px Arial';
+          const label = document.getElementById(`serviceLabel${index}`).value.trim() || `Service ${index + 1}`;
+          posterText(ctx, label, x + itemWidth / 2, panelTop + 230, itemWidth, 23);
+        }
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(35, H - 160, W - 70, 110);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '600 23px Arial';
+        const contact = [website, email, phone].filter(Boolean).join('  |  ');
+        posterText(ctx, contact || 'Add your website, email and phone number', cx, H - 105, W - 150, 30);
+        ctx.textAlign = 'start';
+        localPosterCanvas.classList.remove('hidden');
+        downloadPosterBtn.disabled = false;
+        showToast('Template poster generated with editable services.');
+        return;
+      }
+      ctx.fillStyle = 'rgba(255, 190, 50, 0.18)';
+      for (let i = 0; i < 22; i++) {
+        const x = 50 + (i * 197) % (W - 100);
+        const y = Y(110) + (i * 311) % (H - Y(310));
+        ctx.beginPath();
+        ctx.arc(x, y, 4 + (i % 4) * 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.textAlign = 'center';
+      if (posterLogoImage) {
+        const size = 130;
+        ctx.drawImage(posterLogoImage, cx - size / 2, Y(125), size, size);
+      } else {
+        ctx.fillStyle = detectedFestival === 'birthday' ? '#f9a8d4' : '#fbbf24';
+        ctx.font = '700 72px Arial';
+        ctx.fillText('✦', cx, Y(210));
+      }
+      ctx.fillStyle = '#fff7ed';
+      ctx.font = '800 76px Arial';
+      posterText(ctx, title, cx, Y(430), Math.min(W - 180, 1400), 90);
+      ctx.fillStyle = '#fde68a';
+      ctx.font = 'italic 34px Arial';
+      posterText(ctx, subtitle, cx, Y(580), Math.min(W - 260, 1200), 48);
+      ctx.fillStyle = '#fff';
+      ctx.font = '400 28px Arial';
+      posterText(ctx, 'Celebrate the victory of light, hope and goodness.', cx, Y(770), Math.min(W - 260, 1200), 42);
+      if (selectedPersonalImages.length > 0) {
+        const galleryX = 90;
+        const galleryY = Y(835);
+        const galleryWidth = W - 180;
+        const galleryHeight = Y(205);
+        const columns = Math.min(10, Math.max(1, Math.ceil(Math.sqrt(selectedPersonalImages.length * 1.5))));
+        const rows = Math.ceil(selectedPersonalImages.length / columns);
+        const gap = selectedPersonalImages.length > 20 ? 5 : 10;
+        const photoWidth = (galleryWidth - gap * (columns - 1)) / columns;
+        const photoHeight = (galleryHeight - gap * (rows - 1)) / rows;
+        selectedPersonalImages.forEach((image, index) => {
+          const column = index % columns;
+          const row = Math.floor(index / columns);
+          const x = galleryX + column * (photoWidth + gap);
+          const y = galleryY + row * (photoHeight + gap);
+          const scale = Math.max(photoWidth / image.naturalWidth, photoHeight / image.naturalHeight);
+          const width = image.naturalWidth * scale;
+          const height = image.naturalHeight * scale;
+          ctx.save();
+          ctx.beginPath();
+          ctx.roundRect(x, y, photoWidth, photoHeight, selectedPersonalImages.length > 20 ? 4 : 10);
+          ctx.clip();
+          ctx.drawImage(image, x + (photoWidth - width) / 2, y + (photoHeight - height) / 2, width, height);
+          ctx.restore();
+        });
+      }
+      ctx.fillStyle = '#1c1917';
+      const contactY = Y(selectedPersonalImages.length > 0 ? 1070 : 1060);
+      const contactHeight = Y(selectedPersonalImages.length > 0 ? 215 : 190);
+      ctx.fillRect(90, contactY, W - 180, contactHeight);
+      ctx.fillStyle = '#fef3c7';
+      ctx.font = '600 25px Arial';
+      const contact = [website, email, phone].filter(Boolean).join('  |  ');
+      posterText(ctx, contact || 'Add your website, email and phone number', cx, contactY + Y(75), W - 280, 38);
+      ctx.font = '400 20px Arial';
+      ctx.fillStyle = '#fbbf24';
+      ctx.fillText('Share the light • Instagram', cx, contactY + Y(145));
+      ctx.textAlign = 'start';
+      localPosterCanvas.classList.remove('hidden');
+      downloadPosterBtn.disabled = false;
+      showToast('Poster generated locally without credits.');
+    });
+
+    posterFestivalImage.onload = () => {
+      if (!localPosterCanvas.classList.contains('hidden') && document.getElementById('posterRequest').value.trim()) {
+        localPosterForm.dispatchEvent(new Event('submit', { cancelable: true }));
+      }
+    };
+
+    document.getElementById('posterFormat').addEventListener('change', () => {
+      if (!localPosterCanvas.classList.contains('hidden') && document.getElementById('posterRequest').value.trim()) {
+        localPosterForm.dispatchEvent(new Event('submit', { cancelable: true }));
+      }
+    });
+
+    downloadPosterBtn.addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = `poster-${document.getElementById('posterFormat').value}.png`;
+      link.href = localPosterCanvas.toDataURL('image/png');
+      link.click();
+    });
+
+    // ==========================================
+    // TEXT PROMPT BUILDER LOGIC
+    // ==========================================
+    const textPromptForm = document.getElementById('textPromptForm');
+    const textOutputBox = document.getElementById('textOutputBox');
+    const textPromptResult = document.getElementById('textPromptResult');
+    const copyPromptResultBtn = document.getElementById('copyPromptResultBtn');
+    const textResetBtn = document.getElementById('textResetBtn');
+
+    textPromptForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const category = document.getElementById('textCategory').value;
+      const name = document.getElementById('textEventName').value.trim();
+      const format = document.getElementById('textFormat').value;
+      const tone = document.getElementById('textTone').value;
+      const details = document.getElementById('textExtraDetails').value.trim();
+
+      let promptText = `Act as an expert copywriter and event marketing specialist.\n\nTask: Create content for "${name}" under the "${category}" category.\nTarget Format: ${format.toUpperCase()}\nTone: ${tone}\n`;
+      if (details) promptText += `Key Details / Offers: ${details}\n\n`;
+      else promptText += `\n`;
+
+      promptText += `Requirements:\n1. Hook the audience instantly in sentence 1.\n2. Keep messaging natural, authentic, and free of corporate jargon.\n3. Include a clear Call to Action (CTA).\n4. Provide 2 distinct creative variations (one concise, one expressive).`;
+
+      textPromptResult.innerText = promptText;
+      textOutputBox.classList.remove('hidden');
+      textOutputBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      showToast('Copywriting prompt generated!');
+    });
+
+    textResetBtn.addEventListener('click', () => {
+      textPromptForm.reset();
+      textOutputBox.classList.add('hidden');
+    });
+
+    copyPromptResultBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(textPromptResult.innerText).then(() => {
+        showToast('Prompt copied to clipboard!');
+      });
+    });
+
+    document.querySelectorAll('.copy-card').forEach(btn => {
+      btn.addEventListener('click', () => {
+        navigator.clipboard.writeText(btn.getAttribute('data-text')).then(() => {
+          showToast('Card prompt copied!');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
