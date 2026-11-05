@@ -2576,9 +2576,12 @@
         ctx.shadowBlur = 0;
       }
 
-      let cursorY = rh * 0.175;
+      let cursorY = rh * 0.155;
       if (o.headline) {
-        const fit = fitPosterText(ctx, o.headline, (s) => `800 ${s}px ${OVERLAY_INDIC}`, rw * 0.82, rw * 0.09, rw * 0.04, 2);
+        // Prefer a single headline line (as in the reference poster) so the wish never runs into the artwork.
+        const headlineFont = (s) => `800 ${s}px ${OVERLAY_INDIC}`;
+        let fit = fitPosterText(ctx, o.headline, headlineFont, rw * 0.86, rw * 0.09, rw * 0.045, 1);
+        if (fit.lines.length > 1) fit = fitPosterText(ctx, o.headline, headlineFont, rw * 0.82, rw * 0.075, rw * 0.04, 2);
         const lineHeight = fit.size * 1.22;
         ctx.font = `800 ${fit.size}px ${OVERLAY_INDIC}`;
         ctx.lineJoin = 'round';
@@ -2599,14 +2602,18 @@
           ctx.fillStyle = gold;
           ctx.fillText(line, cx, y);
         });
-        cursorY += fit.size + (fit.lines.length - 1) * lineHeight + rh * 0.02;
+        cursorY += fit.size + (fit.lines.length - 1) * lineHeight + rh * 0.012;
       }
       if (o.subtitle) {
         const light = isLight(cursorY / rh, cursorY / rh + 0.07);
-        const fit = fitPosterText(ctx, o.subtitle, (s) => `italic ${s}px ${OVERLAY_SERIF}`, rw * 0.78, rw * 0.031, rw * 0.02, 3);
+        const fit = fitPosterText(ctx, o.subtitle, (s) => `italic ${s}px ${OVERLAY_SERIF}`, rw * 0.74, rw * 0.03, rw * 0.02, 2);
         ctx.font = `italic ${fit.size}px ${OVERLAY_SERIF}`;
         ctx.fillStyle = light ? '#4a1d12' : '#fff3d6';
+        ctx.save();
+        ctx.shadowColor = light ? 'rgba(255, 255, 255, 0.55)' : 'rgba(0, 0, 0, 0.75)';
+        ctx.shadowBlur = fit.size * 0.35;
         fit.lines.forEach((line, index) => ctx.fillText(line, cx, cursorY + fit.size + index * fit.size * 1.3));
+        ctx.restore();
       }
 
       if (o.tagline) {
@@ -2662,14 +2669,14 @@
         ctx.letterSpacing = '0px';
       };
       drawCentered(o.offer, rh * 0.81, (s) => `800 ${s}px ${OVERLAY_INDIC}`, rw * 0.027, rw * 0.015, '#ffd978', '#1b1f4b', 0);
-      drawCentered(o.slogan, rh * 0.9, (s) => `600 ${s}px ${OVERLAY_INDIC}`, rw * 0.017, rw * 0.01, '#ffe9b0', '#3b2a14', rw * 0.004);
+      drawCentered(o.slogan, rh * 0.92, (s) => `600 ${s}px ${OVERLAY_INDIC}`, rw * 0.017, rw * 0.01, '#ffe9b0', '#3b2a14', rw * 0.004);
 
       if (o.contact) {
-        const barH = rh * 0.055;
+        const barH = rh * 0.042;
         const barW = rw * 0.94;
-        const barY = rh * 0.925;
-        pill(cx - barW / 2, barY, barW, barH, '#0b1f55', '#d9a73a');
-        const fit = fitPosterText(ctx, o.contact, (s) => `700 ${s}px ${OVERLAY_INDIC}`, barW * 0.9, rw * 0.03, rw * 0.014, 1);
+        const barY = rh * 0.943;
+        pill(cx - barW / 2, barY, barW, barH, '#2a0720', '#f0b93c');
+        const fit = fitPosterText(ctx, o.contact, (s) => `700 ${s}px ${OVERLAY_INDIC}`, barW * 0.9, rw * 0.028, rw * 0.014, 1);
         ctx.font = `700 ${fit.size}px ${OVERLAY_INDIC}`;
         ctx.fillStyle = '#ffffff';
         ctx.fillText(fit.lines[0], cx, barY + barH / 2 + fit.size * 0.34);
