@@ -486,7 +486,7 @@
             <input id="useServiceTemplate" type="checkbox" checked class="accent-blue-600" />
             Use editable bottom service section
           </label>
-          <p class="mt-1 text-[10px] text-slate-500">All five are optional. Upload only the bottom images you want to replace; the other reference images stay unchanged.</p>
+          <p class="mt-1 text-[10px] text-slate-500">All five are optional. Uploaded images use evenly spaced, aligned slots in the reference row; other reference images stay unchanged.</p>
           <div class="mt-3 grid grid-cols-1 sm:grid-cols-5 gap-3">
             <div data-service-card="0"><label class="block text-[10px] text-slate-400 mb-1">Service 1</label><input id="serviceImage0" type="file" accept="image/*" class="w-full text-[10px]" /><input id="serviceLabel0" value="Service One" class="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
             <div data-service-card="1"><label class="block text-[10px] text-slate-400 mb-1">Service 2</label><input id="serviceImage1" type="file" accept="image/*" class="w-full text-[10px]" /><input id="serviceLabel1" value="Service Two" class="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
@@ -2823,13 +2823,12 @@
         return;
       }
       if (useReferenceAsTemplate) {
-        const serviceImagePositions = [0.09, 0.27, 0.45, 0.63, 0.81];
         serviceImages.forEach((image, index) => {
           if (!image) return;
-          const slotWidth = imageWidth * 0.14;
-          const slotHeight = imageHeight * 0.12;
-          const slotX = imageOffsetX + imageWidth * serviceImagePositions[index] - slotWidth / 2;
-          const slotY = imageOffsetY + imageHeight * 0.70;
+          const slotWidth = imageWidth * 0.15;
+          const slotHeight = imageHeight * 0.09;
+          const slotX = imageOffsetX + imageWidth * ((index + 0.5) / serviceImages.length) - slotWidth / 2;
+          const slotY = imageOffsetY + imageHeight * 0.59;
           ctx.fillStyle = '#fffdf5';
           ctx.fillRect(slotX - 6, slotY - 6, slotWidth + 12, slotHeight + 12);
           const scale = Math.min(slotWidth / image.naturalWidth, slotHeight / image.naturalHeight);
