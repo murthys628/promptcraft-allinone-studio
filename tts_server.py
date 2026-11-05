@@ -322,6 +322,9 @@ class TtsHandler(BaseHTTPRequestHandler):
         if self.path == "/healthz":
             self.send_json(200, {"ok": True})
             return
+        if self.path == "/config":
+            self.send_json(200, {"imageGeneration": bool(load_openai_key())})
+            return
         self.send_json(404, {"error": "Not found."})
 
     def send_cors_origin(self):
