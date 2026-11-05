@@ -80,7 +80,12 @@
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1" for="authPassword">Password <span id="authPwHint" class="font-normal text-slate-400">(min 8 characters)</span></label>
-          <input id="authPassword" type="password" required minlength="8" autocomplete="new-password" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Password">
+          <div class="relative">
+            <input id="authPassword" type="password" required minlength="8" autocomplete="new-password" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 pr-11 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Password">
+            <button type="button" id="togglePasswordVisibility" class="absolute inset-y-0 right-0 px-3 text-slate-500 hover:text-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-r-lg" aria-label="Show password" aria-pressed="false" title="Show password">
+              <i class="fa-solid fa-eye" aria-hidden="true"></i>
+            </button>
+          </div>
         </div>
         <div id="authError" class="hidden text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2"></div>
         <button type="submit" id="authSubmit" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm transition">Create account</button>
@@ -684,6 +689,7 @@
       const nameInput = document.getElementById('authName');
       const emailInput = document.getElementById('authEmail');
       const pwInput = document.getElementById('authPassword');
+      const pwVisibilityToggle = document.getElementById('togglePasswordVisibility');
       const pwHint = document.getElementById('authPwHint');
       const errorBox = document.getElementById('authError');
       const submitBtn = document.getElementById('authSubmit');
@@ -718,6 +724,14 @@
 
       tabSignup.addEventListener('click', () => setMode('signup'));
       tabLogin.addEventListener('click', () => setMode('login'));
+      pwVisibilityToggle.addEventListener('click', () => {
+        const isVisible = pwInput.type === 'text';
+        pwInput.type = isVisible ? 'password' : 'text';
+        pwVisibilityToggle.setAttribute('aria-label', isVisible ? 'Show password' : 'Hide password');
+        pwVisibilityToggle.setAttribute('aria-pressed', String(!isVisible));
+        pwVisibilityToggle.title = isVisible ? 'Show password' : 'Hide password';
+        pwVisibilityToggle.firstElementChild.className = isVisible ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
+      });
 
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
