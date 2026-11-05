@@ -209,6 +209,9 @@ APP_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.environ.get("DATA_DIR", APP_DIR)
 os.makedirs(DATA_DIR, exist_ok=True)
 AUTH_DB = os.path.join(DATA_DIR, "users.db")
+if os.environ.get("PORT") and not os.environ.get("DATA_DIR"):
+    print("WARNING: DATA_DIR is not set. Accounts are stored on temporary storage and will be lost on every deploy. "
+          "Attach a persistent disk and set DATA_DIR to its mount path.")
 ALLOWED_ORIGINS = {
     origin.strip()
     for origin in os.environ.get("ALLOWED_ORIGINS", "http://127.0.0.1:5500,http://localhost:5500").split(",")
