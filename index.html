@@ -2005,20 +2005,23 @@
       };
 
       recorder.start(1000);
-      let startTime = performance.now();
-      function recordLoop(now) {
-        const elapsed = now - startTime;
+      const startTime = performance.now();
+      // A timer keeps drawing frames even when the tab is in the background (requestAnimationFrame pauses there).
+      const frameTimer = setInterval(() => {
+        const elapsed = performance.now() - startTime;
         drawFrame(elapsed / 1000);
-        if (elapsed < durationMs && !recordingFinished) {
-          requestAnimationFrame(recordLoop);
-        } else if (!recordingFinished && recorder.state === 'recording') {
-          recorder.stop();
+        if (document.hidden && !recordingFinished) {
+          statusMsg.innerText = 'Keep this tab open while the video is recorded, otherwise frames may be dropped.';
         }
-      }
+        if (elapsed >= durationMs || recordingFinished) {
+          clearInterval(frameTimer);
+          if (!recordingFinished && recorder.state === 'recording') recorder.stop();
+        }
+      }, 1000 / 30);
       stopTimer = setTimeout(() => {
+        clearInterval(frameTimer);
         if (!recordingFinished && recorder.state === 'recording') recorder.stop();
       }, durationMs + 500);
-      requestAnimationFrame(recordLoop);
     });
 
     // ==========================================
