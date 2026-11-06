@@ -382,11 +382,12 @@
         <div class="md:col-span-2 rounded-xl border border-sky-500/40 bg-sky-500/5 p-3 space-y-3">
           <div class="text-xs font-bold text-sky-300"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Step 1: Get artwork (free)</div>
           <div>
-            <label class="block text-[11px] text-slate-300 mb-1">Describe the artwork you want (no text in the image)</label>
+            <label class="block text-[11px] text-slate-300 mb-1">Type your poster request in plain words (festival, website, platform)</label>
             <div class="flex gap-2">
-              <input id="freeArtPrompt" placeholder="e.g. Dhanteras: golden kalash, diyas, gold coins, marigold, rich maroon background" class="flex-1 px-3 py-2 rounded-lg border border-slate-700 bg-slate-950 text-white text-xs" />
+              <input id="freeArtPrompt" placeholder="e.g. with using the company details and the logo given in the website https://www.pezosys.com/, make me a poster for &quot;Dhanteras&quot; to post it on instagram, make it look very attractive with respective images related to the festival" class="flex-1 px-3 py-2 rounded-lg border border-slate-700 bg-slate-950 text-white text-xs" />
               <button type="button" id="freeArtBtn" class="hidden px-3 py-2 rounded-lg bg-sky-500 text-slate-950 text-xs font-bold whitespace-nowrap">Generate image</button>
             </div>
+            <label class="mt-2 flex items-center gap-2 text-[11px] text-slate-300"><input id="finalPosterMode" type="checkbox" checked class="accent-emerald-500" /> ChatGPT makes the complete poster (logo, text, contact details). Use its image as-is, nothing added on top.</label>
             <p id="freeArtStatus" class="mt-1 text-[10px] text-slate-500">Free: copy the prompt, create the image in your own ChatGPT or Gemini account, download it, then upload it under "Blank / base image" below. Your exact text, logo and contact bar are added on top.</p>
             <div class="mt-2 flex gap-2 flex-wrap items-center">
               <button type="button" id="openChatGptBtn" class="px-3 py-1.5 rounded-lg bg-emerald-500 text-slate-950 text-xs font-bold">Copy prompt &amp; open ChatGPT (free)</button>
@@ -2214,13 +2215,25 @@
         preview.src = img.src;
         preview.classList.remove('hidden');
         showToast(doneMessage);
-        if (onOk) onOk();
+        if (onOk) onOk(img);
       };
       img.onerror = onFail;
       img.src = url;
     }
 
     const artGallery = document.getElementById('artGallery');
+
+    // Shows an image that already contains all text and branding at its own aspect ratio, uncropped.
+    function showFinishedPoster(img) {
+      const scale = Math.min(1, 1600 / img.naturalWidth);
+      localPosterCanvas.width = Math.round(img.naturalWidth * scale);
+      localPosterCanvas.height = Math.round(img.naturalHeight * scale);
+      localPosterCanvas.getContext('2d').drawImage(img, 0, 0, localPosterCanvas.width, localPosterCanvas.height);
+      localPosterCanvas.className = `mt-6 w-full ${localPosterCanvas.width > localPosterCanvas.height ? 'max-w-3xl' : 'max-w-md'} mx-auto rounded-xl border border-slate-700`;
+      downloadPosterBtn.disabled = false;
+      localPosterCanvas.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      showToast('Poster ready. Click Download PNG.');
+    }
 
     // Accept an image from ChatGPT by drop, file picker or clipboard paste, then jump to the text fields.
     function useArtworkFile(file) {
@@ -2233,7 +2246,12 @@
         reader.result,
         'Artwork added. Now fill in the text, logo and contact details below.',
         () => showToast('Could not read that image.'),
-        () => {
+        (img) => {
+          if (document.getElementById('finalPosterMode').checked) {
+            document.getElementById('overlayOnArtwork').checked = false;
+            showFinishedPoster(img);
+            return;
+          }
           const next = document.getElementById('overlayHeadline');
           next.scrollIntoView({ behavior: 'smooth', block: 'center' });
           setTimeout(() => next.focus(), 400);
@@ -2408,16 +2426,7 @@
     });
 
     function buildChatPrompt() {
-      const scene = document.getElementById('freeArtPrompt').value.trim() || document.getElementById('posterRequest').value.trim();
-      if (!scene) return '';
-      const fmt = document.getElementById('posterFormat').value;
-      const shape = fmt === 'desktop' ? '16:9 landscape' : fmt === 'square' ? '1:1 square (Instagram post)' : '4:5 portrait';
-      const company = document.getElementById('posterCompany').value.trim();
-      const website = document.getElementById('posterWebsite').value.trim();
-      const brand = company || website
-        ? ` This is for ${company || 'our company'}${website ? ` (${website})` : ''}; keep a calm, uncluttered area for the company logo, and a footer strip for the website, email and phone number.`
-        : '';
-      return `Create a high-resolution, ${shape} poster background artwork for this request: ${scene}. Make it very attractive and professional, using imagery, colours and elements that clearly relate to this subject.${brand} Rich colours and lighting. Leave clear empty space at the top (for a logo and headline) and at the bottom (for a contact bar). IMPORTANT: do not draw any text, letters, numbers, logos or watermarks anywhere in the image.`;
+      return document.getElementById('freeArtPrompt').value.trim() || document.getElementById('posterRequest').value.trim();
     }
 
     async function copyAndOpen(url) {
@@ -2448,7 +2457,7 @@
       }
       const fmtValue = document.getElementById('posterFormat').value;
       const landscape = fmtValue === 'desktop';
-      const full = `${prompt}. Poster background artwork with clear empty space at the top and bottom for text. Do not draw any text, letters, words, logos or watermarks.`;
+      const full = prompt;
       button.disabled = true;
       status.textContent = 'Creating your image with OpenAI... this takes 20-60 seconds.';
       try {
@@ -2717,6 +2726,10 @@
 
     localPosterForm.addEventListener('submit', (event) => {
       event.preventDefault();
+      if (document.getElementById('finalPosterMode').checked && posterUploadedBackground && !document.getElementById('overlayOnArtwork').checked) {
+        showFinishedPoster(posterUploadedBackground);
+        return;
+      }
       const request = document.getElementById('posterRequest').value.trim();
       if (!request && !document.getElementById('overlayOnArtwork').checked) {
         showToast('Describe the poster, or pick artwork and fill the text fields.');
