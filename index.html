@@ -504,11 +504,11 @@
           <p class="mt-1 text-[10px] text-slate-500">All five are optional. Uploaded images use evenly spaced, aligned slots in the reference row; other reference images stay unchanged.</p>
           <p class="mt-1 text-[10px] text-slate-500">Pick the Pezosys services you want on this poster — icons are built in, just tick and rename. Leave unticked for posters without services.</p>
           <div class="mt-3 grid grid-cols-1 sm:grid-cols-5 gap-3">
-            <div data-service-card="0"><label class="flex items-center gap-1.5 text-[10px] text-slate-300 mb-1"><input type="checkbox" class="servicePick accent-blue-500" checked /><span class="serviceIconPreview text-blue-300 text-base"></span></label><select class="serviceIconSelect w-full rounded border border-slate-700 bg-slate-950 px-1 py-1 text-[10px] text-white mb-1"></select><input id="serviceLabel0" value="Labels & Stickers" class="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
+            <div data-service-card="0"><label class="flex items-center gap-1.5 text-[10px] text-slate-300 mb-1"><input type="checkbox" class="servicePick accent-blue-500" checked /><span class="serviceIconPreview text-blue-300 text-base"></span></label><select class="serviceIconSelect w-full rounded border border-slate-700 bg-slate-950 px-1 py-1 text-[10px] text-white mb-1"></select><input id="serviceLabel0" value="Dome Labels" class="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
             <div data-service-card="1"><label class="flex items-center gap-1.5 text-[10px] text-slate-300 mb-1"><input type="checkbox" class="servicePick accent-blue-500" checked /><span class="serviceIconPreview text-blue-300 text-base"></span></label><select class="serviceIconSelect w-full rounded border border-slate-700 bg-slate-950 px-1 py-1 text-[10px] text-white mb-1"></select><input id="serviceLabel1" value="Packaging Solutions" class="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
-            <div data-service-card="2"><label class="flex items-center gap-1.5 text-[10px] text-slate-300 mb-1"><input type="checkbox" class="servicePick accent-blue-500" checked /><span class="serviceIconPreview text-blue-300 text-base"></span></label><select class="serviceIconSelect w-full rounded border border-slate-700 bg-slate-950 px-1 py-1 text-[10px] text-white mb-1"></select><input id="serviceLabel2" value="Signage & Branding" class="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
-            <div data-service-card="3"><label class="flex items-center gap-1.5 text-[10px] text-slate-300 mb-1"><input type="checkbox" class="servicePick accent-blue-500" checked /><span class="serviceIconPreview text-blue-300 text-base"></span></label><select class="serviceIconSelect w-full rounded border border-slate-700 bg-slate-950 px-1 py-1 text-[10px] text-white mb-1"></select><input id="serviceLabel3" value="Printing Solutions" class="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
-            <div data-service-card="4"><label class="flex items-center gap-1.5 text-[10px] text-slate-300 mb-1"><input type="checkbox" class="servicePick accent-blue-500" checked /><span class="serviceIconPreview text-blue-300 text-base"></span></label><select class="serviceIconSelect w-full rounded border border-slate-700 bg-slate-950 px-1 py-1 text-[10px] text-white mb-1"></select><input id="serviceLabel4" value="Barcodes & Labels" class="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
+            <div data-service-card="2"><label class="flex items-center gap-1.5 text-[10px] text-slate-300 mb-1"><input type="checkbox" class="servicePick accent-blue-500" checked /><span class="serviceIconPreview text-blue-300 text-base"></span></label><select class="serviceIconSelect w-full rounded border border-slate-700 bg-slate-950 px-1 py-1 text-[10px] text-white mb-1"></select><input id="serviceLabel2" value="Fascias & Overlays" class="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
+            <div data-service-card="3"><label class="flex items-center gap-1.5 text-[10px] text-slate-300 mb-1"><input type="checkbox" class="servicePick accent-blue-500" checked /><span class="serviceIconPreview text-blue-300 text-base"></span></label><select class="serviceIconSelect w-full rounded border border-slate-700 bg-slate-950 px-1 py-1 text-[10px] text-white mb-1"></select><input id="serviceLabel3" value="Graphics & Decals" class="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
+            <div data-service-card="4"><label class="flex items-center gap-1.5 text-[10px] text-slate-300 mb-1"><input type="checkbox" class="servicePick accent-blue-500" checked /><span class="serviceIconPreview text-blue-300 text-base"></span></label><select class="serviceIconSelect w-full rounded border border-slate-700 bg-slate-950 px-1 py-1 text-[10px] text-white mb-1"></select><input id="serviceLabel4" value="Speciality Labels" class="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
           </div>
         </div>
         <div class="md:col-span-2 rounded-xl border border-amber-500/30 bg-amber-950/10 p-4">
@@ -2133,24 +2133,29 @@
 
     // Service uploads replaced by built-in Font Awesome icon picker (serviceSlots)
 
-    // Built-in Pezosys service icons (Font Awesome) — no uploads needed
+    // Built-in Pezosys product icons (Font Awesome) — matches the Products menu on pezosys.com
     const SERVICE_ICONS = [
-      { value: 'fa-tags', label: '🏷️ Tags / Labels', fa: 'fa-tags' },
-      { value: 'fa-box', label: '📦 Packaging Box', fa: 'fa-box' },
-      { value: 'fa-boxes-stacked', label: '📦📦 Bulk Packaging', fa: 'fa-boxes-stacked' },
-      { value: 'fa-print', label: '🖨️ Printing', fa: 'fa-print' },
-      { value: 'fa-barcode', label: '📊 Barcode', fa: 'fa-barcode' },
-      { value: 'fa-rectangle-ad', label: '🪧 Signage / Ads', fa: 'fa-rectangle-ad' },
-      { value: 'fa-pen-ruler', label: '📐 Design', fa: 'fa-pen-ruler' },
-      { value: 'fa-id-card', label: '🆔 ID Cards', fa: 'fa-id-card' },
-      { value: 'fa-image', label: '🖼️ Photo Prints', fa: 'fa-image' },
-      { value: 'fa-flag', label: '🚩 Flex / Banners', fa: 'fa-flag' },
-      { value: 'fa-file-invoice', label: '📄 Stationery', fa: 'fa-file-invoice' },
-      { value: 'fa-mobile-screen', label: '📱 Digital Print', fa: 'fa-mobile-screen' },
-      { value: 'fa-industry', label: '🏭 Industrial', fa: 'fa-industry' },
-      { value: 'fa-stamp', label: ' stamps / Seals', fa: 'fa-stamp' },
-      { value: 'fa-envelope', label: '✉️ Invitations', fa: 'fa-envelope' },
-      { value: 'fa-book', label: '📖 Booklets', fa: 'fa-book' }
+      { value: 'fa-circle-dot', label: 'Dome Labels', fa: 'fa-circle-dot' },
+      { value: 'fa-cubes', label: '3D Printing Solutions', fa: 'fa-cubes' },
+      { value: 'fa-tape', label: 'Adhesive Tapes', fa: 'fa-tape' },
+      { value: 'fa-scissors', label: 'Die Cuts', fa: 'fa-scissors' },
+      { value: 'fa-shield-halved', label: 'EP Metal Stickers', fa: 'fa-shield-halved' },
+      { value: 'fa-layer-group', label: 'Fascias & Overlays', fa: 'fa-layer-group' },
+      { value: 'fa-palette', label: 'Graphics & Decals', fa: 'fa-palette' },
+      { value: 'fa-bolt', label: 'Insulators', fa: 'fa-bolt' },
+      { value: 'fa-plate-wheat', label: 'Metallic Name Plates', fa: 'fa-medal' },
+      { value: 'fa-box', label: 'Packaging Solutions', fa: 'fa-box' },
+      { value: 'fa-rotate', label: 'Roll Form Labels', fa: 'fa-rotate' },
+      { value: 'fa-lock', label: 'Security Labels', fa: 'fa-lock' },
+      { value: 'fa-sticky-note', label: 'Self Adhesive Decals', fa: 'fa-sticky-note' },
+      { value: 'fa-sign', label: 'Signages', fa: 'fa-sign' },
+      { value: 'fa-tag', label: 'Speciality Labels', fa: 'fa-tag' },
+      { value: 'fa-tags', label: 'Tags', fa: 'fa-tags' },
+      { value: 'fa-image', label: 'Wall Graphics', fa: 'fa-image' },
+      { value: 'fa-print', label: 'Printing Solutions', fa: 'fa-print' },
+      { value: 'fa-barcode', label: 'Barcodes & Labels', fa: 'fa-barcode' },
+      { value: 'fa-id-card', label: 'ID Cards', fa: 'fa-id-card' },
+      { value: 'fa-industry', label: 'Industrial Solutions', fa: 'fa-industry' }
     ];
     const serviceSlots = [];
     document.querySelectorAll('[data-service-card]').forEach((card) => {
@@ -2171,6 +2176,11 @@
       select.addEventListener('change', refresh);
       pick.addEventListener('change', refresh);
       refresh();
+      if (index === 0) select.value = 'fa-circle-dot';
+      if (index === 1) select.value = 'fa-box';
+      if (index === 2) select.value = 'fa-layer-group';
+      if (index === 3) select.value = 'fa-palette';
+      if (index === 4) select.value = 'fa-tag';
       serviceSlots[index] = { pick, select, fa: () => select.value };
     });
 
