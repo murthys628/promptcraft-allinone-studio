@@ -580,14 +580,15 @@
       </div>
       <div id="brandLogoControls" class="hidden mt-4 rounded-lg border border-emerald-500/40 bg-slate-950/60 p-3">
         <p class="text-xs font-semibold text-emerald-300">Brand Kit logo placement</p>
-        <p class="mt-1 text-[10px] text-slate-400">Adjust the box to completely cover the old logo. The background color is applied only inside that box.</p>
+        <p class="mt-1 text-[10px] text-slate-400">Adjust the box to completely cover the old logo. Untick "Box background" for a plain logo with no colored box behind it.</p>
         <div class="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-3">
           <label class="text-[10px] text-slate-300">Left <input id="brandLogoLeft" type="range" min="0" max="99" step="1" value="24" class="block w-full accent-emerald-500" /></label>
           <label class="text-[10px] text-slate-300">Top <input id="brandLogoTop" type="range" min="0" max="99" step="1" value="2" class="block w-full accent-emerald-500" /></label>
           <label class="text-[10px] text-slate-300">Width <input id="brandLogoWidth" type="range" min="1" max="100" step="1" value="52" class="block w-full accent-emerald-500" /></label>
           <label class="text-[10px] text-slate-300">Height <input id="brandLogoHeight" type="range" min="1" max="100" step="1" value="9" class="block w-full accent-emerald-500" /></label>
         </div>
-        <label class="mt-2 flex items-center gap-2 text-[10px] text-slate-300">Box background <input id="brandLogoBackground" type="color" value="#370019" class="h-7 w-10 cursor-pointer" /></label>
+        <label class="mt-2 flex items-center gap-2 text-[10px] text-slate-300"><input id="brandLogoBoxEnabled" type="checkbox" class="accent-emerald-500" checked /> Box background</label>
+        <label class="mt-2 flex items-center gap-2 text-[10px] text-slate-300">Background color <input id="brandLogoBackground" type="color" value="#370019" class="h-7 w-10 cursor-pointer" /></label>
         <button type="button" id="downloadBrandedPosterBtn" class="mt-3 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg">Download poster with Brand Kit logo</button>
       </div>
       <canvas id="localPosterCanvas" width="1080" height="1350" class="hidden mt-6 w-full max-w-md mx-auto rounded-xl border border-slate-700"></canvas>
@@ -2419,8 +2420,10 @@
         const badgeX = Math.min(width - badgeWidth, width * Number(document.getElementById('brandLogoLeft').value) / 100);
         const badgeY = Math.min(height - badgeHeight, height * Number(document.getElementById('brandLogoTop').value) / 100);
         ctx.save();
-        ctx.fillStyle = document.getElementById('brandLogoBackground').value;
-        ctx.fillRect(badgeX, badgeY, badgeWidth, badgeHeight);
+        if (document.getElementById('brandLogoBoxEnabled').checked) {
+          ctx.fillStyle = document.getElementById('brandLogoBackground').value;
+          ctx.fillRect(badgeX, badgeY, badgeWidth, badgeHeight);
+        }
         const logoScale = Math.min(
           badgeWidth * 0.9 / logoToApply.naturalWidth,
           badgeHeight * 0.72 / logoToApply.naturalHeight
