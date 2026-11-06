@@ -455,12 +455,19 @@
             <span class="text-xs font-bold text-emerald-400"><i class="fa-solid fa-id-card mr-1"></i> Brand kit</span>
             <span id="brandKitStatus" class="text-[10px] text-slate-400">No brand kit saved yet.</span>
           </div>
-          <p class="text-[10px] text-slate-500">Saves company name, website, email, phone and logo in this browser and applies them automatically every time. Service images can change per poster.</p>
+          <p class="text-[10px] text-slate-500">Save your company details and logo here. Images downloaded directly from ChatGPT or Gemini are not changed: bring the finished image back here to replace its logo.</p>
           <label class="flex items-center gap-2 text-[11px] text-slate-300"><input type="checkbox" id="brandKitSaveServices" /> Also save the 5 service images and labels</label>
           <div class="flex gap-2 flex-wrap">
             <button type="button" id="brandKitSave" class="px-3 py-1.5 rounded-lg bg-emerald-500 text-slate-950 text-xs font-bold">Save brand kit</button>
             <button type="button" id="brandKitApply" class="px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-xs text-white">Apply brand kit</button>
             <button type="button" id="brandKitClear" class="px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-xs text-red-300">Clear</button>
+          </div>
+          <div class="rounded-lg border border-emerald-500/40 p-3 space-y-2">
+            <p class="text-xs font-bold text-emerald-400">Replace logo on a finished image</p>
+            <p class="text-[11px] text-slate-400">1. Save your actual logo in the Brand Kit. 2. Upload the downloaded poster here, or use the image already selected above. 3. Adjust the logo box and download the result from this app.</p>
+            <input id="brandPosterUpload" type="file" accept="image/*" aria-label="Upload finished poster to replace its logo" class="w-full text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-500 file:text-slate-950" />
+            <button type="button" id="brandPosterApply" class="px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-xs text-white">Replace logo on selected image</button>
+            <p id="brandPosterStatus" role="status" class="text-[11px] text-slate-400">No finished poster selected yet.</p>
           </div>
         </div>
         <div>
@@ -548,6 +555,7 @@
           <label class="text-[10px] text-slate-300">Height <input id="brandLogoHeight" type="range" min="1" max="100" step="1" value="9" class="block w-full accent-emerald-500" /></label>
         </div>
         <label class="mt-2 flex items-center gap-2 text-[10px] text-slate-300">Box background <input id="brandLogoBackground" type="color" value="#370019" class="h-7 w-10 cursor-pointer" /></label>
+        <button type="button" id="downloadBrandedPosterBtn" class="mt-3 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg">Download poster with Brand Kit logo</button>
       </div>
       <canvas id="localPosterCanvas" width="1080" height="1350" class="hidden mt-6 w-full max-w-md mx-auto rounded-xl border border-slate-700"></canvas>
     </div>
@@ -2068,6 +2076,7 @@
     let posterUploadedBackground = null;
     let posterReferenceImage = null;
     let finishedPosterImage = null;
+    let selectedPosterImage = null;
     let posterFestivalKey = 'narak';
 
     function loadPosterFestivalImage(key) {
@@ -2229,10 +2238,18 @@
       const reader = new FileReader();
       reader.onload = () => {
         finishedPosterImage = null;
+        selectedPosterImage = null;
         document.getElementById('brandLogoControls').classList.add('hidden');
-        posterUploadedBackground = new Image();
-        posterUploadedBackground.onload = () => showToast('Your artwork is ready. Text will be placed on it.');
-        posterUploadedBackground.src = reader.result;
+        const image = new Image();
+        posterUploadedBackground = image;
+        image.onload = () => {
+          if (posterUploadedBackground !== image) return;
+          selectedPosterImage = image;
+          document.getElementById('brandPosterStatus').textContent = 'Base image selected. Choose Replace logo on selected image to use it as a finished poster.';
+          showToast('Your artwork is ready. Text will be placed on it.');
+        };
+        image.onerror = () => showToast('Could not load the base image.');
+        image.src = reader.result;
         document.getElementById('overlayOnArtwork').checked = true;
       };
       reader.readAsDataURL(file);
@@ -2244,10 +2261,18 @@
       const reader = new FileReader();
       reader.onload = () => {
         finishedPosterImage = null;
+        selectedPosterImage = null;
         document.getElementById('brandLogoControls').classList.add('hidden');
-        posterReferenceImage = new Image();
-        posterReferenceImage.onload = () => showToast('Artwork loaded. Text will be placed on it.');
-        posterReferenceImage.src = reader.result;
+        const image = new Image();
+        posterReferenceImage = image;
+        image.onload = () => {
+          if (posterReferenceImage !== image) return;
+          selectedPosterImage = image;
+          document.getElementById('brandPosterStatus').textContent = 'Reference image selected. Choose Replace logo on selected image to use it as a finished poster.';
+          showToast('Artwork loaded. Text will be placed on it.');
+        };
+        image.onerror = () => showToast('Could not load the reference image.');
+        image.src = reader.result;
         document.getElementById('overlayOnArtwork').checked = true;
       };
       reader.readAsDataURL(file);
@@ -2261,6 +2286,8 @@
         document.getElementById('brandLogoControls').classList.add('hidden');
         posterReferenceImage = null;
         posterUploadedBackground = img;
+        selectedPosterImage = img;
+        document.getElementById('brandPosterStatus').textContent = 'Image selected. Choose Replace logo on selected image to use it as a finished poster.';
         document.getElementById('overlayOnArtwork').checked = true;
         const preview = document.getElementById('artPreview');
         preview.src = img.src;
@@ -2328,6 +2355,11 @@
       }
       localPosterCanvas.className = `mt-6 w-full ${localPosterCanvas.width > localPosterCanvas.height ? 'max-w-3xl' : 'max-w-md'} mx-auto rounded-xl border border-slate-700`;
       downloadPosterBtn.disabled = false;
+      document.getElementById('brandPosterStatus').textContent = skipBrandKitLogo || (logoToApply && !logoToApply.naturalWidth)
+        ? 'The saved logo could not be loaded. The poster has not been changed.'
+        : logoToApply && logoToApply.naturalWidth
+          ? 'Logo applied to the preview. Adjust its box, then download the poster from this app.'
+          : 'No logo saved. Upload your logo below and click Save brand kit; the preview will update.';
       if (notify) {
         document.getElementById('brandLogoControls').scrollIntoView({ behavior: 'smooth', block: 'start' });
         showToast(skipBrandKitLogo || (logoToApply && !logoToApply.naturalWidth)
@@ -2339,7 +2371,7 @@
     }
 
     // Accept an image from ChatGPT by drop, file picker or clipboard paste, then jump to the text fields.
-    function useArtworkFile(file) {
+    function useArtworkFile(file, useAsFinishedPoster = false) {
       if (!file || !file.type.startsWith('image/')) {
         showToast('Please choose an image file.');
         return;
@@ -2350,7 +2382,8 @@
         'Artwork added. Now fill in the text, logo and contact details below.',
         () => showToast('Could not read that image.'),
         (img) => {
-          if (document.getElementById('finalPosterMode').checked) {
+          if (useAsFinishedPoster || document.getElementById('finalPosterMode').checked) {
+            document.getElementById('finalPosterMode').checked = true;
             document.getElementById('overlayOnArtwork').checked = false;
             showFinishedPoster(img);
             return;
@@ -2360,8 +2393,26 @@
           setTimeout(() => next.focus(), 400);
         }
       );
+      reader.onerror = () => showToast('Could not read that image.');
       reader.readAsDataURL(file);
     }
+    document.getElementById('brandPosterUpload').addEventListener('change', (event) => {
+      if (event.target.files[0]) useArtworkFile(event.target.files[0], true);
+      event.target.value = '';
+    });
+    document.getElementById('brandPosterApply').addEventListener('click', () => {
+      if (!selectedPosterImage || !selectedPosterImage.complete || !selectedPosterImage.naturalWidth) {
+        document.getElementById('brandPosterStatus').textContent = 'Choose a finished image first using the upload control above.';
+        showToast('Choose a finished image first.');
+        return;
+      }
+      posterUploadedBackground = selectedPosterImage;
+      posterReferenceImage = null;
+      document.getElementById('finalPosterMode').checked = true;
+      document.getElementById('overlayOnArtwork').checked = false;
+      showFinishedPoster(selectedPosterImage);
+    });
+    document.getElementById('downloadBrandedPosterBtn').addEventListener('click', () => downloadPosterBtn.click());
     const artDropZone = document.getElementById('artDropZone');
 
     // Read an image straight from the clipboard (works on HTTPS after the user allows it).
@@ -2591,6 +2642,8 @@
       }
     });    document.getElementById('posterFestival').addEventListener('change', (event) => {
       finishedPosterImage = null;
+      selectedPosterImage = null;
+      document.getElementById('brandPosterStatus').textContent = 'No finished poster selected yet.';
       document.getElementById('brandLogoControls').classList.add('hidden');
       posterUploadedBackground = null;
       loadPosterFestivalImage(event.target.value);

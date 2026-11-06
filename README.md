@@ -8,12 +8,14 @@ In this build:
 ## Replacing the logo on a finished poster
 
 Upload your actual logo in the poster's **Logo** field and click **Save brand kit**.
-With the complete-poster option checked, upload or paste the downloaded image in
-Step 2, or generate an image in the app. The preview places the saved logo over a
-solid-colored box; it does not automatically detect the original logo. Use the
-placement controls above the preview to cover the original logo and choose a box
-color, then download the PNG. The rest of the poster is unchanged. If no logo is
-saved, the original image is shown unchanged.
+In the Brand Kit section, upload the finished poster under **Replace logo on a
+finished image**, or click **Replace logo on selected image** after selecting a
+base or reference image. You can also upload or paste the image in Step 2 with
+the complete-poster option checked, or generate it in the app. The preview places
+the saved logo over a solid-colored box; it does not automatically detect the
+original logo. Adjust the placement controls, then click **Download poster with
+Brand Kit logo** in this app. A file downloaded directly from ChatGPT or Gemini
+is not changed. If no logo is saved, the original image is shown unchanged.
 
 ## Automatic local narration
 
