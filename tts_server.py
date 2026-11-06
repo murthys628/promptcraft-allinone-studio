@@ -229,6 +229,7 @@ def auth_db():
     db.execute(
         "CREATE TABLE IF NOT EXISTS sessions (token_hash TEXT PRIMARY KEY, user_id INTEGER, expires TEXT)"
     )
+    db.execute("CREATE TABLE IF NOT EXISTS brand_kits (user_id INTEGER PRIMARY KEY, data TEXT)")
     return db
 
 
@@ -325,6 +326,15 @@ class TtsHandler(BaseHTTPRequestHandler):
         if self.path == "/healthz":
             self.send_json(200, {"ok": True})
             return
+        if self.path == "/brandkit":
+            user = self.current_user()
+            if not user:
+                self.send_json(401, {"error": "Please log in."})
+                return
+            with closing(auth_db()) as db:
+                row = db.execute("SELECT data FROM brand_kits WHERE user_id = ?", (user["id"],)).fetchone()
+            self.send_json(200, {"kit": json.loads(row[0]) if row else None})
+            return
         if self.path == "/config":
             self.send_json(200, {"imageGeneration": bool(load_openai_key())})
             return
@@ -354,6 +364,29 @@ class TtsHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_POST(self):
+        if self.path == "/brandkit":
+            user = self.current_user()
+            if not user:
+                self.send_json(401, {"error": "Please log in."})
+                return
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                if length > 8_000_000:
+                    raise ValueError("Brand kit is too large.")
+                kit = json.loads(self.rfile.read(length).decode("utf-8")).get("kit")
+                with closing(auth_db()) as db:
+                    if kit:
+                        db.execute(
+                            "INSERT OR REPLACE INTO brand_kits (user_id, data) VALUES (?, ?)",
+                            (user["id"], json.dumps(kit)),
+                        )
+                    else:
+                        db.execute("DELETE FROM brand_kits WHERE user_id = ?", (user["id"],))
+                    db.commit()
+                self.send_json(200, {"ok": True})
+            except Exception as error:
+                self.send_json(400, {"error": str(error)})
+            return
         if self.path in ("/auth/signup", "/auth/login"):
             try:
                 request = self.read_json()

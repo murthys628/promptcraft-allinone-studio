@@ -723,6 +723,7 @@
       function showApp(user) {
         userLabel.textContent = user ? user.name + ' • ' + user.email : '';
         gate.classList.add('hidden');
+        loadServerBrandKit();
       }
       function showGate() {
         localStorage.removeItem(AUTH_TOKEN_KEY);
@@ -2148,6 +2149,7 @@
       try {
         localStorage.setItem(BRAND_KIT_KEY, JSON.stringify(kit));
         brandKitLogoImage = kit.logo ? imageFromDataUrl(kit.logo) : null;
+        saveServerBrandKit(kit);
         brandKitStatus.textContent = `Brand kit saved${kit.logo ? ' with logo' : ' (no logo uploaded)'}${kit.services ? ' + services' : ''}.`;
         showToast('Brand kit saved in this browser.');
       } catch (e) {
@@ -2158,10 +2160,29 @@
     document.getElementById('brandKitClear').addEventListener('click', () => {
       localStorage.removeItem(BRAND_KIT_KEY);
       brandKitLogoImage = null;
+      saveServerBrandKit(null);
       brandKitStatus.textContent = 'No brand kit saved yet.';
       showToast('Brand kit cleared.');
     });
     applyBrandKit(true);
+
+    // The brand kit lives on the account, so it follows the user to any browser or site address.
+    function saveServerBrandKit(kit) {
+      fetch(AUTH_API + '/brandkit', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ kit }) }).catch(() => {});
+    }
+    async function loadServerBrandKit() {
+      try {
+        const response = await fetch(AUTH_API + '/brandkit', { headers: authHeaders() });
+        if (!response.ok) return;
+        const { kit } = await response.json();
+        if (kit) {
+          localStorage.setItem(BRAND_KIT_KEY, JSON.stringify(kit));
+          applyBrandKit(true);
+        } else if (localStorage.getItem(BRAND_KIT_KEY)) {
+          saveServerBrandKit(JSON.parse(localStorage.getItem(BRAND_KIT_KEY)));
+        }
+      } catch (e) { /* offline: local copy is still used */ }
+    }
 
     document.getElementById('posterPersonalPhotos').addEventListener('change', (event) => {
       personalPosterImages = [];
@@ -2271,9 +2292,7 @@
         );
         ctx.restore();
       }
-      localPosterCanvas.className = 'mt-6 w-full '
-        + (localPosterCanvas.width > localPosterCanvas.height ? 'max-w-3xl' : 'max-w-md')
-        + ' mx-auto rounded-xl border border-slate-700';
+      localPosterCanvas.className = `mt-6 w-full ${localPosterCanvas.width > localPosterCanvas.height ? 'max-w-3xl' : 'max-w-md'} mx-auto rounded-xl border border-slate-700`;
       downloadPosterBtn.disabled = false;
       localPosterCanvas.scrollIntoView({ behavior: 'smooth', block: 'center' });
       showToast(skipBrandKitLogo || (logoToApply && !logoToApply.naturalWidth)
