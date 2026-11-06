@@ -392,8 +392,14 @@
             <div class="mt-2 flex gap-2 flex-wrap items-center">
               <button type="button" id="openChatGptBtn" class="px-3 py-1.5 rounded-lg bg-emerald-500 text-slate-950 text-xs font-bold">Copy prompt &amp; open ChatGPT (free)</button>
               <button type="button" id="openGeminiBtn" class="px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-xs text-white">Copy &amp; open Gemini</button>
+              <button type="button" id="attachLogoBtn" class="px-3 py-1.5 rounded-lg bg-slate-800 border border-sky-500/60 text-xs text-sky-200"><i class="fa-solid fa-image mr-1"></i> Attach logo</button>
+              <input id="chatLogoInput" type="file" accept="image/*" class="hidden" />
+              <img id="chatLogoPreview" alt="Attached logo preview" class="hidden h-8 rounded border border-sky-500/50" />
+              <button type="button" id="clearChatLogoBtn" class="hidden text-[10px] text-slate-400 underline">remove</button>
+              <button type="button" id="copyLogoBtn" class="hidden px-3 py-1.5 rounded-lg bg-sky-600 text-white text-xs font-bold"><i class="fa-solid fa-copy mr-1"></i> Copy logo image</button>
               <span class="text-[10px] text-slate-400">Paste the prompt into ChatGPT, then bring the image back below.</span>
             </div>
+            <p id="chatLogoHint" class="hidden mt-1 text-[10px] text-sky-300">Logo attached. In ChatGPT: paste the prompt (Ctrl+V), then click "Copy logo image" here and paste the logo into the chat too (Ctrl+V), so it uses your logo on the poster.</p>
             <label id="artDropZone" for="artFileInput" tabindex="0" class="mt-2 block cursor-pointer rounded-lg border-2 border-dashed border-emerald-500/60 bg-emerald-500/5 px-3 py-4 text-center text-xs text-emerald-200">
               <i class="fa-solid fa-cloud-arrow-up mr-1"></i> <b>Step 2:</b> bring your ChatGPT image here. Tap to choose it from your gallery/downloads, or drop it here.
               <input id="artFileInput" type="file" accept="image/*" class="hidden" />
@@ -2580,8 +2586,54 @@
     });
 
     function buildChatPrompt() {
-      return document.getElementById('freeArtPrompt').value.trim() || document.getElementById('posterRequest').value.trim();
+      const base = document.getElementById('freeArtPrompt').value.trim() || document.getElementById('posterRequest').value.trim();
+      if (!base) return base;
+      const hasLogo = document.getElementById('chatLogoPreview').classList.contains('hidden') === false;
+      return hasLogo ? base + '\n\nUse the logo image I attach in this chat (the one I paste next) as the brand logo on the poster. Place it clearly and do not distort it.' : base;
     }
+
+    let chatLogoDataUrl = null;
+    const chatLogoInput = document.getElementById('chatLogoInput');
+    const chatLogoPreview = document.getElementById('chatLogoPreview');
+    const clearChatLogoBtn = document.getElementById('clearChatLogoBtn');
+    const copyLogoBtn = document.getElementById('copyLogoBtn');
+    const chatLogoHint = document.getElementById('chatLogoHint');
+    function setChatLogo(dataUrl) {
+      chatLogoDataUrl = dataUrl;
+      chatLogoPreview.src = dataUrl;
+      chatLogoPreview.classList.remove('hidden');
+      clearChatLogoBtn.classList.remove('hidden');
+      copyLogoBtn.classList.remove('hidden');
+      chatLogoHint.classList.remove('hidden');
+    }
+    chatLogoInput.addEventListener('change', () => {
+      const f = chatLogoInput.files && chatLogoInput.files[0];
+      if (!f) return;
+      const r = new FileReader();
+      r.onload = () => setChatLogo(r.result);
+      r.readAsDataURL(f);
+      chatLogoInput.value = '';
+    });
+    clearChatLogoBtn.addEventListener('click', () => {
+      chatLogoDataUrl = null;
+      chatLogoPreview.classList.add('hidden');
+      chatLogoPreview.removeAttribute('src');
+      clearChatLogoBtn.classList.add('hidden');
+      copyLogoBtn.classList.add('hidden');
+      chatLogoHint.classList.add('hidden');
+    });
+    async function copyLogoToClipboard() {
+      if (!chatLogoDataUrl) return;
+      try {
+        const blob = await (await fetch(chatLogoDataUrl)).blob();
+        await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
+        showToast('Logo copied. Paste it (Ctrl+V) in the chat.');
+      } catch (e) {
+        showToast('Could not copy logo here. Try saving it and uploading in ChatGPT.');
+      }
+    }
+    copyLogoBtn.addEventListener('click', copyLogoToClipboard);
+    document.getElementById('attachLogoBtn').addEventListener('click', () => chatLogoInput.click());
 
     async function copyAndOpen(url) {
       const prompt = buildChatPrompt();
