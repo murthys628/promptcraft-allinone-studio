@@ -502,12 +502,13 @@
             Use editable bottom service section
           </label>
           <p class="mt-1 text-[10px] text-slate-500">All five are optional. Uploaded images use evenly spaced, aligned slots in the reference row; other reference images stay unchanged.</p>
+          <p class="mt-1 text-[10px] text-slate-500">Pick the Pezosys services you want on this poster — icons are built in, just tick and rename. Leave unticked for posters without services.</p>
           <div class="mt-3 grid grid-cols-1 sm:grid-cols-5 gap-3">
-            <div data-service-card="0"><label class="block text-[10px] text-slate-400 mb-1">Service 1</label><input id="serviceImage0" type="file" accept="image/*" class="w-full text-[10px]" /><input id="serviceLabel0" value="Service One" class="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
-            <div data-service-card="1"><label class="block text-[10px] text-slate-400 mb-1">Service 2</label><input id="serviceImage1" type="file" accept="image/*" class="w-full text-[10px]" /><input id="serviceLabel1" value="Service Two" class="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
-            <div data-service-card="2"><label class="block text-[10px] text-slate-400 mb-1">Service 3</label><input id="serviceImage2" type="file" accept="image/*" class="w-full text-[10px]" /><input id="serviceLabel2" value="Service Three" class="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
-            <div data-service-card="3"><label class="block text-[10px] text-slate-400 mb-1">Service 4</label><input id="serviceImage3" type="file" accept="image/*" class="w-full text-[10px]" /><input id="serviceLabel3" value="Service Four" class="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
-            <div data-service-card="4"><label class="block text-[10px] text-slate-400 mb-1">Service 5</label><input id="serviceImage4" type="file" accept="image/*" class="w-full text-[10px]" /><input id="serviceLabel4" value="Service Five" class="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
+            <div data-service-card="0"><label class="flex items-center gap-1.5 text-[10px] text-slate-300 mb-1"><input type="checkbox" class="servicePick accent-blue-500" checked /><span class="serviceIconPreview text-blue-300 text-base"></span></label><select class="serviceIconSelect w-full rounded border border-slate-700 bg-slate-950 px-1 py-1 text-[10px] text-white mb-1"></select><input id="serviceLabel0" value="Labels & Stickers" class="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
+            <div data-service-card="1"><label class="flex items-center gap-1.5 text-[10px] text-slate-300 mb-1"><input type="checkbox" class="servicePick accent-blue-500" checked /><span class="serviceIconPreview text-blue-300 text-base"></span></label><select class="serviceIconSelect w-full rounded border border-slate-700 bg-slate-950 px-1 py-1 text-[10px] text-white mb-1"></select><input id="serviceLabel1" value="Packaging Solutions" class="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
+            <div data-service-card="2"><label class="flex items-center gap-1.5 text-[10px] text-slate-300 mb-1"><input type="checkbox" class="servicePick accent-blue-500" checked /><span class="serviceIconPreview text-blue-300 text-base"></span></label><select class="serviceIconSelect w-full rounded border border-slate-700 bg-slate-950 px-1 py-1 text-[10px] text-white mb-1"></select><input id="serviceLabel2" value="Signage & Branding" class="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
+            <div data-service-card="3"><label class="flex items-center gap-1.5 text-[10px] text-slate-300 mb-1"><input type="checkbox" class="servicePick accent-blue-500" checked /><span class="serviceIconPreview text-blue-300 text-base"></span></label><select class="serviceIconSelect w-full rounded border border-slate-700 bg-slate-950 px-1 py-1 text-[10px] text-white mb-1"></select><input id="serviceLabel3" value="Printing Solutions" class="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
+            <div data-service-card="4"><label class="flex items-center gap-1.5 text-[10px] text-slate-300 mb-1"><input type="checkbox" class="servicePick accent-blue-500" checked /><span class="serviceIconPreview text-blue-300 text-base"></span></label><select class="serviceIconSelect w-full rounded border border-slate-700 bg-slate-950 px-1 py-1 text-[10px] text-white mb-1"></select><input id="serviceLabel4" value="Barcodes & Labels" class="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[10px] text-white" /></div>
           </div>
         </div>
         <div class="md:col-span-2 rounded-xl border border-amber-500/30 bg-amber-950/10 p-4">
@@ -2130,19 +2131,48 @@
       reader.readAsDataURL(file);
     });
 
-    for (let index = 0; index < 5; index += 1) {
-      document.getElementById(`serviceImage${index}`).addEventListener('change', (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = () => {
-          serviceImages[index] = new Image();
-          serviceImages[index].onload = () => showToast(`Service image ${index + 1} loaded.`);
-          serviceImages[index].src = reader.result;
-        };
-        reader.readAsDataURL(file);
+    // Service uploads replaced by built-in Font Awesome icon picker (serviceSlots)
+
+    // Built-in Pezosys service icons (Font Awesome) — no uploads needed
+    const SERVICE_ICONS = [
+      { value: 'fa-tags', label: '🏷️ Tags / Labels', fa: 'fa-tags' },
+      { value: 'fa-box', label: '📦 Packaging Box', fa: 'fa-box' },
+      { value: 'fa-boxes-stacked', label: '📦📦 Bulk Packaging', fa: 'fa-boxes-stacked' },
+      { value: 'fa-print', label: '🖨️ Printing', fa: 'fa-print' },
+      { value: 'fa-barcode', label: '📊 Barcode', fa: 'fa-barcode' },
+      { value: 'fa-rectangle-ad', label: '🪧 Signage / Ads', fa: 'fa-rectangle-ad' },
+      { value: 'fa-pen-ruler', label: '📐 Design', fa: 'fa-pen-ruler' },
+      { value: 'fa-id-card', label: '🆔 ID Cards', fa: 'fa-id-card' },
+      { value: 'fa-image', label: '🖼️ Photo Prints', fa: 'fa-image' },
+      { value: 'fa-flag', label: '🚩 Flex / Banners', fa: 'fa-flag' },
+      { value: 'fa-file-invoice', label: '📄 Stationery', fa: 'fa-file-invoice' },
+      { value: 'fa-mobile-screen', label: '📱 Digital Print', fa: 'fa-mobile-screen' },
+      { value: 'fa-industry', label: '🏭 Industrial', fa: 'fa-industry' },
+      { value: 'fa-stamp', label: ' stamps / Seals', fa: 'fa-stamp' },
+      { value: 'fa-envelope', label: '✉️ Invitations', fa: 'fa-envelope' },
+      { value: 'fa-book', label: '📖 Booklets', fa: 'fa-book' }
+    ];
+    const serviceSlots = [];
+    document.querySelectorAll('[data-service-card]').forEach((card) => {
+      const index = Number(card.dataset.serviceCard);
+      const select = card.querySelector('.serviceIconSelect');
+      const preview = card.querySelector('.serviceIconPreview');
+      const pick = card.querySelector('.servicePick');
+      SERVICE_ICONS.forEach((icon) => {
+        const option = document.createElement('option');
+        option.value = icon.value;
+        option.textContent = icon.label;
+        select.appendChild(option);
       });
-    }
+      const refresh = () => {
+        preview.innerHTML = `<i class="fa-solid ${select.value}"></i>`;
+        select.disabled = !pick.checked;
+      };
+      select.addEventListener('change', refresh);
+      pick.addEventListener('change', refresh);
+      refresh();
+      serviceSlots[index] = { pick, select, fa: () => select.value };
+    });
 
     // Brand kit: identity (and optionally services) saved in localStorage
     const BRAND_KIT_KEY = 'promptcraft.brandKit.v1';
@@ -2182,6 +2212,16 @@
           if (index > 4 || !service) return;
           if (service.label) document.getElementById(`serviceLabel${index}`).value = service.label;
           serviceImages[index] = service.image ? imageFromDataUrl(service.image) : null;
+          if (serviceSlots[index]) {
+            if (service.icon) {
+              const match = SERVICE_ICONS.find((i) => i.value === service.icon || i.fa === service.icon);
+              if (match) serviceSlots[index].select.value = match.value;
+              serviceSlots[index].pick.checked = true;
+            } else {
+              serviceSlots[index].pick.checked = false;
+            }
+            serviceSlots[index].select.dispatchEvent(new Event('change'));
+          }
         });
         document.getElementById('brandKitSaveServices').checked = true;
       }
@@ -2201,6 +2241,7 @@
       if (document.getElementById('brandKitSaveServices').checked) {
         kit.services = serviceImages.map((image, index) => ({
           label: document.getElementById(`serviceLabel${index}`).value.trim(),
+          icon: serviceSlots[index] && serviceSlots[index].pick.checked ? serviceSlots[index].fa() : '',
           image: image && image.complete && image.naturalWidth ? imageToDataUrl(image, 400) : ''
         }));
       }
@@ -2972,7 +3013,7 @@
         ctx.fillText(fit.lines[0], cx, pillY + pillH / 2 + fit.size * 0.33);
       }
 
-      const active = o.services.filter((service) => isReadyImage(service.image));
+      const active = o.services.filter((service) => isReadyImage(service.image) || service.icon);
       const hasBand = Boolean(o.offer || active.length > 0 || o.slogan);
       if (hasBand) {
         // Cream bottom band like the reference: offer line + circular service icons + labels + slogan
@@ -3013,10 +3054,25 @@
             ctx.strokeStyle = '#8a1538';
             ctx.stroke();
             ctx.clip();
-            const scale = Math.min((circleR * 1.3) / service.image.naturalWidth, (circleR * 1.3) / service.image.naturalHeight);
-            const iw = service.image.naturalWidth * scale;
-            const ih = service.image.naturalHeight * scale;
-            ctx.drawImage(service.image, slotCx - iw / 2, circleCy - ih / 2, iw, ih);
+            if (isReadyImage(service.image)) {
+              const scale = Math.min((circleR * 1.3) / service.image.naturalWidth, (circleR * 1.3) / service.image.naturalHeight);
+              const iw = service.image.naturalWidth * scale;
+              const ih = service.image.naturalHeight * scale;
+              ctx.drawImage(service.image, slotCx - iw / 2, circleCy - ih / 2, iw, ih);
+            } else {
+              // Draw the picked Font Awesome icon as an SVG inside the circle
+              const iconSize = circleR * 1.1;
+              const svg = document.createElement('svg');
+              const tmp = document.createElement('div');
+              tmp.innerHTML = `<i class="fa-solid ${service.icon}"></i>`;
+              document.body.appendChild(tmp);
+              const computed = getComputedStyle(tmp.querySelector('i'), '::before').content.replace(/"/g, '');
+              document.body.removeChild(tmp);
+              const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" width="${iconSize * 2}" height="${iconSize * 2}" viewBox="0 0 512 512"><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" font-family="Font Awesome 6 Free" font-weight="900" font-size="${iconSize}" fill="#8a1538">${computed}</text></svg>`;
+              const iconImg = new Image();
+              const done = () => ctx.drawImage(iconImg, slotCx - iconSize, circleCy - iconSize, iconSize * 2, iconSize * 2);
+              if (iconImg.complete) done(); else { iconImg.onload = done; iconImg.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgStr))); }
+            }
             ctx.restore();
             if (service.label) {
               const fit = fitPosterText(ctx, service.label, (s) => `700 ${s}px ${OVERLAY_INDIC}`, slotW * 0.92, rw * 0.019 * os, rw * 0.011 * os, 2);
@@ -3166,6 +3222,7 @@
           contact: [website.replace(/^https?:\/\//i, '').replace(/\/$/, ''), email, phone].filter(Boolean).join('   •   '),
           services: serviceImages.map((image, index) => ({
             image,
+            icon: serviceSlots[index] && serviceSlots[index].pick.checked ? serviceSlots[index].fa() : '',
             label: document.getElementById(`serviceLabel${index}`).value.trim()
           }))
         };
