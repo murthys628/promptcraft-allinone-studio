@@ -387,8 +387,8 @@
               <input id="freeArtPrompt" placeholder="e.g. with using the company details and the logo given in the website https://www.pezosys.com/, make me a poster for &quot;Dhanteras&quot; to post it on instagram, make it look very attractive with respective images related to the festival" class="flex-1 px-3 py-2 rounded-lg border border-slate-700 bg-slate-950 text-white text-xs" />
               <button type="button" id="freeArtBtn" class="hidden px-3 py-2 rounded-lg bg-sky-500 text-slate-950 text-xs font-bold whitespace-nowrap">Generate image</button>
             </div>
-            <label class="mt-2 flex items-center gap-2 text-[11px] text-slate-300"><input id="finalPosterMode" type="checkbox" checked class="accent-emerald-500" /> ChatGPT makes the complete poster (logo, text, contact details). Use its image as-is, nothing added on top.</label>
-            <p id="freeArtStatus" class="mt-1 text-[10px] text-slate-500">Free: copy the prompt, create the image in your own ChatGPT or Gemini account, download it, then upload it under "Blank / base image" below. Your exact text, logo and contact bar are added on top.</p>
+            <label class="mt-2 flex items-center gap-2 text-[11px] text-slate-300"><input id="finalPosterMode" type="checkbox" checked class="accent-emerald-500" /> Use the downloaded poster as-is, replacing its top-center logo with the saved Brand Kit logo when available.</label>
+            <p id="freeArtStatus" class="mt-1 text-[10px] text-slate-500">Free: copy the prompt, create the image in your own ChatGPT or Gemini account, download it, then upload it here. The saved Brand Kit logo replaces the top-center logo; the rest of the poster stays unchanged.</p>
             <div class="mt-2 flex gap-2 flex-wrap items-center">
               <button type="button" id="openChatGptBtn" class="px-3 py-1.5 rounded-lg bg-emerald-500 text-slate-950 text-xs font-bold">Copy prompt &amp; open ChatGPT (free)</button>
               <button type="button" id="openGeminiBtn" class="px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-xs text-white">Copy &amp; open Gemini</button>
@@ -2038,6 +2038,7 @@
     const localPosterCanvas = document.getElementById('localPosterCanvas');
     const downloadPosterBtn = document.getElementById('downloadPosterBtn');
     let posterLogoImage = null;
+    let brandKitLogoImage = null;
     const serviceImages = Array(5).fill(null);
     let personalPosterImages = [];
     const posterFestivalImages = {
@@ -2113,13 +2114,15 @@
       let kit = null;
       try { kit = JSON.parse(localStorage.getItem(BRAND_KIT_KEY) || 'null'); } catch (e) { kit = null; }
       if (!kit) {
+        brandKitLogoImage = null;
         if (!silent) showToast('No brand kit saved yet.');
         return;
       }
       Object.entries(brandFields).forEach(([key, id]) => {
         if (typeof kit[key] === 'string') document.getElementById(id).value = kit[key];
       });
-      if (kit.logo) posterLogoImage = imageFromDataUrl(kit.logo);
+      brandKitLogoImage = kit.logo ? imageFromDataUrl(kit.logo) : null;
+      if (brandKitLogoImage) posterLogoImage = brandKitLogoImage;
       if (Array.isArray(kit.services)) {
         kit.services.forEach((service, index) => {
           if (index > 4 || !service) return;
@@ -2144,6 +2147,7 @@
       }
       try {
         localStorage.setItem(BRAND_KIT_KEY, JSON.stringify(kit));
+        brandKitLogoImage = kit.logo ? imageFromDataUrl(kit.logo) : null;
         brandKitStatus.textContent = `Brand kit saved${kit.logo ? ' with logo' : ' (no logo uploaded)'}${kit.services ? ' + services' : ''}.`;
         showToast('Brand kit saved in this browser.');
       } catch (e) {
@@ -2153,6 +2157,7 @@
     document.getElementById('brandKitApply').addEventListener('click', () => applyBrandKit(false));
     document.getElementById('brandKitClear').addEventListener('click', () => {
       localStorage.removeItem(BRAND_KIT_KEY);
+      brandKitLogoImage = null;
       brandKitStatus.textContent = 'No brand kit saved yet.';
       showToast('Brand kit cleared.');
     });
@@ -2224,15 +2229,58 @@
     const artGallery = document.getElementById('artGallery');
 
     // Shows an image that already contains all text and branding at its own aspect ratio, uncropped.
-    function showFinishedPoster(img) {
+    function showFinishedPoster(img, skipBrandKitLogo = false) {
+      const logoToApply = skipBrandKitLogo ? null : brandKitLogoImage;
+      if (logoToApply && !logoToApply.complete) {
+        logoToApply.addEventListener('load', () => showFinishedPoster(img), { once: true });
+        logoToApply.addEventListener('error', () => showFinishedPoster(img, true), { once: true });
+        return;
+      }
       const scale = Math.min(1, 1600 / img.naturalWidth);
       localPosterCanvas.width = Math.round(img.naturalWidth * scale);
       localPosterCanvas.height = Math.round(img.naturalHeight * scale);
-      localPosterCanvas.getContext('2d').drawImage(img, 0, 0, localPosterCanvas.width, localPosterCanvas.height);
-      localPosterCanvas.className = `mt-6 w-full ${localPosterCanvas.width > localPosterCanvas.height ? 'max-w-3xl' : 'max-w-md'} mx-auto rounded-xl border border-slate-700`;
+      const ctx = localPosterCanvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, localPosterCanvas.width, localPosterCanvas.height);
+      if (logoToApply && logoToApply.naturalWidth > 0) {
+        const width = localPosterCanvas.width;
+        const height = localPosterCanvas.height;
+        const badgeWidth = width * 0.52;
+        const badgeHeight = height * 0.09;
+        const badgeX = (width - badgeWidth) / 2;
+        const badgeY = height * 0.018;
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, badgeHeight * 0.16);
+        ctx.fillStyle = 'rgba(55, 0, 25, 0.97)';
+        ctx.fill();
+        ctx.lineWidth = Math.max(2, width * 0.002);
+        ctx.strokeStyle = '#e8b84a';
+        ctx.stroke();
+        const logoScale = Math.min(
+          badgeWidth * 0.9 / logoToApply.naturalWidth,
+          badgeHeight * 0.72 / logoToApply.naturalHeight
+        );
+        const logoWidth = logoToApply.naturalWidth * logoScale;
+        const logoHeight = logoToApply.naturalHeight * logoScale;
+        ctx.drawImage(
+          logoToApply,
+          (width - logoWidth) / 2,
+          badgeY + (badgeHeight - logoHeight) / 2,
+          logoWidth,
+          logoHeight
+        );
+        ctx.restore();
+      }
+      localPosterCanvas.className = 'mt-6 w-full '
+        + (localPosterCanvas.width > localPosterCanvas.height ? 'max-w-3xl' : 'max-w-md')
+        + ' mx-auto rounded-xl border border-slate-700';
       downloadPosterBtn.disabled = false;
       localPosterCanvas.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      showToast('Poster ready. Click Download PNG.');
+      showToast(skipBrandKitLogo || (logoToApply && !logoToApply.naturalWidth)
+        ? 'Saved Brand Kit logo could not be loaded; poster is shown unchanged.'
+        : logoToApply && logoToApply.naturalWidth
+          ? 'Brand Kit logo replaced. Click Download PNG.'
+          : 'Poster ready. Save a Brand Kit logo to replace the top-center logo.');
     }
 
     // Accept an image from ChatGPT by drop, file picker or clipboard paste, then jump to the text fields.
