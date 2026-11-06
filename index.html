@@ -445,6 +445,7 @@
           <select id="posterFormat" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-700 bg-slate-950 text-white text-xs focus:outline-none focus:border-emerald-500">
             <option value="desktop">Desktop – Landscape 16:9 (1920 x 1080)</option>
             <option value="mobile" selected>Mobile – Portrait 4:5 (1080 x 1350)</option>
+            <option value="square">Instagram – Square 1:1 (1080 x 1080)</option>
           </select>
           <p class="mt-1 text-[10px] text-slate-500">Desktop for websites and screens; Mobile for Instagram and WhatsApp.</p>
         </div>
@@ -2399,8 +2400,8 @@
       const thumb = makeThemeArt(key, 160, 200);
       button.innerHTML = `<img src="${thumb.toDataURL('image/jpeg', 0.8)}" alt="${theme.label}" class="w-full h-16 object-cover" /><div class="py-0.5">${theme.label}</div>`;
       button.addEventListener('click', () => {
-        const portrait = document.getElementById('posterFormat').value !== 'desktop';
-        const art = portrait ? makeThemeArt(key, 1080, 1350) : makeThemeArt(key, 1920, 1080);
+        const fmt = document.getElementById('posterFormat').value;
+        const art = fmt === 'square' ? makeThemeArt(key, 1080, 1080) : fmt === 'desktop' ? makeThemeArt(key, 1920, 1080) : makeThemeArt(key, 1080, 1350);
         loadArtwork(art.toDataURL('image/jpeg', 0.92), `${theme.label} background selected. Now fill the text fields and click Generate Poster.`, () => showToast('Could not create that background.'));
       });
       artGallery.appendChild(button);
@@ -2409,8 +2410,14 @@
     function buildChatPrompt() {
       const scene = document.getElementById('freeArtPrompt').value.trim() || document.getElementById('posterRequest').value.trim();
       if (!scene) return '';
-      const landscape = document.getElementById('posterFormat').value === 'desktop';
-      return `Create a high-resolution, ${landscape ? '16:9 landscape' : '4:5 portrait'} poster background artwork: ${scene}. Luxurious, rich colours and lighting. Leave clear empty space at the top (for a logo and headline) and at the bottom (for a contact bar). IMPORTANT: do not draw any text, letters, numbers, logos or watermarks anywhere in the image.`;
+      const fmt = document.getElementById('posterFormat').value;
+      const shape = fmt === 'desktop' ? '16:9 landscape' : fmt === 'square' ? '1:1 square (Instagram post)' : '4:5 portrait';
+      const company = document.getElementById('posterCompany').value.trim();
+      const website = document.getElementById('posterWebsite').value.trim();
+      const brand = company || website
+        ? ` This is for ${company || 'our company'}${website ? ` (${website})` : ''}; keep a calm, uncluttered area for the company logo, and a footer strip for the website, email and phone number.`
+        : '';
+      return `Create a high-resolution, ${shape} poster background artwork for this request: ${scene}. Make it very attractive and professional, using imagery, colours and elements that clearly relate to this subject.${brand} Rich colours and lighting. Leave clear empty space at the top (for a logo and headline) and at the bottom (for a contact bar). IMPORTANT: do not draw any text, letters, numbers, logos or watermarks anywhere in the image.`;
     }
 
     async function copyAndOpen(url) {
@@ -2439,7 +2446,8 @@
         showToast('Describe the image first.');
         return;
       }
-      const landscape = document.getElementById('posterFormat').value === 'desktop';
+      const fmtValue = document.getElementById('posterFormat').value;
+      const landscape = fmtValue === 'desktop';
       const full = `${prompt}. Poster background artwork with clear empty space at the top and bottom for text. Do not draw any text, letters, words, logos or watermarks.`;
       button.disabled = true;
       status.textContent = 'Creating your image with OpenAI... this takes 20-60 seconds.';
@@ -2744,7 +2752,7 @@
         birthday: 'HAPPY BIRTHDAY',
         custom: 'FESTIVE GREETINGS'
       };
-      const title = festivalNames[detectedFestival] || festivalNames.custom;
+      const title = (detectedFestival === 'custom' && extractQuotedHeadline(request)) || festivalNames[detectedFestival] || festivalNames.custom;
       const subtitle = detectedFestival === 'narak'
         ? 'May the light of goodness overcome all darkness'
         : detectedFestival === 'eid' ? 'May this celebration bring peace, joy and blessings'
@@ -2754,7 +2762,7 @@
       const ctx = localPosterCanvas.getContext('2d');
       const posterFormatValue = document.getElementById('posterFormat').value;
       const W = posterFormatValue === 'desktop' ? 1920 : 1080;
-      const H = posterFormatValue === 'desktop' ? 1080 : 1350;
+      const H = posterFormatValue === 'desktop' ? 1080 : posterFormatValue === 'square' ? 1080 : 1350;
       const cx = W / 2;
       const Y = (value) => Math.round(value * H / 1350);
       localPosterCanvas.width = W;
@@ -2924,7 +2932,7 @@
       posterText(ctx, subtitle, cx, Y(580), Math.min(W - 260, 1200), 48);
       ctx.fillStyle = '#fff';
       ctx.font = '400 28px Arial';
-      posterText(ctx, 'Celebrate the victory of light, hope and goodness.', cx, Y(770), Math.min(W - 260, 1200), 42);
+      posterText(ctx, detectedFestival === 'custom' && request ? request.slice(0, 140) : 'Celebrate the victory of light, hope and goodness.', cx, Y(770), Math.min(W - 260, 1200), 42);
       if (selectedPersonalImages.length > 0) {
         const galleryX = 90;
         const galleryY = Y(835);
