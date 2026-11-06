@@ -538,6 +538,7 @@
                 <option value="en">English</option>
               </select>
               <button type="button" id="translateOverlayBtn" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold"><i class="fa-solid fa-arrow-right-arrow-left mr-1"></i> Translate all fields</button>
+              <button type="button" id="translateQuoteBtn" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold"><i class="fa-solid fa-quote-right mr-1"></i> Translate quoted name</button>
               <span id="translateStatus" class="text-[10px] text-slate-400">Type in English above, pick a language, and every text field is converted with correct regional spellings.</span>
             </div>
           </div>
@@ -2703,6 +2704,36 @@
       }
       status.textContent = fail ? ('Done: ' + ok + ' translated, ' + fail + ' failed. Check spelling on the poster.') : 'All ' + ok + ' field(s) translated to ' + document.getElementById('overlayLangSelect').selectedOptions[0].text + '. Click Generate Poster.';
     });
+
+    // Translate the quoted festival name from the request/prompt (e.g. "Lakshmi Pooja")
+    // into the selected regional language, filling the headline automatically.
+    async function translateQuotedHeadline(lang, showStatus) {
+      const status = document.getElementById('translateStatus');
+      const request = document.getElementById('freeArtPrompt').value.trim() || document.getElementById('posterRequest').value.trim();
+      const quoted = request ? extractQuotedHeadline(request) : '';
+      if (!quoted) {
+        if (showStatus) status.textContent = 'No quoted text found in the request above. Put the festival name in quotes, e.g. make a poster for "Lakshmi Pooja".';
+        return false;
+      }
+      if (showStatus) status.textContent = 'Translating "' + quoted + '" ...';
+      try {
+        const translated = await translateText(quoted, lang);
+        const headline = document.getElementById('overlayHeadline');
+        headline.value = translated;
+        headline.dataset.lang = lang;
+        window.__overlayEnglish = window.__overlayEnglish || {};
+        window.__overlayEnglish.overlayHeadline = quoted;
+        if (showStatus) {
+          status.textContent = 'Headline set to: ' + translated + ' — click Generate Poster.';
+          headline.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return true;
+      } catch (e) {
+        if (showStatus) status.textContent = 'Translation failed. Check your internet connection and try again.';
+        return false;
+      }
+    }
+    document.getElementById('translateQuoteBtn').addEventListener('click', () => translateQuotedHeadline(document.getElementById('overlayLangSelect').value, true));
 
     async function copyAndOpen(url) {
       const prompt = buildChatPrompt();
