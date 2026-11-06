@@ -2685,11 +2685,19 @@
         status.textContent = 'Type your text in English in the fields first, then translate.';
         return;
       }
+      // Remember the original English text (per field) so switching languages
+      // always re-translates from English, never from a previous translation.
+      if (!window.__overlayEnglish) window.__overlayEnglish = {};
+      const english = window.__overlayEnglish;
+      for (const el of fields) {
+        if (!(el.id in english) || el.dataset.lang === 'en') english[el.id] = el.value.trim();
+      }
       status.textContent = 'Translating ' + fields.length + ' field(s)...';
       let ok = 0, fail = 0;
       for (const el of fields) {
         try {
-          el.value = await translateText(el.value.trim(), lang);
+          el.value = await translateText(english[el.id], lang);
+          el.dataset.lang = lang;
           ok += 1;
         } catch (e) { fail += 1; }
       }
