@@ -2598,14 +2598,21 @@
     const clearChatLogoBtn = document.getElementById('clearChatLogoBtn');
     const copyLogoBtn = document.getElementById('copyLogoBtn');
     const chatLogoHint = document.getElementById('chatLogoHint');
-    function setChatLogo(dataUrl) {
+    function setChatLogo(dataUrl, skipSave) {
       chatLogoDataUrl = dataUrl;
       chatLogoPreview.src = dataUrl;
       chatLogoPreview.classList.remove('hidden');
       clearChatLogoBtn.classList.remove('hidden');
       copyLogoBtn.classList.remove('hidden');
       chatLogoHint.classList.remove('hidden');
+      if (!skipSave) {
+        try { localStorage.setItem('chatLogoDataUrl', dataUrl); } catch (e) { /* storage full */ }
+      }
     }
+    try {
+      const savedLogo = localStorage.getItem('chatLogoDataUrl');
+      if (savedLogo) setChatLogo(savedLogo, true);
+    } catch (e) { /* storage unavailable */ }
     chatLogoInput.addEventListener('change', () => {
       const f = chatLogoInput.files && chatLogoInput.files[0];
       if (!f) return;
@@ -2621,6 +2628,7 @@
       clearChatLogoBtn.classList.add('hidden');
       copyLogoBtn.classList.add('hidden');
       chatLogoHint.classList.add('hidden');
+      try { localStorage.removeItem('chatLogoDataUrl'); } catch (e) { /* ignore */ }
     });
     async function copyLogoToClipboard() {
       if (!chatLogoDataUrl) return;
