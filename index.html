@@ -387,8 +387,8 @@
               <input id="freeArtPrompt" placeholder="e.g. with using the company details and the logo given in the website https://www.pezosys.com/, make me a poster for &quot;Dhanteras&quot; to post it on instagram, make it look very attractive with respective images related to the festival" class="flex-1 px-3 py-2 rounded-lg border border-slate-700 bg-slate-950 text-white text-xs" />
               <button type="button" id="freeArtBtn" class="hidden px-3 py-2 rounded-lg bg-sky-500 text-slate-950 text-xs font-bold whitespace-nowrap">Generate image</button>
             </div>
-            <label class="mt-2 flex items-center gap-2 text-[11px] text-slate-300"><input id="finalPosterMode" type="checkbox" checked class="accent-emerald-500" /> Use the downloaded poster as-is, replacing its top-center logo with the saved Brand Kit logo when available.</label>
-            <p id="freeArtStatus" class="mt-1 text-[10px] text-slate-500">Free: copy the prompt, create the image in your own ChatGPT or Gemini account, download it, then upload it here. The saved Brand Kit logo replaces the top-center logo; the rest of the poster stays unchanged.</p>
+            <label class="mt-2 flex items-center gap-2 text-[11px] text-slate-300"><input id="finalPosterMode" type="checkbox" checked class="accent-emerald-500" /> Use the complete poster and cover its original logo with the saved Brand Kit logo.</label>
+            <p id="freeArtStatus" class="mt-1 text-[10px] text-slate-500">Create an image in ChatGPT or Gemini, then upload or paste it here. Save your actual logo in the Brand Kit below. Adjust the logo box to cover the original before downloading.</p>
             <div class="mt-2 flex gap-2 flex-wrap items-center">
               <button type="button" id="openChatGptBtn" class="px-3 py-1.5 rounded-lg bg-emerald-500 text-slate-950 text-xs font-bold">Copy prompt &amp; open ChatGPT (free)</button>
               <button type="button" id="openGeminiBtn" class="px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-xs text-white">Copy &amp; open Gemini</button>
@@ -537,6 +537,17 @@
       <div class="mt-4 rounded-lg border border-slate-800 bg-slate-950/60 p-3 text-[11px] text-slate-400">
         <i class="fa-solid fa-circle-info text-emerald-400 mr-1"></i>
         Choose a festival for a curated visual, or upload your own artwork. The design is composed in your browser and never sent to a service.
+      </div>
+      <div id="brandLogoControls" class="hidden mt-4 rounded-lg border border-emerald-500/40 bg-slate-950/60 p-3">
+        <p class="text-xs font-semibold text-emerald-300">Brand Kit logo placement</p>
+        <p class="mt-1 text-[10px] text-slate-400">Adjust the box to completely cover the old logo. The background color is applied only inside that box.</p>
+        <div class="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <label class="text-[10px] text-slate-300">Left <input id="brandLogoLeft" type="range" min="0" max="99" step="1" value="24" class="block w-full accent-emerald-500" /></label>
+          <label class="text-[10px] text-slate-300">Top <input id="brandLogoTop" type="range" min="0" max="99" step="1" value="2" class="block w-full accent-emerald-500" /></label>
+          <label class="text-[10px] text-slate-300">Width <input id="brandLogoWidth" type="range" min="1" max="100" step="1" value="52" class="block w-full accent-emerald-500" /></label>
+          <label class="text-[10px] text-slate-300">Height <input id="brandLogoHeight" type="range" min="1" max="100" step="1" value="9" class="block w-full accent-emerald-500" /></label>
+        </div>
+        <label class="mt-2 flex items-center gap-2 text-[10px] text-slate-300">Box background <input id="brandLogoBackground" type="color" value="#370019" class="h-7 w-10 cursor-pointer" /></label>
       </div>
       <canvas id="localPosterCanvas" width="1080" height="1350" class="hidden mt-6 w-full max-w-md mx-auto rounded-xl border border-slate-700"></canvas>
     </div>
@@ -2056,6 +2067,7 @@
     posterFestivalImage.crossOrigin = 'anonymous';
     let posterUploadedBackground = null;
     let posterReferenceImage = null;
+    let finishedPosterImage = null;
     let posterFestivalKey = 'narak';
 
     function loadPosterFestivalImage(key) {
@@ -2133,10 +2145,15 @@
         document.getElementById('brandKitSaveServices').checked = true;
       }
       brandKitStatus.textContent = `Saved kit applied${kit.logo ? ' (logo included)' : ''}${kit.services ? ' + services' : ''}.`;
+      refreshFinishedPoster();
       if (!silent) showToast('Brand kit applied.');
     }
 
     document.getElementById('brandKitSave').addEventListener('click', () => {
+      if (posterLogoImage && (!posterLogoImage.complete || !posterLogoImage.naturalWidth)) {
+        showToast('The selected logo is not ready. Wait for it to load or choose another image.');
+        return;
+      }
       const kit = {};
       Object.entries(brandFields).forEach(([key, id]) => { kit[key] = document.getElementById(id).value.trim(); });
       if (posterLogoImage && posterLogoImage.complete && posterLogoImage.naturalWidth) kit.logo = imageToDataUrl(posterLogoImage, 600);
@@ -2151,6 +2168,7 @@
         brandKitLogoImage = kit.logo ? imageFromDataUrl(kit.logo) : null;
         saveServerBrandKit(kit);
         brandKitStatus.textContent = `Brand kit saved${kit.logo ? ' with logo' : ' (no logo uploaded)'}${kit.services ? ' + services' : ''}.`;
+        refreshFinishedPoster();
         showToast('Brand kit saved in this browser.');
       } catch (e) {
         showToast('Could not save: browser storage is full. Try without service images.');
@@ -2162,6 +2180,7 @@
       brandKitLogoImage = null;
       saveServerBrandKit(null);
       brandKitStatus.textContent = 'No brand kit saved yet.';
+      refreshFinishedPoster();
       showToast('Brand kit cleared.');
     });
     applyBrandKit(true);
@@ -2209,6 +2228,8 @@
       if (!file) return;
       const reader = new FileReader();
       reader.onload = () => {
+        finishedPosterImage = null;
+        document.getElementById('brandLogoControls').classList.add('hidden');
         posterUploadedBackground = new Image();
         posterUploadedBackground.onload = () => showToast('Your artwork is ready. Text will be placed on it.');
         posterUploadedBackground.src = reader.result;
@@ -2222,6 +2243,8 @@
       if (!file) return;
       const reader = new FileReader();
       reader.onload = () => {
+        finishedPosterImage = null;
+        document.getElementById('brandLogoControls').classList.add('hidden');
         posterReferenceImage = new Image();
         posterReferenceImage.onload = () => showToast('Artwork loaded. Text will be placed on it.');
         posterReferenceImage.src = reader.result;
@@ -2234,6 +2257,8 @@
       const img = new Image();
       img.crossOrigin = 'anonymous';
       img.onload = () => {
+        finishedPosterImage = null;
+        document.getElementById('brandLogoControls').classList.add('hidden');
         posterReferenceImage = null;
         posterUploadedBackground = img;
         document.getElementById('overlayOnArtwork').checked = true;
@@ -2249,12 +2274,26 @@
 
     const artGallery = document.getElementById('artGallery');
 
-    // Shows an image that already contains all text and branding at its own aspect ratio, uncropped.
-    function showFinishedPoster(img, skipBrandKitLogo = false) {
+    function refreshFinishedPoster() {
+      if (finishedPosterImage) showFinishedPoster(finishedPosterImage, false, false);
+    }
+
+    ['brandLogoLeft', 'brandLogoTop', 'brandLogoWidth', 'brandLogoHeight', 'brandLogoBackground'].forEach((id) => {
+      document.getElementById(id).addEventListener('input', refreshFinishedPoster);
+    });
+
+    function showFinishedPoster(img, skipBrandKitLogo = false, notify = true) {
+      finishedPosterImage = img;
+      document.getElementById('brandLogoControls').classList.remove('hidden');
       const logoToApply = skipBrandKitLogo ? null : brandKitLogoImage;
       if (logoToApply && !logoToApply.complete) {
-        logoToApply.addEventListener('load', () => showFinishedPoster(img), { once: true });
-        logoToApply.addEventListener('error', () => showFinishedPoster(img, true), { once: true });
+        downloadPosterBtn.disabled = true;
+        logoToApply.addEventListener('load', () => {
+          if (finishedPosterImage === img && brandKitLogoImage === logoToApply) showFinishedPoster(img, false, notify);
+        }, { once: true });
+        logoToApply.addEventListener('error', () => {
+          if (finishedPosterImage === img && brandKitLogoImage === logoToApply) showFinishedPoster(img, true);
+        }, { once: true });
         return;
       }
       const scale = Math.min(1, 1600 / img.naturalWidth);
@@ -2265,18 +2304,13 @@
       if (logoToApply && logoToApply.naturalWidth > 0) {
         const width = localPosterCanvas.width;
         const height = localPosterCanvas.height;
-        const badgeWidth = width * 0.52;
-        const badgeHeight = height * 0.09;
-        const badgeX = (width - badgeWidth) / 2;
-        const badgeY = height * 0.018;
+        const badgeWidth = width * Number(document.getElementById('brandLogoWidth').value) / 100;
+        const badgeHeight = height * Number(document.getElementById('brandLogoHeight').value) / 100;
+        const badgeX = Math.min(width - badgeWidth, width * Number(document.getElementById('brandLogoLeft').value) / 100);
+        const badgeY = Math.min(height - badgeHeight, height * Number(document.getElementById('brandLogoTop').value) / 100);
         ctx.save();
-        ctx.beginPath();
-        ctx.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, badgeHeight * 0.16);
-        ctx.fillStyle = 'rgba(55, 0, 25, 0.97)';
-        ctx.fill();
-        ctx.lineWidth = Math.max(2, width * 0.002);
-        ctx.strokeStyle = '#e8b84a';
-        ctx.stroke();
+        ctx.fillStyle = document.getElementById('brandLogoBackground').value;
+        ctx.fillRect(badgeX, badgeY, badgeWidth, badgeHeight);
         const logoScale = Math.min(
           badgeWidth * 0.9 / logoToApply.naturalWidth,
           badgeHeight * 0.72 / logoToApply.naturalHeight
@@ -2285,7 +2319,7 @@
         const logoHeight = logoToApply.naturalHeight * logoScale;
         ctx.drawImage(
           logoToApply,
-          (width - logoWidth) / 2,
+          badgeX + (badgeWidth - logoWidth) / 2,
           badgeY + (badgeHeight - logoHeight) / 2,
           logoWidth,
           logoHeight
@@ -2294,12 +2328,14 @@
       }
       localPosterCanvas.className = `mt-6 w-full ${localPosterCanvas.width > localPosterCanvas.height ? 'max-w-3xl' : 'max-w-md'} mx-auto rounded-xl border border-slate-700`;
       downloadPosterBtn.disabled = false;
-      localPosterCanvas.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      showToast(skipBrandKitLogo || (logoToApply && !logoToApply.naturalWidth)
-        ? 'Saved Brand Kit logo could not be loaded; poster is shown unchanged.'
-        : logoToApply && logoToApply.naturalWidth
-          ? 'Brand Kit logo replaced. Click Download PNG.'
-          : 'Poster ready. Save a Brand Kit logo to replace the top-center logo.');
+      if (notify) {
+        document.getElementById('brandLogoControls').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        showToast(skipBrandKitLogo || (logoToApply && !logoToApply.naturalWidth)
+          ? 'Saved Brand Kit logo could not be loaded; poster is shown unchanged.'
+          : logoToApply && logoToApply.naturalWidth
+            ? 'Brand Kit logo applied. Adjust its box before downloading.'
+            : 'Poster unchanged. Upload your logo and save the Brand Kit below.');
+      }
     }
 
     // Accept an image from ChatGPT by drop, file picker or clipboard paste, then jump to the text fields.
@@ -2535,10 +2571,16 @@
         });
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || 'Image generation failed.');
-        loadArtwork(`data:image/png;base64,${data.image}`, 'Image ready. Fill the text fields and click Generate Poster.', () => {
+        loadArtwork(`data:image/png;base64,${data.image}`, 'Image ready.', () => {
           status.textContent = 'The image could not be displayed. Try again.';
-        }, () => {
-          status.textContent = 'Image ready. Click again for a different version.';
+        }, (img) => {
+          if (document.getElementById('finalPosterMode').checked) {
+            document.getElementById('overlayOnArtwork').checked = false;
+            showFinishedPoster(img);
+            status.textContent = 'Image ready. Save your Brand Kit logo and adjust its box before downloading.';
+          } else {
+            status.textContent = 'Image ready. Fill the text fields and click Generate Poster.';
+          }
         });
       } catch (error) {
         status.textContent = error instanceof TypeError
@@ -2548,6 +2590,8 @@
         button.disabled = false;
       }
     });    document.getElementById('posterFestival').addEventListener('change', (event) => {
+      finishedPosterImage = null;
+      document.getElementById('brandLogoControls').classList.add('hidden');
       posterUploadedBackground = null;
       loadPosterFestivalImage(event.target.value);
     });
@@ -2797,6 +2841,8 @@
         showFinishedPoster(posterUploadedBackground);
         return;
       }
+      finishedPosterImage = null;
+      document.getElementById('brandLogoControls').classList.add('hidden');
       const request = document.getElementById('posterRequest').value.trim();
       if (!request && !document.getElementById('overlayOnArtwork').checked) {
         showToast('Describe the poster, or pick artwork and fill the text fields.');

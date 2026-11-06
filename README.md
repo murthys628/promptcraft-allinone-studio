@@ -5,6 +5,16 @@ In this build:
 - **Standby Canvas:** The video canvas does not show any image, logo, or Diwali lamp upon opening.
 - **Prompt-Driven Generation:** When a user enters a prompt (e.g., Diwali in Kannada, Mega Sale, Corporate Summit) and clicks **Auto-Detect & Generate Video From Prompt**, the matching theme, background images, spoken voice, and text are dynamically generated and displayed.
 
+## Replacing the logo on a finished poster
+
+Upload your actual logo in the poster's **Logo** field and click **Save brand kit**.
+With the complete-poster option checked, upload or paste the downloaded image in
+Step 2, or generate an image in the app. The preview places the saved logo over a
+solid-colored box; it does not automatically detect the original logo. Use the
+placement controls above the preview to cover the original logo and choose a box
+color, then download the PNG. The rest of the poster is unchanged. If no logo is
+saved, the original image is shown unchanged.
+
 ## Automatic local narration
 
 The downloaded video can include generated narration and background music without credits.
