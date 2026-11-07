@@ -365,7 +365,7 @@ class TtsHandler(BaseHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.end_headers()
 
-    def find_ffmpeg():
+    def find_ffmpeg(self):
         found = shutil.which("ffmpeg")
         if found:
             return found
