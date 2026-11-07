@@ -379,19 +379,32 @@ class TtsHandler(BaseHTTPRequestHandler):
                 raise ValueError("yt-dlp is not installed on the server machine.")
         tmp_dir = tempfile.mkdtemp(prefix="yt_")
         out_template = os.path.join(tmp_dir, "video.%(ext)s")
-        command = [
+        # YouTube bot-blocks datacenter IPs (Render) unless cookies or a player client are provided.
+        # - Extractor args: use the tv/web_embedded player clients which are far less strict,
+        #   and skip the default web client that triggers the "Sign in to confirm" wall.
+        # - If the operator places a cookies.txt next to the server, it is used automatically.
+        cookies_file = os.path.join(APP_DIR, "youtube_cookies.txt")
+        base_command = [
             *yt_dlp_cmd,
             "-f", "best[ext=mp4][vcodec^=avc1][height<=720]/best[ext=mp4][height<=720]/best[height<=720]/best",
             "-o", out_template,
             "--no-playlist",
             "--no-warnings",
             "--max-filesize", "200M",
-            url,
         ]
-        command = [c for c in command if c]
+        if os.path.isfile(cookies_file):
+            base_command += ["--cookies", cookies_file]
+        attempts = [
+            base_command + ["--extractor-args", "youtube:player_client=tv,web_embedded,android"],
+            base_command + ["--extractor-args", "youtube:player_client=default"],
+        ]
+        result = None
+        for attempt in attempts:
+            result = subprocess.run(attempt + [url], capture_output=True, text=True, timeout=300)
+            if result.returncode == 0:
+                break
         try:
-            result = subprocess.run(command, capture_output=True, text=True, timeout=300)
-            if result.returncode != 0:
+            if not result or result.returncode != 0:
                 raise ValueError("YouTube download failed: " + (result.stderr or result.stdout or "unknown error")[-500:])
             video_file = None
             for name in os.listdir(tmp_dir):
