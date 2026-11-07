@@ -1367,6 +1367,9 @@
       }
       musicDestinationAudible = true;
       await musicAudioContext.resume();
+      if (musicAudioContext.state !== 'running') {
+        throw new Error('The audio system is suspended by the browser. Click Preview once, then Record again.');
+      }
       if (musicAudio) {
         musicAudio.volume = 1;
         musicAudio.loop = true;
@@ -1382,6 +1385,18 @@
         narrationAudio.volume = 1;
         narrationAudio.loop = false;
         await narrationAudio.play();
+        // Verify audio is actually flowing before recording, otherwise the export would be silent.
+        await new Promise((resolve) => setTimeout(resolve, 600));
+        const checkSamples = new Uint8Array(narrationAnalyserNode.fftSize);
+        narrationAnalyserNode.getByteTimeDomainData(checkSamples);
+        let checkSum = 0;
+        for (const sample of checkSamples) {
+          const normalized = (sample - 128) / 128;
+          checkSum += normalized * normalized;
+        }
+        if (Math.sqrt(checkSum / checkSamples.length) < 0.004) {
+          throw new Error('Narration audio is silent. Ensure the tab is not muted and click Preview, then Record again.');
+        }
         if (musicAudio && musicGainNode && narrationAnalyserNode) {
           const samples = new Uint8Array(narrationAnalyserNode.fftSize);
           const updateMusicLevel = () => {
