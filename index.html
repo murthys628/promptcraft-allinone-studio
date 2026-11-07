@@ -313,8 +313,8 @@
               <label class="block text-xs font-semibold text-slate-300 mb-1">Background Music / Song (Optional)</label>
               <button type="button" id="clearMusicBtn" class="text-[10px] text-rose-300 hover:text-rose-200">Remove</button>
             </div>
-            <input type="file" id="musicUpload" accept="audio/*" class="w-full text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-400 cursor-pointer" />
-            <p class="mt-1 text-[10px] text-slate-500">Music plays continuously, rises during narration pauses, and ducks under speech. The total video duration is shown here after download.</p>
+            <input type="file" id="musicUpload" accept="audio/*" multiple class="w-full text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-400 cursor-pointer" />
+            <p class="mt-1 text-[10px] text-slate-500">Pick ONE song, or TWO songs: song 1 plays over background photos 1–2 and fades out, song 2 takes over from photo 3 onwards. Ducks under narration. The total video duration is shown here after download.</p>
           </div>
           <div class="sm:col-span-2">
             <div class="flex items-center justify-between">
@@ -1015,6 +1015,12 @@
     let availableVoices = [];
     let musicAudio = null;
     let musicObjectUrl = null;
+    // Dual-song support: song 1 plays over backgrounds 1-2, song 2 takes over from background 3.
+    let musicAudioSecond = null;
+    let musicObjectUrlSecond = null;
+    let activeMusicIsSecond = false;
+    let musicSourceNodeSecond = null;
+    let dualMusicWatcherTimer = null;
     let narrationAudio = null;
     let narrationObjectUrl = null;
     let narrationIsUploaded = false;
@@ -1147,8 +1153,9 @@
     });
 
     musicUpload.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
+      const files = Array.from(e.target.files || []);
+      if (!files.length) return;
+      if (files.length > 2) showToast('Only the first two songs are used.');
       stopMusic();
       if (musicAudioContext && musicAudioContext.state !== 'closed') musicAudioContext.close();
       musicAudioContext = null;
@@ -1160,19 +1167,36 @@
       narrationAnalyserNode = null;
       musicDestination = null;
       if (musicObjectUrl) URL.revokeObjectURL(musicObjectUrl);
-      musicObjectUrl = URL.createObjectURL(file);
+      if (musicObjectUrlSecond) URL.revokeObjectURL(musicObjectUrlSecond);
+      musicObjectUrl = URL.createObjectURL(files[0]);
       musicAudio = new Audio(musicObjectUrl);
       musicAudio.loop = false;
       musicAudio.volume = 1;
       musicAudio.preload = 'auto';
-      showToast('Background music loaded.');
+      if (files[1]) {
+        musicObjectUrlSecond = URL.createObjectURL(files[1]);
+        musicAudioSecond = new Audio(musicObjectUrlSecond);
+        musicAudioSecond.loop = false;
+        musicAudioSecond.volume = 1;
+        musicAudioSecond.preload = 'auto';
+        showToast('Two songs loaded. Song 1 plays for photos 1-2, song 2 from photo 3 onwards.');
+      } else {
+        musicAudioSecond = null;
+        musicObjectUrlSecond = null;
+        showToast('Background music loaded.');
+      }
+      activeMusicIsSecond = false;
     });
 
     clearMusicBtn.addEventListener('click', () => {
       stopMusic();
       if (musicObjectUrl) URL.revokeObjectURL(musicObjectUrl);
+      if (musicObjectUrlSecond) URL.revokeObjectURL(musicObjectUrlSecond);
       musicAudio = null;
+      musicAudioSecond = null;
       musicObjectUrl = null;
+      musicObjectUrlSecond = null;
+      activeMusicIsSecond = false;
       musicUpload.value = '';
       showToast('Background music removed.');
     });
@@ -1321,9 +1345,17 @@
     }
 
     function stopMusic() {
+      stopDualMusicWatcher();
+      activeMusicIsSecond = false;
       if (musicAudio) {
         musicAudio.pause();
         musicAudio.currentTime = 0;
+        musicAudio.volume = 1;
+      }
+      if (musicAudioSecond) {
+        musicAudioSecond.pause();
+        musicAudioSecond.currentTime = 0;
+        musicAudioSecond.volume = 1;
       }
       if (narrationAudio) {
         narrationAudio.pause();
@@ -1333,6 +1365,57 @@
       if (narrationGainNode) narrationGainNode.disconnect();
       if (musicDuckingFrame !== null) cancelAnimationFrame(musicDuckingFrame);
       musicDuckingFrame = null;
+    }
+
+    // Watches which background photo is on screen. When photo 3 (index 2) appears,
+    // fades out song 1 and fades in song 2. Runs only while a recording is live.
+    function startDualMusicWatcher() {
+      stopDualMusicWatcher();
+      dualMusicWatcherTimer = setInterval(() => {
+        const idx = window.__bgIndexForMusic || 0;
+        const wantSecond = idx >= 2;
+        if (wantSecond === activeMusicIsSecond) return;
+        activeMusicIsSecond = wantSecond;
+        const fadeIn = musicAudioSecond, fadeOut = musicAudio;
+        if (wantSecond && fadeIn && musicGainNode) {
+          try { fadeIn.currentTime = 0; fadeIn.play(); } catch {}
+          fadeIn.volume = 0;
+          const iv = setInterval(() => {
+            fadeIn.volume = Math.min(1, fadeIn.volume + 0.08);
+            if (fadeIn.volume >= 1) clearInterval(iv);
+          }, 60);
+          if (fadeOut) {
+            const ov = setInterval(() => {
+              fadeOut.volume = Math.max(0, fadeOut.volume - 0.08);
+              if (fadeOut.volume <= 0) { fadeOut.pause(); clearInterval(ov); }
+            }, 60);
+          }
+        } else if (!wantSecond && musicAudio && musicGainNode) {
+          // Switched back (e.g. looping gallery) - restore song 1.
+          try { musicAudio.play(); } catch {}
+          const iv = setInterval(() => {
+            musicAudio.volume = Math.min(1, musicAudio.volume + 0.08);
+            if (musicAudio.volume >= 1) clearInterval(iv);
+          }, 60);
+          if (musicAudioSecond) {
+            const ov = setInterval(() => {
+              musicAudioSecond.volume = Math.max(0, musicAudioSecond.volume - 0.08);
+              if (musicAudioSecond.volume <= 0) { musicAudioSecond.pause(); clearInterval(ov); }
+            }, 60);
+          }
+        }
+      }, 150);
+    }
+    function stopDualMusicWatcher() {
+      if (dualMusicWatcherTimer) { clearInterval(dualMusicWatcherTimer); dualMusicWatcherTimer = null; }
+    }
+    // In dual-song mode with 3+ photos, the video should be long enough to play both songs:
+    // song 1 for photos 1-2 and song 2 for photos 3 onward, so sum their durations.
+    function dualMusicDurationCandidate() {
+      if (!musicAudioSecond || customBackgrounds.length < 3) return 0;
+      const d1 = musicAudio && Number.isFinite(musicAudio.duration) ? musicAudio.duration : 0;
+      const d2 = Number.isFinite(musicAudioSecond.duration) ? musicAudioSecond.duration : 0;
+      return d1 + d2;
     }
 
     async function prepareMusicStream() {
@@ -1357,6 +1440,13 @@
         musicGainNode.connect(musicDestination);
         musicGainNode.connect(musicAudioContext.destination);
       }
+      if (musicAudioSecond && customBackgrounds.length >= 3) {
+        // Dual-song mode only makes sense with 3+ photos. With 1-2 photos the second file is
+        // ignored entirely so song 1 loops for the whole video (classic single-music behavior).
+        if (!musicSourceNodeSecond) musicSourceNodeSecond = musicAudioContext.createMediaElementSource(musicAudioSecond);
+        musicSourceNodeSecond.disconnect();
+        musicSourceNodeSecond.connect(musicGainNode);
+      }
       if (narrationAudio) {
         if (!narrationSourceNode) narrationSourceNode = musicAudioContext.createMediaElementSource(narrationAudio);
         if (!narrationGainNode) narrationGainNode = musicAudioContext.createGain();
@@ -1376,14 +1466,24 @@
       if (musicAudioContext.state !== 'running') {
         throw new Error('The audio system is suspended by the browser. Click Preview once, then Record again.');
       }
+      const dualMode = !!(musicAudioSecond && customBackgrounds.length >= 3);
       if (musicAudio) {
         musicAudio.volume = 1;
-        musicAudio.loop = true;
+        musicAudio.loop = !dualMode; // in dual mode song 1 must END after photos 1-2 so song 2 can take over
         try {
           await musicAudio.play();
         } catch (error) {
           throw new Error(`Background music could not play: ${error.message || 'allow audio playback and try again.'}`);
         }
+      }
+      if (dualMode) {
+        // Dual-song mode: song 1 plays over photos 1-2, then song 2 fades in from photo 3 onwards.
+        musicAudioSecond.volume = 0;
+        musicAudioSecond.loop = false;
+        try { await musicAudioSecond.play(); } catch { /* will retry on switch */ }
+        musicAudioSecond.pause();
+        musicAudioSecond.currentTime = 0;
+        startDualMusicWatcher();
       }
       if (narrationAudio) {
         await waitForAudioReady(narrationAudio);
@@ -1730,6 +1830,8 @@
         const idx = customBackgrounds.length > 1 && customBackgroundDurationSeconds
           ? Math.min(usablePool.length - 1, Math.floor(safeTime / customBackgroundDurationSeconds))
           : Math.floor(safeTime / 4) % usablePool.length;
+        // Track which background photo is showing so the dual-song switch can react to it.
+        window.__bgIndexForMusic = idx;
         drawBackgroundImage(usablePool[idx], W, H);
         if (cleanUploadedBackground.checked && customBackgrounds.length > 0) {
           return;
@@ -2035,8 +2137,10 @@
         stopMusic();
         return;
       }
-      const musicDurationMs = musicAudio && Number.isFinite(musicAudio.duration)
-        ? Math.ceil(musicAudio.duration * 1000) + 250
+      const dualModeDuration = dualMusicDurationCandidate();
+      const activeMusic = activeMusicIsSecond && musicAudioSecond ? musicAudioSecond : musicAudio;
+      const musicDurationMs = (activeMusic && Number.isFinite(activeMusic.duration))
+        ? Math.ceil((dualModeDuration || activeMusic.duration) * 1000) + 250
         : 0;
       const narrationDurationMs = narrationAudio && Number.isFinite(narrationAudio.duration)
         ? Math.ceil(narrationAudio.duration * 1000) + 250
