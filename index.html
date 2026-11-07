@@ -55,7 +55,17 @@
 <body class="theme-light min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white">
 
   <!-- Sign up / Log in gate: covers the whole app until a valid session exists -->
-  <style>#authGate .bg-blue-600{color:#fff!important;background:#1e40af!important;box-shadow:0 2px 8px rgba(30,64,175,.45)}#authGate input{color:#0f172a!important}</style>
+  <style>#authGate .bg-blue-600{color:#fff!important;background:#1e40af!important;box-shadow:0 2px 8px rgba(30,64,175,.45)}#authGate input{color:#0f172a!important;background-color:#ffffff!important;caret-color:#1e40af!important}#authGate input::placeholder{color:#64748b!important}</style>
+  <style>
+    /* Browser autofill paints its own colors that beat normal CSS — force them visible */
+    input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus,
+    textarea:-webkit-autofill, select:-webkit-autofill {
+      -webkit-text-fill-color: #0f172a !important;
+      -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+      caret-color: #1e40af !important;
+      transition: background-color 9999s ease-out 0s;
+    }
+  </style>
   <div id="authGate" class="fixed inset-0 z-[200] bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center p-4 overflow-auto">
     <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl p-7">
       <div class="flex items-center gap-3 mb-5">
