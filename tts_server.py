@@ -386,7 +386,10 @@ class TtsHandler(BaseHTTPRequestHandler):
         cookies_file = os.path.join(APP_DIR, "youtube_cookies.txt")
         base_command = [
             *yt_dlp_cmd,
-            "-f", "best[ext=mp4][vcodec^=avc1][height<=720]/best[ext=mp4][height<=720]/best[height<=720]/best",
+            # Many Shorts have no progressive (video+audio combined) MP4 - download best
+            # video and audio separately and let ffmpeg merge them into MP4.
+            "-f", "bestvideo[height<=720]+bestaudio/best[height<=720]/best",
+            "--merge-output-format", "mp4",
             "-o", out_template,
             "--no-playlist",
             "--no-warnings",
