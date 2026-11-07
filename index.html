@@ -58,6 +58,10 @@
   <style>
     /* Auth inputs styled for the dark navy gate: light text, dark input background */
     #authGate input { color:#f8fafc !important; -webkit-text-fill-color:#f8fafc !important; background-color:#111827 !important; border:1px solid #475569 !important; caret-color:#60a5fa !important; }
+    /* Native password bullets ignore color overrides in some Chromium builds —
+       render dots as normal text glyphs instead so they inherit the light color */
+    #authGate input[type="password"] { -webkit-text-security: disc !important; }
+    #authGate input#authPassword.showing { -webkit-text-security: none !important; }
     #authGate input::placeholder { color:#94a3b8 !important; }
     #authGate input:-webkit-autofill, #authGate input:-webkit-autofill:hover, #authGate input:-webkit-autofill:focus {
       -webkit-text-fill-color:#f8fafc !important;
@@ -802,6 +806,7 @@
       pwVisibilityToggle.addEventListener('click', () => {
         const isVisible = pwInput.type === 'text';
         pwInput.type = isVisible ? 'password' : 'text';
+        pwInput.classList.toggle('showing', !isVisible);
         pwVisibilityToggle.setAttribute('aria-label', isVisible ? 'Show password' : 'Hide password');
         pwVisibilityToggle.setAttribute('aria-pressed', String(!isVisible));
         pwVisibilityToggle.title = isVisible ? 'Show password' : 'Hide password';
