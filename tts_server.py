@@ -12,6 +12,7 @@ import urllib.request
 import os
 import re
 import tempfile
+import sys
 import asyncio
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -365,6 +366,51 @@ class TtsHandler(BaseHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.end_headers()
 
+    def fetch_youtube_video(self, url):
+        # Download the best MP4 (720p-or-below, video+audio combined) via yt-dlp.
+        yt_dlp = shutil.which("yt-dlp") or shutil.which("yt_dlp")
+        if yt_dlp:
+            yt_dlp_cmd = [yt_dlp]
+        else:
+            try:
+                import yt_dlp as _ydl  # noqa: F401
+                yt_dlp_cmd = [sys.executable, "-m", "yt_dlp"]
+            except ImportError:
+                raise ValueError("yt-dlp is not installed on the server machine.")
+        tmp_dir = tempfile.mkdtemp(prefix="yt_")
+        out_template = os.path.join(tmp_dir, "video.%(ext)s")
+        command = [
+            *yt_dlp_cmd,
+            "-f", "best[ext=mp4][vcodec^=avc1][height<=720]/best[ext=mp4][height<=720]/best[height<=720]/best",
+            "-o", out_template,
+            "--no-playlist",
+            "--no-warnings",
+            "--max-filesize", "200M",
+            url,
+        ]
+        command = [c for c in command if c]
+        try:
+            result = subprocess.run(command, capture_output=True, text=True, timeout=300)
+            if result.returncode != 0:
+                raise ValueError("YouTube download failed: " + (result.stderr or result.stdout or "unknown error")[-500:])
+            video_file = None
+            for name in os.listdir(tmp_dir):
+                if name.lower().endswith((".mp4", ".webm", ".mkv", ".mov")):
+                    video_file = os.path.join(tmp_dir, name)
+                    break
+            if not video_file:
+                raise ValueError("YouTube download produced no video file.")
+            with open(video_file, "rb") as downloaded:
+                body = downloaded.read()
+        finally:
+            shutil.rmtree(tmp_dir, ignore_errors=True)
+        self.send_response(200)
+        self.send_cors_origin()
+        self.send_header("Content-Type", "video/mp4")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
     def find_ffmpeg(self):
         found = shutil.which("ffmpeg")
         if found:
@@ -421,8 +467,18 @@ class TtsHandler(BaseHTTPRequestHandler):
                 db.commit()
             self.send_json(200, {"ok": True})
             return
-        if self.path in ("/image", "/tts") and not self.current_user():
+        if self.path in ("/image", "/tts", "/youtube") and not self.current_user():
             self.send_json(401, {"error": "Please log in to use this feature."})
+            return
+        if self.path == "/youtube":
+            try:
+                request = self.read_json()
+                url = str(request.get("url", "")).strip()
+                if "youtube.com/watch" not in url and "youtu.be/" not in url and "youtube.com/shorts" not in url:
+                    raise ValueError("That does not look like a YouTube link.")
+                self.fetch_youtube_video(url)
+            except Exception as error:
+                self.send_json(400, {"error": str(error)})
             return
         if self.path == "/image":
             try:

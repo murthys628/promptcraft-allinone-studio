@@ -330,10 +330,19 @@
               <button type="button" id="clearReferenceVideoBtn" class="text-[10px] text-rose-300 hover:text-rose-200">Remove</button>
             </div>
             <input type="file" id="referenceVideoUpload" accept="video/*" class="w-full text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-fuchsia-500 file:text-white hover:file:bg-fuchsia-400 cursor-pointer" />
+            <div class="mt-2 flex gap-2">
+              <input id="youtubeUrl" type="text" placeholder="Paste YouTube link here" class="flex-1 min-w-0 bg-slate-800 border border-slate-700 rounded px-2 py-1.5 text-[11px] text-slate-200 placeholder-slate-500 focus:outline-none focus:border-fuchsia-500" />
+              <button type="button" id="youtubeFetchBtn" class="shrink-0 px-3 py-1.5 bg-fuchsia-600 hover:bg-fuchsia-500 text-white text-[11px] font-semibold rounded">Fetch Video</button>
+            </div>
+            <p id="youtubeStatus" class="mt-1 text-[10px] text-slate-500 hidden"></p>
             <p class="mt-1 text-[10px] text-slate-500">The video is used as the visual background. Choose clean mode to preserve its design without added visual overlays.</p>
             <label class="mt-2 flex items-center gap-2 text-[11px] text-slate-300">
               <input id="cleanReferenceVideo" type="checkbox" checked class="accent-fuchsia-500" />
               Keep reference video clean (do not overlay generated visuals or text)
+            </label>
+            <label class="mt-1 flex items-center gap-2 text-[11px] text-slate-300">
+              <input id="endCardEnabled" type="checkbox" checked class="accent-amber-500" />
+              End the video with a PEZOSYS company-wishes card
             </label>
           </div>
         </div>
@@ -972,6 +981,10 @@
     const musicUpload = document.getElementById('musicUpload');
     const narrationUpload = document.getElementById('narrationUpload');
     const referenceVideoUpload = document.getElementById('referenceVideoUpload');
+    const youtubeUrlInput = document.getElementById('youtubeUrl');
+    const youtubeFetchBtn = document.getElementById('youtubeFetchBtn');
+    const youtubeStatus = document.getElementById('youtubeStatus');
+    const endCardEnabled = document.getElementById('endCardEnabled');
     const cleanReferenceVideo = document.getElementById('cleanReferenceVideo');
     const cleanUploadedBackground = document.getElementById('cleanUploadedBackground');
     const clearLogoBtn = document.getElementById('clearLogoBtn');
@@ -1010,6 +1023,19 @@
 
     let customLogoImg = null;
     let customBackgrounds = [];
+    // Built-in PEZOSYS watermark logo: drop a 'pezosys_logo.png' next to index.html and it is
+    // stamped top-right on every generated video automatically (user-uploaded logo wins if set).
+    let pezosysWatermarkTried = false;
+    let pezosysWatermarkLogo = null;
+    function loadPezosysWatermark() {
+      if (pezosysWatermarkTried) return;
+      pezosysWatermarkTried = true;
+      const img = new Image();
+      img.onload = () => { pezosysWatermarkLogo = img; if (isPromptActivated) drawFrame(0); };
+      img.onerror = () => { pezosysWatermarkLogo = null; };
+      img.src = 'pezosys_logo.png';
+    }
+    loadPezosysWatermark();
     let customBackgroundLoadId = 0;
     let customBackgroundDurationSeconds = null;
     let availableVoices = [];
@@ -1150,6 +1176,49 @@
         if (isPromptActivated) drawFrame(0);
         showToast('Reference video loaded. It will be used as the visual background.');
       }, { once: true });
+    });
+
+    youtubeFetchBtn.addEventListener('click', async () => {
+      const url = youtubeUrlInput.value.trim();
+      if (!url) { showToast('Paste a YouTube link first.'); return; }
+      youtubeStatus.classList.remove('hidden');
+      youtubeStatus.className = 'mt-1 text-[10px] text-amber-400';
+      youtubeStatus.textContent = 'Fetching video from YouTube... this can take up to a minute.';
+      youtubeFetchBtn.disabled = true;
+      try {
+        const token = localStorage.getItem(AUTH_TOKEN_KEY) || '';
+        const response = await fetch(AUTH_API + '/youtube', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) },
+          body: JSON.stringify({ url })
+        });
+        if (!response.ok) {
+          let detail = 'Could not fetch the YouTube video.';
+          try { const e = await response.json(); if (e.error) detail = e.error; } catch {}
+          throw new Error(detail);
+        }
+        const blob = await response.blob();
+        if (referenceVideoObjectUrl) URL.revokeObjectURL(referenceVideoObjectUrl);
+        referenceVideoObjectUrl = URL.createObjectURL(blob);
+        if (referenceVideo) referenceVideo.pause();
+        referenceVideo = document.createElement('video');
+        referenceVideo.src = referenceVideoObjectUrl;
+        referenceVideo.preload = 'auto';
+        referenceVideo.muted = true;
+        referenceVideo.loop = true;
+        referenceVideo.playsInline = true;
+        referenceVideo.addEventListener('loadeddata', () => {
+          if (isPromptActivated) drawFrame(0);
+          showToast('YouTube video loaded as the visual background.');
+        }, { once: true });
+        youtubeStatus.className = 'mt-1 text-[10px] text-emerald-400';
+        youtubeStatus.textContent = 'Video fetched successfully and loaded as background.';
+      } catch (error) {
+        youtubeStatus.className = 'mt-1 text-[10px] text-rose-400';
+        youtubeStatus.textContent = error.message || 'Fetch failed.';
+      } finally {
+        youtubeFetchBtn.disabled = false;
+      }
     });
 
     musicUpload.addEventListener('change', (e) => {
@@ -1918,11 +1987,21 @@
         ctx.restore();
       }
 
-      // 4. Logo in Top-Right
-      if (isReadyImage(customLogoImg)) {
+      // 4. Logo in Top-Right (aspect ratio preserved inside a 190x70 box)
+      const drawWatermark = (img, alpha) => {
         ctx.save();
-        ctx.drawImage(customLogoImg, W - 230, 40, 180, 65);
+        ctx.globalAlpha = alpha;
+        const box = { w: 190, h: 70, x: W - 200, y: 30 };
+        const scale = Math.min(box.w / img.width, box.h / img.height);
+        const lw = img.width * scale, lh = img.height * scale;
+        ctx.drawImage(img, box.x + (box.w - lw) / 2, box.y + (box.h - lh) / 2, lw, lh);
         ctx.restore();
+      };
+      if (isReadyImage(customLogoImg)) {
+        drawWatermark(customLogoImg, 1);
+      } else if (isReadyImage(pezosysWatermarkLogo)) {
+        // Default PEZOSYS watermark when the user has not uploaded their own logo.
+        drawWatermark(pezosysWatermarkLogo, 0.92);
       } else if (brandName.value.trim()) {
         ctx.save();
         ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
@@ -2001,6 +2080,74 @@
 
     // Initial Standby Render
     drawFrame(0);
+
+    // PEZOSYS company-wishes end card, drawn over the last few seconds of every export.
+    function drawEndCard(localSec, totalSec) {
+      const W = canvas.width, H = canvas.height, cx = W / 2;
+      const progress = Math.min(1, localSec / Math.max(0.8, totalSec * 0.4)); // quick fade-in
+      // Dark festive backdrop
+      let bg = ctx.createRadialGradient(cx, H * 0.45, 60, cx, H * 0.5, Math.max(W, H) * 0.75);
+      bg.addColorStop(0, '#2a1a4e'); bg.addColorStop(0.55, '#160b2e'); bg.addColorStop(1, '#07040f');
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+      // Golden sparkles
+      for (let i = 0; i < 60; i++) {
+        const sx = (Math.sin(i * 12.9898 + localSec * 0.6) * 43758.5453) % 1;
+        const sy = (Math.sin(i * 78.233 + localSec * 0.4) * 12345.6789) % 1;
+        const x = Math.abs(sx) * W, y = Math.abs(sy) * H;
+        ctx.fillStyle = `rgba(255, 215, 120, ${0.15 + 0.5 * Math.abs(Math.sin(localSec * 2 + i))})`;
+        ctx.beginPath(); ctx.arc(x, y, 1.6 + (i % 3), 0, Math.PI * 2); ctx.fill();
+      }
+      // Deepavali diya row
+      const diyaCount = 7, diyaGap = Math.min(90, W / (diyaCount + 1));
+      const diyasY = H * 0.72;
+      for (let i = 0; i < diyaCount; i++) {
+        const dx = cx + (i - (diyaCount - 1) / 2) * diyaGap;
+        const flicker = 0.85 + 0.15 * Math.sin(localSec * 7 + i * 1.7);
+        ctx.fillStyle = '#8a4a12';
+        ctx.beginPath(); ctx.ellipse(dx, diyasY, diyaGap * 0.22, diyaGap * 0.09, 0, 0, Math.PI * 2); ctx.fill();
+        let flame = ctx.createRadialGradient(dx, diyasY - diyaGap * 0.22, 1, dx, diyasY - diyaGap * 0.22, diyaGap * 0.3);
+        flame.addColorStop(0, `rgba(255,251,210,${0.95 * flicker})`);
+        flame.addColorStop(0.45, `rgba(255,190,60,${0.85 * flicker})`);
+        flame.addColorStop(1, 'rgba(255,140,20,0)');
+        ctx.fillStyle = flame;
+        ctx.beginPath(); ctx.ellipse(dx, diyasY - diyaGap * 0.22, diyaGap * 0.12, diyaGap * 0.24, 0, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.save();
+      ctx.globalAlpha = progress;
+      ctx.textAlign = 'center';
+      // Headline
+      ctx.font = `900 ${Math.round(H * 0.052)}px 'Noto Sans Kannada','Tunga',Arial`;
+      ctx.shadowColor = 'rgba(255,190,80,.8)'; ctx.shadowBlur = 20;
+      ctx.fillStyle = '#ffd76a';
+      ctx.fillText('ಪೆಝೋಸಿಸ್ ಪರಿವಾರದ ಪರವಾಗಿ', cx, H * 0.30);
+      ctx.fillText('ಹಬ್ಬದ ಶುಭಾಶಯಗಳು!', cx, H * 0.30 + H * 0.065);
+      ctx.shadowBlur = 0;
+      // English blessing line
+      ctx.font = `italic ${Math.round(H * 0.026)}px Georgia`;
+      ctx.fillStyle = '#f3e6c8';
+      ctx.fillText('With warm wishes from the PEZOSYS family — prosperity, precision & excellence', cx, H * 0.45);
+      // Brand mark
+      ctx.font = '900 30px Arial';
+      ctx.fillStyle = '#ffd76a';
+      ctx.fillText('PEZOSYS™', cx, H * 0.55);
+      ctx.font = '600 italic 15px Georgia';
+      ctx.fillStyle = '#d9a63c';
+      ctx.fillText('Proven Proficiency', cx, H * 0.55 + 24);
+      if (isReadyImage(pezosysWatermarkLogo)) {
+        const img = pezosysWatermarkLogo;
+        const bw = 150, bh = 80;
+        const scale = Math.min(bw / img.width, bh / img.height);
+        ctx.drawImage(img, cx - (img.width * scale) / 2, H * 0.575, img.width * scale, img.height * scale);
+      }
+      // Footer contacts
+      ctx.font = '600 15px Arial';
+      ctx.fillStyle = '#cbb98a';
+      ctx.fillText('www.pezosys.com   |   enquiry@pezosys.com   |   +91 9364796391', cx, H * 0.86);
+      ctx.restore();
+      // Gold frame
+      ctx.strokeStyle = '#c8861a'; ctx.lineWidth = 8; ctx.strokeRect(6, 6, W - 12, H - 12);
+      ctx.strokeStyle = '#ffd76a'; ctx.lineWidth = 2; ctx.strokeRect(16, 16, W - 32, H - 32);
+    }
 
     // Live Animation & Spoken Voice Preview
     let isPreviewing = false;
@@ -2145,9 +2292,11 @@
       const narrationDurationMs = narrationAudio && Number.isFinite(narrationAudio.duration)
         ? Math.ceil(narrationAudio.duration * 1000) + 250
         : 0;
-      const durationMs = Math.max(selectedDurationMs, narrationDurationMs, musicDurationMs);
+      const endCardMs = endCardEnabled.checked ? 4000 : 0; // PEZOSYS wishes card appended at the end
+      const contentDurationMs = Math.max(selectedDurationMs, narrationDurationMs, musicDurationMs);
+      const durationMs = contentDurationMs + endCardMs;
       customBackgroundDurationSeconds = customBackgrounds.length > 1
-        ? durationMs / 1000 / customBackgrounds.length
+        ? contentDurationMs / 1000 / customBackgrounds.length
         : null;
       statusMsg.innerText = `Recording full ${narrationAudio ? 'narration and music' : 'audio'} (${Math.ceil(durationMs / 1000)}s)...`;
       audioTracks.forEach((track) => { track.enabled = true; });
@@ -2268,7 +2417,11 @@
       // A timer keeps drawing frames even when the tab is in the background (requestAnimationFrame pauses there).
       const frameTimer = setInterval(() => {
         const elapsed = performance.now() - startTime;
-        drawFrame(elapsed / 1000);
+        if (endCardMs && elapsed >= contentDurationMs) {
+          drawEndCard((elapsed - contentDurationMs) / 1000, endCardMs / 1000);
+        } else {
+          drawFrame(elapsed / 1000);
+        }
         if (document.hidden && !recordingFinished) {
           statusMsg.innerText = 'Keep this tab open while the video is recorded, otherwise frames may be dropped.';
         }
