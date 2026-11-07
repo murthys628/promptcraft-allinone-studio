@@ -1340,8 +1340,14 @@
       stopMusic();
       if (!musicAudioContext || musicAudioContext.state === 'closed') {
         musicAudioContext = new AudioContext();
-        musicDestination = musicAudioContext.createMediaStreamDestination();
       }
+      // Always create a FRESH destination. The previous export's cleanup stops its track, and
+      // an ended MediaStreamTrack can never be reused - reusing the old destination made every
+      // export after the first one record video with no audio at all.
+      if (musicDestination) {
+        try { musicDestination.disconnect(); } catch {}
+      }
+      musicDestination = musicAudioContext.createMediaStreamDestination();
       if (musicAudio) {
         if (!musicSourceNode) musicSourceNode = musicAudioContext.createMediaElementSource(musicAudio);
         if (!musicGainNode) musicGainNode = musicAudioContext.createGain();
@@ -1974,7 +1980,13 @@
       }
       const selectedSeconds = parseInt(videoDuration.value, 10);
       const selectedDurationMs = selectedSeconds * 1000;
+      // Prefer native MP4 recording: phones (Android gallery, iPhone) can only play MP4 audio reliably.
+      // WebM with Opus audio looks silent in most mobile players even when the audio track exists.
       const mp4MimeType = [
+        'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
+        'video/mp4;codecs=avc1,mp4a.40.2',
+        'video/mp4;codecs=avc1.64001f,mp4a.40.2',
+        'video/mp4;codecs=mp4a.40.2',
         'video/webm;codecs=vp9,opus',
         'video/webm;codecs=vp8,opus',
         'video/webm'
@@ -2069,10 +2081,32 @@
           return;
         }
         const cleanName = (brandName.value || 'Video').replace(/[^a-zA-Z0-9]/g, '_');
+        const isNativeMp4 = (recorder.mimeType || mp4MimeType).includes('mp4');
         const fileName = `${cleanName}_${languageSelect.value}_${videoFormat.value}_video.mp4`;
         stream.getTracks().forEach((track) => track.stop());
         const totalDuration = formatVideoDuration(durationMs);
-        // Convert the reliable WebM recording to MP4 through the local server so the audio track survives.
+        // Phones can only play AAC audio inside MP4. Chrome sometimes records MP4 with Opus audio,
+        // which desktop players decode but Android/iPhone gallery players play as silent video.
+        // So only skip conversion when the audio is AAC (or unknown); otherwise let ffmpeg re-encode to AAC.
+        const recordedMime = (recorder.mimeType || mp4MimeType || '').toLowerCase();
+        const isPhoneSafeMp4 = recordedMime.includes('mp4') && (recordedMime.includes('mp4a') || !recordedMime.includes('opus'));
+        if (isPhoneSafeMp4) {
+          // Already a phone-compatible MP4 with audio - no server conversion needed.
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          statusMsg.innerText = `MP4 downloaded with audio. Total duration: ${totalDuration} (ends at ${totalDuration}).`;
+          recordBtn.disabled = false;
+          stopMusic();
+          if (referenceVideo) referenceVideo.pause();
+          return;
+        }
+        // WebM recording: convert to MP4 through the local server so phone players can play the audio.
         try {
           statusMsg.innerText = 'Converting video to MP4 (keeping narration audio)...';
           const token = localStorage.getItem(AUTH_TOKEN_KEY) || '';
