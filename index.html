@@ -1960,12 +1960,12 @@
       const selectedSeconds = parseInt(videoDuration.value, 10);
       const selectedDurationMs = selectedSeconds * 1000;
       const mp4MimeType = [
-        'video/mp4;codecs="avc1.42E01F,mp4a.40.2"',
-        'video/mp4;codecs="avc1.42E01F"',
-        'video/mp4'
+        'video/webm;codecs=vp9,opus',
+        'video/webm;codecs=vp8,opus',
+        'video/webm'
       ].find(type => window.MediaRecorder && MediaRecorder.isTypeSupported(type));
       if (!mp4MimeType) {
-        statusMsg.innerText = 'MP4 recording is not supported in this browser. Use the latest Chrome or Edge and try again.';
+        statusMsg.innerText = 'Video recording is not supported in this browser. Use the latest Chrome or Edge and try again.';
         return;
       }
       statusMsg.innerText = `Rendering video... (${selectedSeconds}s)`;
@@ -2031,7 +2031,7 @@
         stopMusic();
         if (referenceVideo) referenceVideo.pause();
         recordBtn.disabled = false;
-        statusMsg.innerText = `Could not start MP4 recording: ${error.message || 'unsupported encoder.'}`;
+        statusMsg.innerText = `Could not start video recording: ${error.message || 'unsupported encoder.'}`;
         return;
       }
       const chunks = [];
@@ -2039,7 +2039,7 @@
       let stopTimer = null;
 
       recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
-      recorder.onstop = () => {
+      recorder.onstop = async () => {
         if (recordingFinished) return;
         recordingFinished = true;
         if (stopTimer) clearTimeout(stopTimer);
@@ -2053,18 +2053,46 @@
           if (referenceVideo) referenceVideo.pause();
           return;
         }
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
         const cleanName = (brandName.value || 'Video').replace(/[^a-zA-Z0-9]/g, '_');
-        a.download = `${cleanName}_${languageSelect.value}_${videoFormat.value}_video.mp4`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        const fileName = `${cleanName}_${languageSelect.value}_${videoFormat.value}_video.mp4`;
         stream.getTracks().forEach((track) => track.stop());
         const totalDuration = formatVideoDuration(durationMs);
-        statusMsg.innerText = `MP4 downloaded. Total duration: ${totalDuration} (ends at ${totalDuration}).`;
+        // Convert the reliable WebM recording to MP4 through the local server so the audio track survives.
+        try {
+          statusMsg.innerText = 'Converting video to MP4 (keeping narration audio)...';
+          const token = localStorage.getItem(AUTH_TOKEN_KEY) || '';
+          const response = await fetch(AUTH_API + '/convert', {
+            method: 'POST',
+            headers: token ? { Authorization: 'Bearer ' + token } : {},
+            body: blob,
+          });
+          if (!response.ok) {
+            let detail = 'Conversion failed.';
+            try { detail = (await response.json()).error || detail; } catch {}
+            throw new Error(detail);
+          }
+          const mp4Blob = await response.blob();
+          const url = URL.createObjectURL(mp4Blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          statusMsg.innerText = `MP4 downloaded with audio. Total duration: ${totalDuration} (ends at ${totalDuration}).`;
+        } catch (error) {
+          // Fallback: give the user the original WebM (which has the audio) instead of a silent MP4.
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = fileName.replace(/\.mp4$/, '.webm');
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          statusMsg.innerText = `MP4 conversion failed (${error.message || 'unknown error'}). Downloaded WebM instead - it contains the audio. Total duration: ${totalDuration}.`;
+        }
         recordBtn.disabled = false;
         stopMusic();
         if (referenceVideo) referenceVideo.pause();
@@ -2079,7 +2107,7 @@
         if (referenceVideo) referenceVideo.pause();
         recordBtn.disabled = false;
         const errorMessage = event.error && event.error.message ? ` ${event.error.message}` : '';
-        statusMsg.innerText = `MP4 recording failed.${errorMessage} Try the latest Chrome or Edge.`;
+        statusMsg.innerText = `Video recording failed.${errorMessage} Try the latest Chrome or Edge.`;
       };
 
       recorder.start(1000);

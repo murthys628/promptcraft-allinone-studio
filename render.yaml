@@ -3,7 +3,7 @@ services:
     name: promptcraft-suite
     runtime: python
     plan: starter
-    buildCommand: pip install -r requirements.txt
+    buildCommand: apt-get update && apt-get install -y --no-install-recommends ffmpeg && pip install -r requirements.txt
     startCommand: python tts_server.py
     healthCheckPath: /healthz
     envVars:

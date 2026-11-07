@@ -3,6 +3,8 @@ import hashlib
 import hmac
 import secrets
 import sqlite3
+import subprocess
+import shutil
 from contextlib import closing
 import datetime
 import urllib.error
@@ -363,6 +365,17 @@ class TtsHandler(BaseHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.end_headers()
 
+    def find_ffmpeg():
+        found = shutil.which("ffmpeg")
+        if found:
+            return found
+        local_dir = os.path.join(APP_DIR, "ffmpeg")
+        if os.path.isdir(local_dir):
+            for root, _dirs, files in os.walk(local_dir):
+                if "ffmpeg.exe" in files:
+                    return os.path.join(root, "ffmpeg.exe")
+        return None
+
     def do_POST(self):
         if self.path == "/brandkit":
             user = self.current_user()
@@ -422,6 +435,47 @@ class TtsHandler(BaseHTTPRequestHandler):
                     raise ValueError("Image prompt is too long; keep it under 4000 characters.")
                 orientation = "landscape" if request.get("orientation") == "landscape" else "portrait"
                 self.send_json(200, {"image": create_openai_image(prompt, orientation)})
+            except Exception as error:
+                self.send_json(400, {"error": str(error)})
+            return
+        if self.path == "/convert":
+            try:
+                user = self.current_user()
+                if not user:
+                    self.send_json(401, {"error": "Please log in to use this feature."})
+                    return
+                length = int(self.headers.get("Content-Length", "0"))
+                if length > 400_000_000:
+                    raise ValueError("Video file is too large to convert.")
+                ffmpeg = self.find_ffmpeg()
+                if not ffmpeg:
+                    raise ValueError("FFmpeg was not found on the server machine.")
+                video_path = tempfile.mktemp(suffix=".webm")
+                mp4_path = tempfile.mktemp(suffix=".mp4")
+                try:
+                    with open(video_path, "wb") as incoming:
+                        incoming.write(self.rfile.read(length))
+                    result = subprocess.run(
+                        [ffmpeg, "-y", "-i", video_path, "-c:v", "libx264", "-preset", "veryfast", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", mp4_path],
+                        capture_output=True, text=True, timeout=600,
+                    )
+                    if result.returncode != 0 or not os.path.isfile(mp4_path):
+                        raise ValueError("FFmpeg conversion failed: " + (result.stderr or "unknown error")[-500:])
+                    with open(mp4_path, "rb") as converted:
+                        body = converted.read()
+                finally:
+                    for cleanup in (video_path, mp4_path):
+                        try:
+                            if os.path.isfile(cleanup):
+                                os.remove(cleanup)
+                        except OSError:
+                            pass
+                self.send_response(200)
+                self.send_cors_origin()
+                self.send_header("Content-Type", "video/mp4")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
             except Exception as error:
                 self.send_json(400, {"error": str(error)})
             return
