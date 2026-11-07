@@ -55,16 +55,18 @@
 <body class="theme-light min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white">
 
   <!-- Sign up / Log in gate: covers the whole app until a valid session exists -->
-  <style>#authGate .bg-blue-600{color:#fff!important;background:#1e40af!important;box-shadow:0 2px 8px rgba(30,64,175,.45)}#authGate input{color:#0f172a!important;background-color:#ffffff!important;caret-color:#1e40af!important}#authGate input::placeholder{color:#64748b!important}</style>
   <style>
-    /* Browser autofill paints its own colors that beat normal CSS — force them visible */
-    input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus,
-    textarea:-webkit-autofill, select:-webkit-autofill {
-      -webkit-text-fill-color: #0f172a !important;
-      -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
-      caret-color: #1e40af !important;
+    /* Auth inputs styled for the dark navy gate: light text, dark input background */
+    #authGate input { color:#f8fafc !important; -webkit-text-fill-color:#f8fafc !important; background-color:#111827 !important; border:1px solid #475569 !important; caret-color:#60a5fa !important; }
+    #authGate input::placeholder { color:#94a3b8 !important; }
+    #authGate input:-webkit-autofill, #authGate input:-webkit-autofill:hover, #authGate input:-webkit-autofill:focus {
+      -webkit-text-fill-color:#f8fafc !important;
+      -webkit-box-shadow:0 0 0 1000px #111827 inset !important;
+      caret-color:#60a5fa !important;
       transition: background-color 9999s ease-out 0s;
     }
+    /* Labels on the dark gate card */
+    #authGate label { color:#e2e8f0 !important; }
   </style>
   <div id="authGate" class="fixed inset-0 z-[200] bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center p-4 overflow-auto">
     <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl p-7">
